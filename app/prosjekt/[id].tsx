@@ -70,7 +70,7 @@ function AddYarnModal({
 }) {
   const colorScheme = useColorScheme();
   const colors = colorScheme === 'dark' ? Colors.dark : Colors.light;
-  const { yarnStock, qualities, brands, getQualityById, getQualitiesForBrand } = useKnitting();
+  const { yarnStock, qualities, brands, getQualityById, getQualitiesForBrand, updateQuality } = useKnitting();
 
   const [mode, setMode] = useState<'lager' | 'nytt'>('lager');
 
@@ -83,6 +83,8 @@ function AddYarnModal({
   const [newColorHex, setNewColorHex] = useState('#CCCCCC');
   const [newSkeinsTotal, setNewSkeinsTotal] = useState(1);
   const [newSkeinsProject, setNewSkeinsProject] = useState(1);
+  const [newGramsPerSkein, setNewGramsPerSkein] = useState('');
+  const [newMetersPerSkein, setNewMetersPerSkein] = useState('');
 
   const availableYarn = useMemo(() =>
     yarnStock.filter(y => !excludeIds.includes(y.id) && y.skeins > 0),
@@ -99,10 +101,19 @@ function AddYarnModal({
     setNewBrandId(null); setNewQualityId(null);
     setNewColorName(''); setNewColorHex('#CCCCCC');
     setNewSkeinsTotal(1); setNewSkeinsProject(1);
+    setNewGramsPerSkein(''); setNewMetersPerSkein('');
     setMode('lager');
   };
 
   const handleClose = () => { reset(); onClose(); };
+
+  const handleQualitySelect = (qId: string) => {
+    setNewQualityId(qId);
+    const q = qualities.find(q => q.id === qId);
+    setNewGramsPerSkein(q && q.gramsPerSkein > 0 ? String(q.gramsPerSkein) : '');
+    setNewMetersPerSkein(q && q.metersPerSkein > 0 ? String(q.metersPerSkein) : '');
+    Haptics.selectionAsync();
+  };
 
   const handleAddFromStock = () => {
     if (!selected) return;
@@ -112,6 +123,11 @@ function AddYarnModal({
 
   const handleAddNew = () => {
     if (!newQualityId || !newColorName.trim()) return;
+    const g = parseInt(newGramsPerSkein) || 0;
+    const m = parseInt(newMetersPerSkein) || 0;
+    if (g > 0 || m > 0) {
+      updateQuality(newQualityId, { gramsPerSkein: g, metersPerSkein: m });
+    }
     onAddNew(newQualityId, newColorName.trim(), newColorHex, newSkeinsTotal, newSkeinsProject);
     reset(); onClose();
   };
@@ -237,7 +253,7 @@ function AddYarnModal({
                         {qualitiesForBrand.map(q => (
                           <Pressable
                             key={q.id}
-                            onPress={() => { setNewQualityId(q.id); Haptics.selectionAsync(); }}
+                            onPress={() => handleQualitySelect(q.id)}
                             style={[styles.pill, {
                               backgroundColor: newQualityId === q.id ? colors.primaryBtn : colors.background,
                               borderColor: newQualityId === q.id ? colors.primaryBtn : colors.border,
@@ -282,6 +298,31 @@ function AddYarnModal({
 
                 <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Nøster til dette prosjektet</Text>
                 <Counter value={newSkeinsProject} onChange={setNewSkeinsProject} max={newSkeinsTotal} />
+
+                <View style={{ flexDirection: 'row', gap: 12 }}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Gram per nøste</Text>
+                    <TextInput
+                      style={[styles.detailInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border, fontFamily: 'Inter_400Regular' }]}
+                      value={newGramsPerSkein}
+                      onChangeText={setNewGramsPerSkein}
+                      placeholder="f.eks. 50"
+                      placeholderTextColor={colors.textTertiary}
+                      keyboardType="number-pad"
+                    />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Meter per nøste</Text>
+                    <TextInput
+                      style={[styles.detailInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border, fontFamily: 'Inter_400Regular' }]}
+                      value={newMetersPerSkein}
+                      onChangeText={setNewMetersPerSkein}
+                      placeholder="f.eks. 200"
+                      placeholderTextColor={colors.textTertiary}
+                      keyboardType="number-pad"
+                    />
+                  </View>
+                </View>
 
                 <Pressable
                   style={({ pressed }) => [styles.modalBtn, {
