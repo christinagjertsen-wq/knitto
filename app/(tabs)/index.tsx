@@ -246,14 +246,12 @@ export default function HomeScreen() {
           style={[styles.header, { paddingTop: topInset + 16 }]}
         >
           <View style={styles.headerTopRow}>
-            <View style={{ flex: 1 }}>
-              <Text style={[styles.greetingLarge, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>
-                {greeting}
-              </Text>
-              <Text style={[styles.greetingTagline, { color: Colors.palette.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                På tide å strikke litt?
-              </Text>
-            </View>
+            <Text style={[styles.greetingLarge, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold', textAlign: 'center' }]}>
+              {greeting}
+            </Text>
+            <Text style={[styles.greetingTagline, { color: Colors.palette.textTertiary, fontFamily: 'Inter_400Regular', textAlign: 'center' }]}>
+              På tide å strikke litt?
+            </Text>
           </View>
 
           <View style={[styles.headerStats, { backgroundColor: 'rgba(26,35,64,0.05)' }]}>
@@ -320,7 +318,7 @@ export default function HomeScreen() {
             </Pressable>
           )}
 
-          <View style={[styles.divider, { backgroundColor: colors.border }]} />
+          <View style={{ marginTop: 24 }} />
 
           <View style={styles.sectionHeader}>
             <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>
@@ -358,9 +356,9 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 28,
   },
   headerTopRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     marginBottom: 24,
+    gap: 4,
   },
   greetingLarge: {
     fontSize: 32,
@@ -379,12 +377,12 @@ const styles = StyleSheet.create({
   headerStatNumber: { fontSize: 26 },
   headerStatLabel: { fontSize: 12, marginTop: 2 },
   headerStatDivider: { width: 1, marginHorizontal: 8 },
-  content: { padding: 20, gap: 0 },
+  content: { padding: 20, paddingTop: 12, gap: 0 },
   sectionHeader: {
     marginBottom: 12,
-    marginTop: 4,
+    marginTop: 0,
   },
-  sectionTitle: { fontSize: 22 },
+  sectionTitle: { fontSize: 22, textAlign: 'center' },
   projectsList: { gap: 10 },
   projectRow: {
     flexDirection: 'row',
@@ -434,11 +432,6 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   emptyProjectsText: { fontSize: 15 },
-  divider: {
-    height: 1,
-    marginVertical: 24,
-    marginHorizontal: 4,
-  },
   statsRow: { flexDirection: 'row', gap: 10 },
   statCard: {
     flex: 1,
