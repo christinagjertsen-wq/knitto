@@ -13,7 +13,7 @@ import {
   Animated,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useFocusEffect } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
@@ -320,7 +320,13 @@ export default function InnstillingerScreen() {
         colors={[Colors.palette.nordicBlue, Colors.palette.nordicIce]}
         style={[styles.header, { paddingTop: topInset + 16 }]}
       >
-        <Text style={[styles.title, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>Innstillinger</Text>
+        <View style={styles.headerRow}>
+          <Pressable onPress={() => router.navigate('/(tabs)')} hitSlop={10} style={styles.homeBtn}>
+            <Ionicons name="home-outline" size={20} color={Colors.palette.navy} />
+          </Pressable>
+          <Text style={[styles.title, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>Innstillinger</Text>
+          <View style={styles.homeBtn} />
+        </View>
       </LinearGradient>
 
       <ScrollView
@@ -492,6 +498,8 @@ export default function InnstillingerScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   header: { paddingHorizontal: 24, paddingBottom: 20, borderBottomLeftRadius: 28, borderBottomRightRadius: 28 },
+  headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  homeBtn: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
   title: { fontSize: 32 },
   content: { padding: 20, gap: 12 },
   sectionTitle: { fontSize: 20, marginTop: 8, marginBottom: 4 },

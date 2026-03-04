@@ -397,7 +397,13 @@ export default function LagerScreen() {
         colors={[Colors.palette.nordicBlue, Colors.palette.nordicIce]}
         style={[styles.topBar, { paddingTop: topInset + 16 }]}
       >
-        <Text style={[styles.screenTitle, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>Lager</Text>
+        <View style={styles.topBarRow}>
+          <Pressable onPress={() => router.navigate('/(tabs)')} hitSlop={10} style={styles.homeBtn}>
+            <Ionicons name="home-outline" size={20} color={Colors.palette.navy} />
+          </Pressable>
+          <Text style={[styles.screenTitle, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>Lager</Text>
+          <View style={styles.homeBtn} />
+        </View>
       </LinearGradient>
 
       <View style={styles.segmentContainer}>
@@ -566,6 +572,8 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
   },
+  topBarRow: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  homeBtn: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
   screenTitle: { fontSize: 32 },
   addBtn: {
     width: 40,

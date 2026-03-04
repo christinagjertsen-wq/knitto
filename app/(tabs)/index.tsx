@@ -297,9 +297,12 @@ export default function HomeScreen() {
   const topInset = Platform.OS === 'web' ? 67 : insets.top;
 
   const featuredProjects = useMemo(() => {
-    const active = projects.filter(p => p.status === 'aktiv');
-    if (active.length > 0) return active.slice(0, 3);
-    return projects.filter(p => p.status === 'planlagt').slice(0, 3);
+    const active = projects.filter(p => p.status === 'aktiv').slice(0, 3);
+    const remaining = 3 - active.length;
+    const planned = remaining > 0
+      ? projects.filter(p => p.status === 'planlagt').slice(0, remaining)
+      : [];
+    return [...active, ...planned];
   }, [projects]);
 
   const greeting = getGreeting(firstName);
@@ -322,6 +325,13 @@ export default function HomeScreen() {
           style={[styles.header, { paddingTop: topInset + 16 }]}
         >
           <View style={styles.headerTopRow}>
+            <Pressable
+              style={styles.gearBtn}
+              onPress={() => router.navigate('/(tabs)/innstillinger')}
+              hitSlop={10}
+            >
+              <Ionicons name="settings-outline" size={22} color={Colors.palette.navy} />
+            </Pressable>
             <Text style={[styles.greetingLarge, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold', textAlign: 'center' }]}>
               {greeting}
             </Text>
