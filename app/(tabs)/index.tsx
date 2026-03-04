@@ -27,7 +27,7 @@ const STATUS_COLORS: Record<ProjectStatus, string> = {
   ferdig: '#C97B84',
 };
 
-function StatCard({ label, value, unit }: { label: string; value: number; unit: string }) {
+function StatCard({ label, value }: { label: string; value: number }) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
   const colors = isDark ? Colors.dark : Colors.light;
@@ -36,9 +36,6 @@ function StatCard({ label, value, unit }: { label: string; value: number; unit: 
     <View style={[styles.statCard, { backgroundColor: colors.surface }]}>
       <Text style={[styles.statValue, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>
         {value.toLocaleString('nb-NO')}
-      </Text>
-      <Text style={[styles.statUnit, { color: colors.accent, fontFamily: 'Inter_600SemiBold' }]}>
-        {unit}
       </Text>
       <Text style={[styles.statLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
         {label}
@@ -147,9 +144,9 @@ export default function HomeScreen() {
             Garnlager
           </Text>
           <View style={styles.statsRow}>
-            <StatCard label="nøster på lager" value={stats.totalSkeins} unit="nøster" />
-            <StatCard label="gram på lager" value={stats.totalGrams} unit="g" />
-            <StatCard label="meter på lager" value={stats.totalMeters} unit="m" />
+            <StatCard label="nøster på lager" value={stats.totalSkeins} />
+            <StatCard label="gram på lager" value={stats.totalGrams} />
+            <StatCard label="meter på lager" value={stats.totalMeters} />
           </View>
 
           <Pressable
@@ -249,7 +246,6 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   statValue: { fontSize: 22 },
-  statUnit: { fontSize: 11, marginTop: 2 },
   statLabel: { fontSize: 10, marginTop: 4, textAlign: 'center' },
   lagerButton: {
     flexDirection: 'row',
