@@ -288,15 +288,6 @@ export default function KvalitetScreen() {
           </Text>
         </View>
         <Pressable
-          style={[styles.addBtn, { backgroundColor: colors.primaryBtn }]}
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            setShowAdd(true);
-          }}
-        >
-          <Ionicons name="add" size={20} color="#fff" />
-        </Pressable>
-        <Pressable
           style={styles.deleteBtn}
           onPress={() => {
             Alert.alert('Slett kvalitet', 'Sletter denne kvaliteten og alle farger.', [
@@ -375,6 +366,13 @@ export default function KvalitetScreen() {
       </ScrollView>
 
       <AddYarnModal qualityId={id} visible={showAdd} onClose={() => setShowAdd(false)} />
+
+      <Pressable
+        style={[styles.fab, { backgroundColor: colors.primaryBtn, bottom: (Platform.OS === 'web' ? 34 : insets.bottom) + 24 }]}
+        onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setShowAdd(true); }}
+      >
+        <Ionicons name="add" size={28} color="#fff" />
+      </Pressable>
     </View>
   );
 }
@@ -391,7 +389,20 @@ const styles = StyleSheet.create({
   backBtn: { padding: 4 },
   qualityTitle: { fontSize: 22 },
   qualitySub: { fontSize: 13, marginTop: 2 },
-  addBtn: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
+  fab: {
+    position: 'absolute',
+    right: 20,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.22,
+    shadowRadius: 10,
+    elevation: 8,
+  },
   deleteBtn: { padding: 8 },
   listContent: { padding: 16, gap: 10 },
   qualityInfo: {
