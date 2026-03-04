@@ -10,6 +10,8 @@ import {
   Modal,
   KeyboardAvoidingView,
   Alert,
+  Animated,
+  PanResponder,
 } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -88,32 +90,102 @@ function BrandCard({ brand }: { brand: Brand }) {
   );
 }
 
-function NeedleCard({ needle, onDelete }: { needle: Needle; onDelete: () => void }) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
-  const colors = isDark ? Colors.dark : Colors.light;
+const SWIPE_THRESHOLD = 80;
+
+function NeedleCard({ needle, onDelete, onQuantityChange }: { needle: Needle; onDelete: () => void; onQuantityChange: (q: number) => void }) {
+  const colors = Colors.light;
+  const translateX = useRef(new Animated.Value(0)).current;
+  const swiping = useRef(false);
+  const [editing, setEditing] = useState(false);
+  const [qInput, setQInput] = useState(String(needle.quantity));
+
+  const snapBack = () => {
+    Animated.spring(translateX, { toValue: 0, useNativeDriver: true, tension: 120, friction: 10 }).start();
+  };
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dx) > 10 && Math.abs(g.dy) < 15,
+      onPanResponderGrant: () => { swiping.current = true; },
+      onPanResponderMove: (_, g) => {
+        translateX.setValue(Math.min(0, g.dx));
+      },
+      onPanResponderRelease: (_, g) => {
+        swiping.current = false;
+        if (g.dx < -SWIPE_THRESHOLD) {
+          Animated.timing(translateX, { toValue: -400, duration: 200, useNativeDriver: true }).start(() => {
+            translateX.setValue(0);
+            onDelete();
+          });
+        } else {
+          snapBack();
+        }
+      },
+      onPanResponderTerminate: () => { swiping.current = false; snapBack(); },
+    })
+  ).current;
+
+  const commitEdit = () => {
+    const v = parseInt(qInput, 10);
+    if (!isNaN(v) && v >= 0) {
+      if (v === 0) {
+        Alert.alert('Slett pinne', 'Sett antall til 0 sletter pinnen. Fortsette?', [
+          { text: 'Avbryt', style: 'cancel', onPress: () => { setQInput(String(needle.quantity)); setEditing(false); } },
+          { text: 'Slett', style: 'destructive', onPress: () => { setEditing(false); onDelete(); } },
+        ]);
+      } else {
+        onQuantityChange(v);
+        setEditing(false);
+      }
+    } else {
+      setQInput(String(needle.quantity));
+      setEditing(false);
+    }
+  };
 
   return (
-    <View style={[styles.needleCard, { backgroundColor: colors.surface }]}>
-      <View style={[styles.needleSize, { backgroundColor: colors.badgeBg }]}>
-        <Text style={[styles.needleSizeText, { color: colors.badgeText, fontFamily: 'Inter_700Bold' }]}>{needle.size}</Text>
-        <Text style={[styles.needleSizeUnit, { color: colors.badgeText, fontFamily: 'Inter_400Regular' }]}>mm</Text>
+    <View style={styles.swipeNeedleContainer}>
+      <View style={[styles.needleDeleteBg, { backgroundColor: '#C97B84' }]}>
+        <Ionicons name="trash-outline" size={22} color="#fff" />
       </View>
-      <View style={styles.needleInfo}>
-        <Text style={[styles.needleType, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
-          {NEEDLE_TYPE_LABELS[needle.type]}
-        </Text>
-        <Text style={[styles.needleMeta, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-          {needle.lengthCm} cm · {NEEDLE_MATERIAL_LABELS[needle.material]}
-        </Text>
-      </View>
-      <View style={styles.needleRight}>
-        <View style={[styles.quantityBadge, { backgroundColor: isDark ? Colors.palette.navyLight : Colors.palette.surfaceSecondary }]}>
-          <Text style={[styles.quantityText, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
-            {needle.quantity}
-          </Text>
+      <Animated.View style={{ transform: [{ translateX }] }} {...panResponder.panHandlers}>
+        <View style={[styles.needleCard, { backgroundColor: colors.surface }]}>
+          <View style={[styles.needleSize, { backgroundColor: colors.badgeBg }]}>
+            <Text style={[styles.needleSizeText, { color: colors.badgeText, fontFamily: 'Inter_700Bold' }]}>{needle.size}</Text>
+            <Text style={[styles.needleSizeUnit, { color: colors.badgeText, fontFamily: 'Inter_400Regular' }]}>mm</Text>
+          </View>
+          <View style={styles.needleInfo}>
+            <Text style={[styles.needleType, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
+              {NEEDLE_TYPE_LABELS[needle.type]}
+            </Text>
+            <Text style={[styles.needleMeta, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
+              {needle.lengthCm} cm · {NEEDLE_MATERIAL_LABELS[needle.material]}
+            </Text>
+          </View>
+          <Pressable
+            style={[styles.quantityBadge, { backgroundColor: Colors.palette.surfaceSecondary }]}
+            onPress={() => { setQInput(String(needle.quantity)); setEditing(true); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
+          >
+            {editing ? (
+              <TextInput
+                style={[styles.quantityInput, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}
+                value={qInput}
+                onChangeText={setQInput}
+                keyboardType="number-pad"
+                autoFocus
+                selectTextOnFocus
+                onBlur={commitEdit}
+                onSubmitEditing={commitEdit}
+                returnKeyType="done"
+              />
+            ) : (
+              <Text style={[styles.quantityText, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
+                {needle.quantity}
+              </Text>
+            )}
+          </Pressable>
         </View>
-      </View>
+      </Animated.View>
     </View>
   );
 }
@@ -299,7 +371,7 @@ export default function LagerScreen() {
   const [search, setSearch] = useState('');
   const [showAddBrand, setShowAddBrand] = useState(false);
   const [showAddNeedle, setShowAddNeedle] = useState(false);
-  const { brands, needles, deleteNeedle, getQualitiesForBrand, getYarnStockForQuality, getTotalStats } = useKnitting();
+  const { brands, needles, deleteNeedle, updateNeedle, getQualitiesForBrand, getYarnStockForQuality, getTotalStats } = useKnitting();
 
   const stats = getTotalStats();
   const topInset = Platform.OS === 'web' ? 67 : insets.top;
@@ -452,6 +524,10 @@ export default function LagerScreen() {
                     deleteNeedle(needle.id);
                     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
                   }}
+                  onQuantityChange={(q) => {
+                    updateNeedle(needle.id, { quantity: q });
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  }}
                 />
               ))
             )}
@@ -597,14 +673,30 @@ const styles = StyleSheet.create({
   needleType: { fontSize: 15, marginBottom: 3 },
   needleMeta: { fontSize: 13 },
   needleRight: { alignItems: 'center', gap: 8 },
-  quantityBadge: {
-    width: 32,
-    height: 32,
+  swipeNeedleContainer: {
+    borderRadius: 16,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  needleDeleteBg: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    right: 0,
+    width: 80,
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  quantityText: { fontSize: 15 },
+  quantityBadge: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  quantityText: { fontSize: 16 },
+  quantityInput: { fontSize: 16, textAlign: 'center', minWidth: 30 },
   emptyState: { alignItems: 'center', paddingVertical: 60, gap: 12 },
   emptyText: { fontSize: 16 },
   emptyBtn: { paddingHorizontal: 20, paddingVertical: 12, borderRadius: 12, marginTop: 4 },
