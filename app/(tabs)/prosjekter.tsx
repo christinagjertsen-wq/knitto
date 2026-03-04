@@ -15,7 +15,6 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import Svg, { Circle } from 'react-native-svg';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -45,35 +44,6 @@ const STATUS_BG: Record<ProjectStatus, string> = {
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SWIPE_THRESHOLD = 80;
 
-function ProgressRing({ progress, color, size = 32 }: { progress: number; color: string; size?: number }) {
-  const radius = (size - 4) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference * (1 - Math.min(Math.max(progress, 0), 1));
-
-  return (
-    <Svg width={size} height={size} style={{ transform: [{ rotate: '-90deg' }] }}>
-      <Circle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        stroke="rgba(0,0,0,0.08)"
-        strokeWidth={3}
-        fill="none"
-      />
-      <Circle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        stroke={color}
-        strokeWidth={3}
-        fill="none"
-        strokeDasharray={`${circumference} ${circumference}`}
-        strokeDashoffset={strokeDashoffset}
-        strokeLinecap="round"
-      />
-    </Svg>
-  );
-}
 
 function SwipeableProjectCard({
   project,
@@ -98,13 +68,6 @@ function SwipeableProjectCard({
   const projectNeedles = useMemo(() =>
     project.needleIds.map(id => needles.find(n => n.id === id)).filter(Boolean),
     [project.needleIds, needles]);
-
-  const totalSkeinsAllocated = project.yarnAllocations.reduce((s, a) => s + a.skeinsAllocated, 0);
-  const totalSkeinsAvail = project.yarnAllocations.reduce((s, a) => {
-    const y = yarnStock.find(y => y.id === a.yarnStockId);
-    return s + (y ? y.skeins + a.skeinsAllocated : a.skeinsAllocated);
-  }, 0);
-  const progress = totalSkeinsAvail > 0 ? totalSkeinsAllocated / totalSkeinsAvail : 0;
 
   const nextStatus: ProjectStatus | null =
     project.status === 'planlagt' ? 'aktiv' :
@@ -184,13 +147,10 @@ function SwipeableProjectCard({
                 <View style={[styles.swatch, { backgroundColor: colors.border }]} />
               )}
             </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-              <View style={[styles.statusBadge, { backgroundColor: STATUS_BG[project.status] }]}>
-                <Text style={[styles.statusBadgeText, { color: STATUS_COLORS[project.status], fontFamily: 'Inter_600SemiBold' }]}>
-                  {STATUS_LABELS[project.status]}
-                </Text>
-              </View>
-              <ProgressRing progress={progress} color={STATUS_COLORS[project.status]} size={30} />
+            <View style={[styles.statusBadge, { backgroundColor: STATUS_BG[project.status] }]}>
+              <Text style={[styles.statusBadgeText, { color: STATUS_COLORS[project.status], fontFamily: 'Inter_600SemiBold' }]}>
+                {STATUS_LABELS[project.status]}
+              </Text>
             </View>
           </View>
           <Text style={[styles.projectName, { color: colors.text, fontFamily: 'Inter_700Bold' }]} numberOfLines={1}>
