@@ -92,7 +92,7 @@ function AddYarnModal({
 }) {
   const colorScheme = useColorScheme();
   const colors = colorScheme === 'dark' ? Colors.dark : Colors.light;
-  const { yarnStock, qualities, brands, getQualityById, getQualitiesForBrand, updateQuality } = useKnitting();
+  const { yarnStock, qualities, brands, getQualityById, getQualitiesForBrand, updateQuality, addBrand } = useKnitting();
 
   const [mode, setMode] = useState<'lager' | 'nytt'>('lager');
 
@@ -107,6 +107,8 @@ function AddYarnModal({
   const [newSkeinsProject, setNewSkeinsProject] = useState(1);
   const [newGramsPerSkein, setNewGramsPerSkein] = useState('');
   const [newMetersPerSkein, setNewMetersPerSkein] = useState('');
+  const [showNewBrandInput, setShowNewBrandInput] = useState(false);
+  const [newBrandName, setNewBrandName] = useState('');
 
   const availableYarn = useMemo(() =>
     yarnStock.filter(y => !excludeIds.includes(y.id) && y.skeins > 0),
@@ -118,12 +120,24 @@ function AddYarnModal({
     [newBrandId, qualities]
   );
 
+  const handleAddBrand = () => {
+    const name = newBrandName.trim();
+    if (!name) return;
+    const created = addBrand(name);
+    setNewBrandId(created.id);
+    setNewQualityId(null);
+    setNewBrandName('');
+    setShowNewBrandInput(false);
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+  };
+
   const reset = () => {
     setSelected(null); setSkeins(1);
     setNewBrandId(null); setNewQualityId(null);
     setNewColorName(''); setNewColorHex('#CCCCCC');
     setNewSkeinsTotal(1); setNewSkeinsProject(1);
     setNewGramsPerSkein(''); setNewMetersPerSkein('');
+    setShowNewBrandInput(false); setNewBrandName('');
     setMode('lager');
   };
 
@@ -252,7 +266,7 @@ function AddYarnModal({
                     {brands.map(b => (
                       <Pressable
                         key={b.id}
-                        onPress={() => { setNewBrandId(b.id); setNewQualityId(null); Haptics.selectionAsync(); }}
+                        onPress={() => { setNewBrandId(b.id); setNewQualityId(null); setShowNewBrandInput(false); Haptics.selectionAsync(); }}
                         style={[styles.pill, {
                           backgroundColor: newBrandId === b.id ? colors.primaryBtn : colors.background,
                           borderColor: newBrandId === b.id ? colors.primaryBtn : colors.border,
@@ -264,8 +278,45 @@ function AddYarnModal({
                         }]}>{b.name}</Text>
                       </Pressable>
                     ))}
+                    <Pressable
+                      onPress={() => { setShowNewBrandInput(true); setNewBrandId(null); Haptics.selectionAsync(); }}
+                      style={[styles.pill, {
+                        backgroundColor: showNewBrandInput ? colors.primaryBtn : colors.background,
+                        borderColor: showNewBrandInput ? colors.primaryBtn : colors.border,
+                        borderStyle: 'dashed',
+                      }]}
+                    >
+                      <Ionicons name="add" size={14} color={showNewBrandInput ? '#fff' : colors.textSecondary} />
+                      <Text style={[styles.pillText, {
+                        color: showNewBrandInput ? '#fff' : colors.textSecondary,
+                        fontFamily: 'Inter_400Regular',
+                      }]}>Nytt merke</Text>
+                    </Pressable>
                   </View>
                 </ScrollView>
+
+                {showNewBrandInput && (
+                  <View style={[styles.inlineInputRow, { backgroundColor: colors.background }]}>
+                    <TextInput
+                      style={[styles.inlineInput, { color: colors.text, fontFamily: 'Inter_400Regular' }]}
+                      placeholder="Navn på merke"
+                      placeholderTextColor={colors.textTertiary}
+                      value={newBrandName}
+                      onChangeText={setNewBrandName}
+                      autoFocus
+                      autoCapitalize="words"
+                      returnKeyType="done"
+                      onSubmitEditing={handleAddBrand}
+                    />
+                    <Pressable
+                      onPress={handleAddBrand}
+                      style={[styles.inlineBtn, { backgroundColor: newBrandName.trim() ? colors.primaryBtn : colors.border }]}
+                      disabled={!newBrandName.trim()}
+                    >
+                      <Text style={[styles.inlineBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Legg til</Text>
+                    </Pressable>
+                  </View>
+                )}
 
                 {newBrandId && qualitiesForBrand.length > 0 && (
                   <>
@@ -1153,8 +1204,12 @@ const styles = StyleSheet.create({
   modeToggle: { flexDirection: 'row', borderRadius: 12, padding: 3, gap: 3 },
   modeBtn: { flex: 1, paddingVertical: 9, borderRadius: 10, alignItems: 'center' },
   modeBtnText: { fontSize: 14 },
-  pill: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1.5 },
+  pill: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1.5 },
   pillText: { fontSize: 13 },
+  inlineInputRow: { flexDirection: 'row', alignItems: 'center', gap: 8, borderRadius: 14, padding: 10 },
+  inlineInput: { flex: 1, fontSize: 15 },
+  inlineBtn: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 10 },
+  inlineBtnText: { color: '#fff', fontSize: 14 },
   modalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.4)' },
   modalSheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40, gap: 12 },
   editModalSheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: '92%' },
