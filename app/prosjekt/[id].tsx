@@ -304,6 +304,123 @@ function AddYarnModal({
   );
 }
 
+function AddNeedleModal({
+  visible,
+  onClose,
+  onAdd,
+}: {
+  visible: boolean;
+  onClose: () => void;
+  onAdd: (needle: { size: string; type: import('@/context/KnittingContext').NeedleType; lengthCm: number; material: import('@/context/KnittingContext').NeedleMaterial; quantity: number }) => void;
+}) {
+  const colorScheme = useColorScheme();
+  const colors = colorScheme === 'dark' ? Colors.dark : Colors.light;
+  const [size, setSize] = useState('');
+  const [type, setType] = useState<'rundpinne' | 'strømpepinner' | 'rett'>('rundpinne');
+  const [lengthCm, setLengthCm] = useState('');
+  const [material, setMaterial] = useState<'bambus' | 'metall' | 'plast' | 'tre'>('metall');
+  const [quantity, setQuantity] = useState(1);
+
+  const reset = () => { setSize(''); setType('rundpinne'); setLengthCm(''); setMaterial('metall'); setQuantity(1); };
+  const handleClose = () => { reset(); onClose(); };
+  const handleAdd = () => {
+    if (!size.trim() || !lengthCm.trim()) return;
+    onAdd({ size: size.trim(), type, lengthCm: parseInt(lengthCm) || 0, material, quantity });
+    reset(); onClose();
+  };
+
+  const TYPE_LABELS: Record<string, string> = { rundpinne: 'Rundpinne', strømpepinner: 'Strømpepinner', rett: 'Rett' };
+  const MAT_LABELS: Record<string, string> = { metall: 'Metall', bambus: 'Bambus', tre: 'Tre', plast: 'Plast' };
+
+  return (
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={handleClose}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalOverlay}>
+        <View style={[styles.editModalSheet, { backgroundColor: colors.surface }]}>
+          <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.editModalContent, { gap: 12 }]}>
+            <View style={styles.modalHandle} />
+            <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Ny pinne</Text>
+
+            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Størrelse (mm)</Text>
+            <TextInput
+              style={[styles.detailInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border, fontFamily: 'Inter_400Regular' }]}
+              value={size}
+              onChangeText={setSize}
+              placeholder="f.eks. 3.5"
+              placeholderTextColor={colors.textTertiary}
+              keyboardType="decimal-pad"
+            />
+
+            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Type</Text>
+            <View style={{ flexDirection: 'row', gap: 8 }}>
+              {(['rundpinne', 'strømpepinner', 'rett'] as const).map(t => (
+                <Pressable
+                  key={t}
+                  onPress={() => setType(t)}
+                  style={[styles.pill, {
+                    flex: 1, alignItems: 'center',
+                    backgroundColor: type === t ? colors.primaryBtn : colors.background,
+                    borderColor: type === t ? colors.primaryBtn : colors.border,
+                  }]}
+                >
+                  <Text style={[styles.pillText, { color: type === t ? '#fff' : colors.text, fontFamily: type === t ? 'Inter_600SemiBold' : 'Inter_400Regular' }]}>
+                    {TYPE_LABELS[t]}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+
+            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Lengde (cm)</Text>
+            <TextInput
+              style={[styles.detailInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border, fontFamily: 'Inter_400Regular' }]}
+              value={lengthCm}
+              onChangeText={setLengthCm}
+              placeholder="f.eks. 80"
+              placeholderTextColor={colors.textTertiary}
+              keyboardType="number-pad"
+            />
+
+            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Materiale</Text>
+            <View style={{ flexDirection: 'row', gap: 8 }}>
+              {(['metall', 'bambus', 'tre', 'plast'] as const).map(m => (
+                <Pressable
+                  key={m}
+                  onPress={() => setMaterial(m)}
+                  style={[styles.pill, {
+                    flex: 1, alignItems: 'center',
+                    backgroundColor: material === m ? colors.primaryBtn : colors.background,
+                    borderColor: material === m ? colors.primaryBtn : colors.border,
+                  }]}
+                >
+                  <Text style={[styles.pillText, { color: material === m ? '#fff' : colors.text, fontFamily: material === m ? 'Inter_600SemiBold' : 'Inter_400Regular' }]}>
+                    {MAT_LABELS[m]}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+
+            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Antall</Text>
+            <Counter value={quantity} onChange={setQuantity} />
+
+            <Pressable
+              style={({ pressed }) => [styles.modalBtn, {
+                backgroundColor: (size.trim() && lengthCm.trim()) ? colors.primaryBtn : colors.border,
+                opacity: pressed ? 0.85 : 1,
+              }]}
+              onPress={handleAdd}
+              disabled={!size.trim() || !lengthCm.trim()}
+            >
+              <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Legg til</Text>
+            </Pressable>
+            <Pressable style={styles.cancelBtn} onPress={handleClose}>
+              <Text style={[styles.cancelBtnText, { color: colors.textSecondary }]}>Avbryt</Text>
+            </Pressable>
+          </ScrollView>
+        </View>
+      </KeyboardAvoidingView>
+    </Modal>
+  );
+}
+
 function EditDetailsModal({
   visible,
   onClose,
@@ -404,13 +521,14 @@ export default function ProsjektScreen() {
   const insets = useSafeAreaInsets();
   const topInset = Platform.OS === 'web' ? 67 : insets.top;
   const [showAddYarn, setShowAddYarn] = useState(false);
+  const [showAddNeedle, setShowAddNeedle] = useState(false);
   const [showEditDetails, setShowEditDetails] = useState(false);
 
   const {
     getProjectById, updateProject, deleteProject,
     yarnStock, qualities, brands, needles,
     allocateYarnToProject, removeYarnFromProject,
-    addYarnStock, getQualityById,
+    addYarnStock, addNeedle, getQualityById,
   } = useKnitting();
 
   const project = getProjectById(id);
@@ -600,11 +718,23 @@ export default function ProsjektScreen() {
             <Text style={[styles.cardLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>
               Pinner ({projectNeedles.length})
             </Text>
+            <Pressable
+              style={[styles.addSmallBtn, { backgroundColor: colors.primaryBtn }]}
+              onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setShowAddNeedle(true); }}
+            >
+              <Ionicons name="add" size={16} color="#fff" />
+            </Pressable>
           </View>
           {needles.length === 0 ? (
-            <Text style={[styles.notesText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-              Legg til pinner i Lager-fanen
-            </Text>
+            <Pressable
+              style={[styles.emptyYarnRow, { borderColor: colors.border }]}
+              onPress={() => setShowAddNeedle(true)}
+            >
+              <Ionicons name="add-circle-outline" size={20} color={colors.textTertiary} />
+              <Text style={[styles.emptyYarnText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
+                Legg til ny pinne
+              </Text>
+            </Pressable>
           ) : (
             needles.map(needle => {
               const isLinked = project.needleIds.includes(needle.id);
@@ -683,6 +813,16 @@ export default function ProsjektScreen() {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         }}
         excludeIds={project.yarnAllocations.map(a => a.yarnStockId)}
+      />
+
+      <AddNeedleModal
+        visible={showAddNeedle}
+        onClose={() => setShowAddNeedle(false)}
+        onAdd={(needle) => {
+          const newNeedle = addNeedle(needle);
+          updateProject(id, { needleIds: [...project.needleIds, newNeedle.id] });
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        }}
       />
 
       <EditDetailsModal
