@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useCallback, useRef } from 'react';
+import { LinearGradient } from 'expo-linear-gradient';
 import {
   View,
   Text,
@@ -278,9 +279,12 @@ export default function ProsjekterScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.topBar, { paddingTop: topInset + 8 }]}>
-        <Text style={[styles.screenTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Prosjekter</Text>
-      </View>
+      <LinearGradient
+        colors={[Colors.palette.nordicBlue, Colors.palette.nordicIce]}
+        style={[styles.topBar, { paddingTop: topInset + 16 }]}
+      >
+        <Text style={[styles.screenTitle, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>Prosjekter</Text>
+      </LinearGradient>
 
       <View style={[styles.searchBar, { backgroundColor: colors.surface }]}>
         <Ionicons name="search" size={16} color={colors.textTertiary} />
@@ -385,8 +389,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingBottom: 8,
+    paddingHorizontal: 24,
+    paddingBottom: 20,
+    borderBottomLeftRadius: 28,
+    borderBottomRightRadius: 28,
   },
   screenTitle: { fontSize: 32 },
   addBtn: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },

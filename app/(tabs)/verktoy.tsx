@@ -1,4 +1,5 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react';
+import { LinearGradient } from 'expo-linear-gradient';
 import {
   View,
   Text,
@@ -271,9 +272,12 @@ export default function VerktoyScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { paddingTop: topInset + 8 }]}>
-        <Text style={[styles.title, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Verktøy</Text>
-      </View>
+      <LinearGradient
+        colors={[Colors.palette.nordicBlue, Colors.palette.nordicIce]}
+        style={[styles.header, { paddingTop: topInset + 16 }]}
+      >
+        <Text style={[styles.title, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>Verktøy</Text>
+      </LinearGradient>
 
       <ScrollView
         ref={tabScrollRef}
@@ -339,8 +343,8 @@ export default function VerktoyScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  header: { paddingHorizontal: 20, paddingBottom: 8 },
-  title: { fontSize: 34 },
+  header: { paddingHorizontal: 24, paddingBottom: 20, borderBottomLeftRadius: 28, borderBottomRightRadius: 28 },
+  title: { fontSize: 32 },
   tabScroll: { flexGrow: 0 },
   tabBar: { paddingHorizontal: 20, paddingVertical: 8, gap: 8, flexDirection: 'row' },
   tabChip: {

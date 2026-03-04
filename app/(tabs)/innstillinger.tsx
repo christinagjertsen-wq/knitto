@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { LinearGradient } from 'expo-linear-gradient';
 import {
   View,
   Text,
@@ -56,9 +57,12 @@ export default function InnstillingerScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { paddingTop: topInset + 8 }]}>
-        <Text style={[styles.title, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Innstillinger</Text>
-      </View>
+      <LinearGradient
+        colors={[Colors.palette.nordicBlue, Colors.palette.nordicIce]}
+        style={[styles.header, { paddingTop: topInset + 16 }]}
+      >
+        <Text style={[styles.title, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>Innstillinger</Text>
+      </LinearGradient>
 
       <ScrollView
         contentContainerStyle={[styles.content, { paddingBottom: Platform.OS === 'web' ? 100 : insets.bottom + 100 }]}
@@ -172,8 +176,8 @@ export default function InnstillingerScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  header: { paddingHorizontal: 20, paddingBottom: 12 },
-  title: { fontSize: 34 },
+  header: { paddingHorizontal: 24, paddingBottom: 20, borderBottomLeftRadius: 28, borderBottomRightRadius: 28 },
+  title: { fontSize: 32 },
   content: { padding: 20, gap: 12 },
   sectionTitle: { fontSize: 20, marginTop: 8, marginBottom: 4 },
   profileCard: { borderRadius: 20, padding: 20, flexDirection: 'row', alignItems: 'center', gap: 14 },
