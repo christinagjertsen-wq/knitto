@@ -42,11 +42,6 @@ function QualityCard({ quality, onPress, onDelete }: { quality: Quality; onPress
       }}
     >
       <View style={styles.qualityCardLeft}>
-        <View style={[styles.weightBadge, { backgroundColor: isDark ? Colors.palette.navyLight : Colors.palette.navy }]}>
-          <Text style={[styles.weightBadgeText, { fontFamily: 'Inter_600SemiBold' }]} numberOfLines={1}>
-            {quality.weightCategory}
-          </Text>
-        </View>
         <View style={{ flex: 1 }}>
           <Text style={[styles.qualityName, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]} numberOfLines={1}>
             {quality.name}
@@ -79,7 +74,6 @@ function AddQualityModal({ brandId, visible, onClose }: { brandId: string; visib
   const isDark = colorScheme === 'dark';
   const colors = isDark ? Colors.dark : Colors.light;
   const [name, setName] = useState('');
-  const [weight, setWeight] = useState('DK');
   const [fiber, setFiber] = useState('');
   const [grams, setGrams] = useState('50');
   const [meters, setMeters] = useState('');
@@ -90,7 +84,6 @@ function AddQualityModal({ brandId, visible, onClose }: { brandId: string; visib
     addQuality({
       brandId,
       name: name.trim(),
-      weightCategory: weight,
       fiberContent: fiber.trim(),
       gramsPerSkein: parseFloat(grams) || 50,
       metersPerSkein: parseFloat(meters) || 100,
@@ -98,7 +91,7 @@ function AddQualityModal({ brandId, visible, onClose }: { brandId: string; visib
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setName(''); setFiber(''); setGrams('50'); setMeters('');
     onClose();
-  }, [name, weight, fiber, grams, meters, brandId, addQuality, onClose]);
+  }, [name, fiber, grams, meters, brandId, addQuality, onClose]);
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
@@ -119,27 +112,6 @@ function AddQualityModal({ brandId, visible, onClose }: { brandId: string; visib
               onChangeText={setName}
               autoFocus
             />
-
-            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Garntykkelse</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ maxHeight: 44 }}>
-              <View style={{ flexDirection: 'row', gap: 8 }}>
-                {WEIGHT_CATEGORIES.map(w => (
-                  <Pressable
-                    key={w}
-                    onPress={() => setWeight(w)}
-                    style={[styles.optionPill, {
-                      backgroundColor: weight === w ? Colors.palette.navy : colors.background,
-                      borderColor: weight === w ? Colors.palette.navy : colors.border,
-                    }]}
-                  >
-                    <Text style={[styles.optionPillText, {
-                      color: weight === w ? '#fff' : colors.textSecondary,
-                      fontFamily: weight === w ? 'Inter_600SemiBold' : 'Inter_400Regular',
-                    }]}>{w}</Text>
-                  </Pressable>
-                ))}
-              </View>
-            </ScrollView>
 
             <TextInput
               style={[styles.input, { color: colors.text, backgroundColor: colors.background }]}
@@ -313,14 +285,6 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 2,
   },
-  qualityCardLeft: { flex: 1, flexDirection: 'row', gap: 12, alignItems: 'flex-start' },
-  weightBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
-    marginTop: 2,
-  },
-  weightBadgeText: { fontSize: 11, color: '#fff' },
   qualityName: { fontSize: 15, marginBottom: 3 },
   qualityFiber: { fontSize: 12, marginBottom: 3 },
   qualityMeta: { fontSize: 12 },

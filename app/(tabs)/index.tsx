@@ -119,25 +119,25 @@ export default function HomeScreen() {
         contentInsetAdjustmentBehavior="automatic"
       >
         <LinearGradient
-          colors={isDark ? ['#1A2340', '#0D1220'] : ['#1A2340', '#243058']}
+          colors={isDark ? ['#1A2340', '#0D1220'] : [Colors.palette.nordicBlue, Colors.palette.nordicIce]}
           style={[styles.header, { paddingTop: topInset + 20 }]}
         >
-          <Text style={[styles.greeting, { fontFamily: 'Inter_400Regular' }]}>God dag</Text>
-          <Text style={[styles.headerTitle, { fontFamily: 'Inter_700Bold' }]}>Ditt strikkelager</Text>
-          <View style={styles.headerStats}>
+          <Text style={[styles.greeting, { color: isDark ? 'rgba(255,255,255,0.6)' : Colors.palette.textSecondary, fontFamily: 'Inter_400Regular' }]}>God dag</Text>
+          <Text style={[styles.headerTitle, { color: isDark ? '#fff' : Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>Ditt strikkelager</Text>
+          <View style={[styles.headerStats, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(26,35,64,0.05)' }]}>
             <View style={styles.headerStat}>
-              <Text style={[styles.headerStatNumber, { fontFamily: 'Inter_700Bold' }]}>{brands.length}</Text>
-              <Text style={[styles.headerStatLabel, { fontFamily: 'Inter_400Regular' }]}>merker</Text>
+              <Text style={[styles.headerStatNumber, { color: isDark ? '#fff' : Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>{brands.length}</Text>
+              <Text style={[styles.headerStatLabel, { color: isDark ? 'rgba(255,255,255,0.6)' : Colors.palette.textTertiary, fontFamily: 'Inter_400Regular' }]}>merker</Text>
             </View>
-            <View style={styles.headerStatDivider} />
+            <View style={[styles.headerStatDivider, { backgroundColor: isDark ? 'rgba(255,255,255,0.15)' : 'rgba(26,35,64,0.1)' }]} />
             <View style={styles.headerStat}>
-              <Text style={[styles.headerStatNumber, { fontFamily: 'Inter_700Bold' }]}>{yarnStock.length}</Text>
-              <Text style={[styles.headerStatLabel, { fontFamily: 'Inter_400Regular' }]}>farger</Text>
+              <Text style={[styles.headerStatNumber, { color: isDark ? '#fff' : Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>{yarnStock.length}</Text>
+              <Text style={[styles.headerStatLabel, { color: isDark ? 'rgba(255,255,255,0.6)' : Colors.palette.textTertiary, fontFamily: 'Inter_400Regular' }]}>farger</Text>
             </View>
-            <View style={styles.headerStatDivider} />
+            <View style={[styles.headerStatDivider, { backgroundColor: isDark ? 'rgba(255,255,255,0.15)' : 'rgba(26,35,64,0.1)' }]} />
             <View style={styles.headerStat}>
-              <Text style={[styles.headerStatNumber, { fontFamily: 'Inter_700Bold' }]}>{projects.length}</Text>
-              <Text style={[styles.headerStatLabel, { fontFamily: 'Inter_400Regular' }]}>prosjekter</Text>
+              <Text style={[styles.headerStatNumber, { color: isDark ? '#fff' : Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>{projects.length}</Text>
+              <Text style={[styles.headerStatLabel, { color: isDark ? 'rgba(255,255,255,0.6)' : Colors.palette.textTertiary, fontFamily: 'Inter_400Regular' }]}>prosjekter</Text>
             </View>
           </View>
         </LinearGradient>

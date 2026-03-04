@@ -220,7 +220,7 @@ export default function KvalitetScreen() {
             {quality.name}
           </Text>
           <Text style={[styles.qualitySub, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-            {brand?.name} · {quality.weightCategory}
+            {brand?.name}
           </Text>
         </View>
         <Pressable

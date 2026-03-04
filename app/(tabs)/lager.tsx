@@ -340,7 +340,7 @@ export default function LagerScreen() {
       </View>
 
       <View style={styles.segmentContainer}>
-        <View style={[styles.segment, { backgroundColor: isDark ? colors.surface : '#E5EAF2' }]}>
+        <View style={[styles.segment, { backgroundColor: isDark ? colors.surface : '#E1E8F0' }]}>
           {(['garn', 'pinner'] as Tab[]).map(tab => (
             <Pressable
               key={tab}

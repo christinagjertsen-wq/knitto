@@ -10,7 +10,6 @@ export interface Quality {
   id: string;
   brandId: string;
   name: string;
-  weightCategory: string;
   fiberContent: string;
   gramsPerSkein: number;
   metersPerSkein: number;
@@ -107,9 +106,9 @@ const DEMO_DATA = {
     { id: 'b2', name: 'Filcolana' },
   ] as Brand[],
   qualities: [
-    { id: 'q1', brandId: 'b1', name: 'Tynn Merinoull', weightCategory: 'Fingering', fiberContent: '100% Merinoull', gramsPerSkein: 50, metersPerSkein: 175 },
-    { id: 'q2', brandId: 'b1', name: 'KOS', weightCategory: 'DK', fiberContent: '55% Alpakka, 45% Merinoull', gramsPerSkein: 50, metersPerSkein: 130 },
-    { id: 'q3', brandId: 'b2', name: 'Arwetta Classic', weightCategory: 'Fingering', fiberContent: '80% Merinoull, 20% Polyamid', gramsPerSkein: 50, metersPerSkein: 210 },
+    { id: 'q1', brandId: 'b1', name: 'Tynn Merinoull', fiberContent: '100% Merinoull', gramsPerSkein: 50, metersPerSkein: 175 },
+    { id: 'q2', brandId: 'b1', name: 'KOS', fiberContent: '55% Alpakka, 45% Merinoull', gramsPerSkein: 50, metersPerSkein: 130 },
+    { id: 'q3', brandId: 'b2', name: 'Arwetta Classic', fiberContent: '80% Merinoull, 20% Polyamid', gramsPerSkein: 50, metersPerSkein: 210 },
   ] as Quality[],
   yarnStock: [
     { id: 'y1', qualityId: 'q1', colorName: 'Natthimmel', colorHex: '#2E3D6E', skeins: 4 },
