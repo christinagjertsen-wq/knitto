@@ -26,15 +26,15 @@ const STATUS_LABELS: Record<ProjectStatus, string> = {
 };
 
 const STATUS_COLORS: Record<ProjectStatus, string> = {
-  planlagt: '#8A9BB5',
-  aktiv: '#5C9E8A',
-  ferdig: '#C97B84',
+  planlagt: '#9AADC8',
+  aktiv: '#6A8EC8',
+  ferdig: '#4A6898',
 };
 
 const STATUS_BG: Record<ProjectStatus, string> = {
-  planlagt: 'rgba(138,155,181,0.15)',
-  aktiv: 'rgba(92,158,138,0.15)',
-  ferdig: 'rgba(201,123,132,0.15)',
+  planlagt: 'rgba(154,173,200,0.15)',
+  aktiv: 'rgba(106,142,200,0.15)',
+  ferdig: 'rgba(74,104,152,0.15)',
 };
 
 function ProjectCard({ project, onDelete }: { project: Project; onDelete: () => void }) {

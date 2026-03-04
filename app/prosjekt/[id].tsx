@@ -26,9 +26,9 @@ const STATUS_LABELS: Record<ProjectStatus, string> = {
 };
 
 const STATUS_COLORS: Record<ProjectStatus, string> = {
-  planlagt: '#8A9BB5',
-  aktiv: '#5C9E8A',
-  ferdig: '#C97B84',
+  planlagt: '#9AADC8',
+  aktiv: '#6A8EC8',
+  ferdig: '#4A6898',
 };
 
 function AddYarnModal({
