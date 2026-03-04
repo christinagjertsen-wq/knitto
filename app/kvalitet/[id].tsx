@@ -20,22 +20,82 @@ import Colors from '@/constants/colors';
 import { useKnitting, YarnStock } from '@/context/KnittingContext';
 
 const PRESET_COLORS = [
-  { name: 'Natthimmel', hex: '#2E3D6E' },
-  { name: 'Havregrå', hex: '#B0A8A0' },
-  { name: 'Dusty Rose', hex: '#C97B84' },
-  { name: 'Skoggrønn', hex: '#5C9E8A' },
+  { name: 'Hvit', hex: '#FFFFFF' },
+  { name: 'Offwhite', hex: '#FAF9F6' },
   { name: 'Elfenben', hex: '#F5EDE8' },
-  { name: 'Solhvit', hex: '#F9F4E8' },
-  { name: 'Mørkeblå', hex: '#1A2340' },
-  { name: 'Rust', hex: '#C4603A' },
-  { name: 'Burgunder', hex: '#7D2E3A' },
-  { name: 'Sennep', hex: '#C4903A' },
-  { name: 'Lavendel', hex: '#8B7CB8' },
-  { name: 'Koks', hex: '#3D3D3D' },
-  { name: 'Offwhite', hex: '#FAF8F4' },
-  { name: 'Terrakotta', hex: '#C1734A' },
-  { name: 'Lyseblå', hex: '#8AAEE8' },
-  { name: 'Mosegrønn', hex: '#6B7C56' },
+  { name: 'Vanille', hex: '#FFF8E7' },
+  { name: 'Isblå', hex: '#F0F8FF' },
+  { name: 'Mintdugg', hex: '#F0FFF4' },
+  { name: 'Rosendugg', hex: '#FFF0F5' },
+  { name: 'Snøhvit', hex: '#FAFAFA' },
+  { name: 'Lin', hex: '#F5F0E8' },
+  { name: 'Beige', hex: '#EDE8E0' },
+
+  { name: 'Lys rosa', hex: '#F9C6CF' },
+  { name: 'Lys fersken', hex: '#FAD2B0' },
+  { name: 'Lys gul', hex: '#FAE8A0' },
+  { name: 'Lys grønn', hex: '#C8E8C0' },
+  { name: 'Lys aqua', hex: '#A8E0E8' },
+  { name: 'Lys blå', hex: '#B8D8F8' },
+  { name: 'Lys lavendel', hex: '#D0C0F0' },
+  { name: 'Lys orkidé', hex: '#F0C0D8' },
+  { name: 'Lys kalk', hex: '#D8E8C0' },
+  { name: 'Lys grå', hex: '#D8D8D8' },
+
+  { name: 'Laks', hex: '#F09090' },
+  { name: 'Aprikos', hex: '#F0A870' },
+  { name: 'Gul', hex: '#F0D058' },
+  { name: 'Lysegrønn', hex: '#88C888' },
+  { name: 'Turkis', hex: '#70C8D8' },
+  { name: 'Himmelblå', hex: '#88B8F0' },
+  { name: 'Lilla', hex: '#A888D8' },
+  { name: 'Rosa', hex: '#E888B0' },
+  { name: 'Olivingrønn', hex: '#B0C890' },
+  { name: 'Sølvgrå', hex: '#B8B8B8' },
+
+  { name: 'Rød', hex: '#E05858' },
+  { name: 'Oransje', hex: '#E08040' },
+  { name: 'Gull', hex: '#E0B030' },
+  { name: 'Grønn', hex: '#48A848' },
+  { name: 'Teal', hex: '#38A8B8' },
+  { name: 'Blå', hex: '#4888D8' },
+  { name: 'Mørk lilla', hex: '#8858B8' },
+  { name: 'Fuksia', hex: '#D85890' },
+  { name: 'Olivengrønn', hex: '#88A058' },
+  { name: 'Grå', hex: '#909090' },
+
+  { name: 'Karmsinrød', hex: '#C83030' },
+  { name: 'Brent oransje', hex: '#C86020' },
+  { name: 'Oker', hex: '#B08810' },
+  { name: 'Mørkegrønn', hex: '#287828' },
+  { name: 'Mørk teal', hex: '#188888' },
+  { name: 'Koboltblå', hex: '#2058B8' },
+  { name: 'Dyp lilla', hex: '#6030A0' },
+  { name: 'Karmin', hex: '#B02868' },
+  { name: 'Brun', hex: '#785030' },
+  { name: 'Mellomgrå', hex: '#686868' },
+
+  { name: 'Mørk rød', hex: '#901818' },
+  { name: 'Rust', hex: '#904010' },
+  { name: 'Oliven', hex: '#806010' },
+  { name: 'Skoggrønn', hex: '#185018' },
+  { name: 'Dyp teal', hex: '#106060' },
+  { name: 'Marineblå', hex: '#103890' },
+  { name: 'Aubergine', hex: '#400878' },
+  { name: 'Burgunder', hex: '#780830' },
+  { name: 'Mørk brun', hex: '#503010' },
+  { name: 'Koks', hex: '#404040' },
+
+  { name: 'Dyp rød', hex: '#580808' },
+  { name: 'Mahogni', hex: '#602808' },
+  { name: 'Dyp oliven', hex: '#483800' },
+  { name: 'Dyp grønn', hex: '#083008' },
+  { name: 'Nattgrønn', hex: '#083838' },
+  { name: 'Nattblå', hex: '#081848' },
+  { name: 'Dyp violet', hex: '#280458' },
+  { name: 'Mørk vin', hex: '#480818' },
+  { name: 'Dyp brun', hex: '#301808' },
+  { name: 'Svart', hex: '#181818' },
 ];
 
 function SkeinCounter({ value, onChange }: { value: number; onChange: (v: number) => void }) {
@@ -151,16 +211,20 @@ function AddYarnModal({ qualityId, visible, onClose }: { qualityId: string; visi
 
             <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Velg farge</Text>
             <View style={styles.colorGrid}>
-              {PRESET_COLORS.map(c => (
-                <Pressable
-                  key={c.hex}
-                  onPress={() => { setSelectedHex(c.hex); setColorName(prev => prev || c.name); }}
-                  style={[
-                    styles.presetColor,
-                    { backgroundColor: c.hex },
-                    selectedHex === c.hex && !customHex && styles.presetColorSelected,
-                  ]}
-                />
+              {Array.from({ length: 7 }, (_, rowIndex) => (
+                <View key={rowIndex} style={styles.colorRow}>
+                  {PRESET_COLORS.slice(rowIndex * 10, rowIndex * 10 + 10).map(c => (
+                    <Pressable
+                      key={c.hex}
+                      onPress={() => { setSelectedHex(c.hex); setColorName(prev => prev || c.name); }}
+                      style={[
+                        styles.presetColor,
+                        { backgroundColor: c.hex },
+                        selectedHex === c.hex && !customHex && styles.presetColorSelected,
+                      ]}
+                    />
+                  ))}
+                </View>
               ))}
             </View>
 
@@ -378,9 +442,10 @@ const styles = StyleSheet.create({
   bigColorSwatch: { width: 64, height: 64, borderRadius: 32 },
   fieldLabel: { fontSize: 13, marginBottom: 4, marginTop: 8 },
   input: { borderRadius: 12, padding: 12, fontSize: 15 },
-  colorGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  presetColor: { width: 36, height: 36, borderRadius: 18 },
-  presetColorSelected: { borderWidth: 3, borderColor: Colors.palette.navy },
+  colorGrid: { gap: 6 },
+  colorRow: { flexDirection: 'row', justifyContent: 'space-between' },
+  presetColor: { width: 27, height: 27, borderRadius: 14, borderWidth: 0.5, borderColor: 'rgba(0,0,0,0.1)' },
+  presetColorSelected: { borderWidth: 2.5, borderColor: Colors.palette.navy },
   modalBtn: { padding: 16, borderRadius: 14, alignItems: 'center', marginTop: 8 },
   modalBtnText: { color: '#fff', fontSize: 16 },
   cancelBtn: { alignItems: 'center', padding: 12 },
