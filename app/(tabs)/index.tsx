@@ -250,8 +250,11 @@ export default function HomeScreen() {
         >
           <View style={styles.headerTopRow}>
             <View style={{ flex: 1 }}>
-              <Text style={[styles.greetingSmall, { color: Colors.palette.textSecondary, fontFamily: 'Inter_400Regular' }]}>
+              <Text style={[styles.greetingLarge, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>
                 {greeting}
+              </Text>
+              <Text style={[styles.greetingTagline, { color: Colors.palette.textTertiary, fontFamily: 'Inter_400Regular' }]}>
+                På tide å strikke litt?
               </Text>
             </View>
             <Pressable
@@ -366,8 +369,8 @@ const styles = StyleSheet.create({
   },
   headerTopRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
+    alignItems: 'flex-start',
+    marginBottom: 24,
   },
   settingsBtn: {
     width: 40,
@@ -376,8 +379,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  greetingSmall: {
-    fontSize: 17,
+  greetingLarge: {
+    fontSize: 32,
+    lineHeight: 38,
+  },
+  greetingTagline: {
+    fontSize: 14,
+    marginTop: 4,
   },
   headerStats: {
     flexDirection: 'row',
