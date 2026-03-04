@@ -31,6 +31,16 @@ Mobilapp for strikkeprosjekter, garnlager og pinnelager. Bygget med Expo Router 
 - Apple-inspirert, 2026-estetikk
 - Støtter mørkt og lyst tema
 
+## Navigasjon (tabs)
+- **Prosjekter** (index) — hjemmeskjerm med hilsen og statistikk
+- **Lager** — garnlager og pinnelager
+- **Verktøy** — tellere og nålestørrelseskart
+- **Profil** — brukernavn, statistikk, premium-skjerm
+
+## Premium
+RevenueCat-integrasjon ble avvist av bruker. Premium er foreløpig kun UI (ingen ekte betaling).
+For å koble til ekte betalinger: bruk RevenueCat-integrasjonen i Replit (connector:ccfg_revenuecat_01KED80FZSMH99H5FHQWSX7D4M) eller legg inn REVENUECAT_API_KEY som secret.
+
 ## Workflows
 - `Start Backend`: Express server (port 5000)
 - `Start Frontend`: Expo Metro bundler (port 8081)
