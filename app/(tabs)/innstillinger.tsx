@@ -43,11 +43,13 @@ export default function InnstillingerScreen() {
   const activeProjects = projects.filter(p => p.status === 'aktiv').length;
   const finishedProjects = projects.filter(p => p.status === 'ferdig').length;
   const totalSkeins = yarnStock.reduce((s, y) => s + y.skeins, 0);
+  const skeinsUsed = projects.reduce((s, p) => s + p.yarnAllocations.reduce((a, al) => a + al.skeinsAllocated, 0), 0);
 
   const statRows = [
     { label: 'Aktive prosjekter', value: String(activeProjects), icon: 'play-circle-outline' as const },
     { label: 'Ferdige prosjekter', value: String(finishedProjects), icon: 'checkmark-circle-outline' as const },
     { label: 'Totalt nøster på lager', value: String(totalSkeins), icon: 'cube-outline' as const },
+    { label: 'Nøster brukt fra lager', value: String(skeinsUsed), icon: 'git-merge-outline' as const },
     { label: 'Pinner registrert', value: String(needles.length), icon: 'construct-outline' as const },
   ];
 
