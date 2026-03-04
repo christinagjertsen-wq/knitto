@@ -324,16 +324,12 @@ export default function ProsjekterScreen() {
     ferdig: projects.filter(p => p.status === 'ferdig').length,
   }), [projects]);
 
+  const bottomInset = Platform.OS === 'web' ? 34 : insets.bottom;
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.topBar, { paddingTop: topInset + 8 }]}>
         <Text style={[styles.screenTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Prosjekter</Text>
-        <Pressable
-          style={[styles.addBtn, { backgroundColor: colors.primaryBtn }]}
-          onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setShowAdd(true); }}
-        >
-          <Ionicons name="add" size={22} color="#fff" />
-        </Pressable>
       </View>
 
       <View style={[styles.searchBar, { backgroundColor: colors.surface }]}>
@@ -422,6 +418,13 @@ export default function ProsjekterScreen() {
       </ScrollView>
 
       <AddProjectModal visible={showAdd} onClose={() => setShowAdd(false)} />
+
+      <Pressable
+        style={[styles.fab, { backgroundColor: colors.primaryBtn, bottom: bottomInset + 88 }]}
+        onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setShowAdd(true); }}
+      >
+        <Ionicons name="add" size={28} color="#fff" />
+      </Pressable>
     </View>
   );
 }
@@ -437,6 +440,20 @@ const styles = StyleSheet.create({
   },
   screenTitle: { fontSize: 32 },
   addBtn: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
+  fab: {
+    position: 'absolute',
+    right: 20,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.22,
+    shadowRadius: 10,
+    elevation: 8,
+  },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',

@@ -315,19 +315,12 @@ export default function LagerScreen() {
       .filter(n => !q || n.size.includes(q) || NEEDLE_TYPE_LABELS[n.type].toLowerCase().includes(q) || NEEDLE_MATERIAL_LABELS[n.material].toLowerCase().includes(q));
   }, [needles, search]);
 
+  const bottomInset = Platform.OS === 'web' ? 34 : insets.bottom;
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.topBar, { paddingTop: topInset + 8 }]}>
         <Text style={[styles.screenTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Lager</Text>
-        <Pressable
-          style={[styles.addBtn, { backgroundColor: colors.primaryBtn }]}
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            activeTab === 'garn' ? setShowAddBrand(true) : setShowAddNeedle(true);
-          }}
-        >
-          <Ionicons name="add" size={22} color="#fff" />
-        </Pressable>
       </View>
 
       <View style={styles.segmentContainer}>
@@ -453,6 +446,16 @@ export default function LagerScreen() {
 
       <AddBrandModal visible={showAddBrand} onClose={() => setShowAddBrand(false)} />
       <AddNeedleModal visible={showAddNeedle} onClose={() => setShowAddNeedle(false)} />
+
+      <Pressable
+        style={[styles.fab, { backgroundColor: colors.primaryBtn, bottom: bottomInset + 88 }]}
+        onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          activeTab === 'garn' ? setShowAddBrand(true) : setShowAddNeedle(true);
+        }}
+      >
+        <Ionicons name="add" size={28} color="#fff" />
+      </Pressable>
     </View>
   );
 }
@@ -473,6 +476,20 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  fab: {
+    position: 'absolute',
+    right: 20,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.22,
+    shadowRadius: 10,
+    elevation: 8,
   },
   segmentContainer: { paddingHorizontal: 20, marginBottom: 12 },
   segment: {

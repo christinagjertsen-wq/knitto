@@ -270,7 +270,7 @@ export default function HomeScreen() {
                 {greeting}
               </Text>
               <Text style={[styles.headerTitle, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>
-                Ditt strikkelager
+                Garnlager
               </Text>
             </View>
             <Pressable
