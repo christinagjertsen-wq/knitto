@@ -11,6 +11,7 @@ import {
   KeyboardAvoidingView,
   Alert,
 } from 'react-native';
+import { BlurView } from 'expo-blur';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -324,11 +325,25 @@ export default function LagerScreen() {
       </View>
 
       <View style={styles.segmentContainer}>
-        <View style={[styles.segment, { backgroundColor: isDark ? colors.surface : '#E1E8F0' }]}>
+        <BlurView
+          intensity={Platform.OS === 'ios' ? 60 : 0}
+          tint="light"
+          style={[styles.segment, { backgroundColor: Platform.OS === 'ios' ? 'rgba(255,255,255,0.45)' : (isDark ? colors.surface : '#E1E8F0') }]}
+        >
           {(['garn', 'pinner'] as Tab[]).map(tab => (
             <Pressable
               key={tab}
-              style={[styles.segmentTab, activeTab === tab && { backgroundColor: isDark ? Colors.palette.navyLight : '#fff' }]}
+              style={[
+                styles.segmentTab,
+                activeTab === tab && {
+                  backgroundColor: '#fff',
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 6,
+                  elevation: 3,
+                },
+              ]}
               onPress={() => {
                 setActiveTab(tab);
                 setSearch('');
@@ -343,7 +358,7 @@ export default function LagerScreen() {
               </Text>
             </Pressable>
           ))}
-        </View>
+        </BlurView>
       </View>
 
       <View style={[styles.searchBar, { backgroundColor: colors.surface }]}>
@@ -494,8 +509,11 @@ const styles = StyleSheet.create({
   segmentContainer: { paddingHorizontal: 20, marginBottom: 12 },
   segment: {
     flexDirection: 'row',
-    borderRadius: 12,
-    padding: 3,
+    borderRadius: 14,
+    padding: 4,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.6)',
   },
   segmentTab: {
     flex: 1,
