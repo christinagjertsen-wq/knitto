@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo, useEffect } from 'react';
+import React, { useState, useRef, useMemo, useEffect, useCallback } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
   View,
@@ -11,6 +11,7 @@ import {
   TextInput,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
@@ -258,10 +259,19 @@ export default function VerktoyScreen() {
   const tabScrollRef = useRef<ScrollView>(null);
   const chipOffsets = useRef<Record<string, number>>({});
 
-  useEffect(() => {
+  const scrollToActive = useCallback((animated = true) => {
     const x = chipOffsets.current[activeSection] ?? 0;
-    tabScrollRef.current?.scrollTo({ x: Math.max(0, x - 20), animated: true });
+    tabScrollRef.current?.scrollTo({ x: Math.max(0, x - 20), animated });
   }, [activeSection]);
+
+  useEffect(() => {
+    scrollToActive(true);
+  }, [activeSection]);
+
+  useFocusEffect(useCallback(() => {
+    const t = setTimeout(() => scrollToActive(false), 80);
+    return () => clearTimeout(t);
+  }, [scrollToActive]));
 
   const sections = [
     { key: 'tellere', label: 'Tellere', icon: 'add-circle-outline' as const },
