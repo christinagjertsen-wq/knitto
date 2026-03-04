@@ -39,17 +39,22 @@ function TabIcon({
 
 function NativeTabLayout() {
   return (
-    <NativeTabs>
-      <NativeTabs.Trigger name="index">
-        <Icon sf={{ default: "list.clipboard", selected: "list.clipboard.fill" }} />
+    <NativeTabs
+      screenOptions={{ tabBarShowLabel: true }}
+    >
+      <NativeTabs.Trigger name="index" title="Hjem">
+        <Icon sf={{ default: "house", selected: "house.fill" }} />
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="lager">
+      <NativeTabs.Trigger name="prosjekter" title="Prosjekter">
+        <Icon sf={{ default: "list.bullet.clipboard", selected: "list.bullet.clipboard.fill" }} />
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="lager" title="Lager">
         <Icon sf={{ default: "archivebox", selected: "archivebox.fill" }} />
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="verktoy">
+      <NativeTabs.Trigger name="verktoy" title="Verktøy">
         <Icon sf={{ default: "wrench", selected: "wrench.fill" }} />
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="innstillinger">
+      <NativeTabs.Trigger name="innstillinger" title="Innstillinger">
         <Icon sf={{ default: "gearshape", selected: "gearshape.fill" }} />
       </NativeTabs.Trigger>
     </NativeTabs>
@@ -87,6 +92,15 @@ function ClassicTabLayout() {
       <Tabs.Screen
         name="index"
         options={{
+          title: "Hjem",
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon name="home-outline" focusedName="home" label="Hjem" color={color} focused={focused} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="prosjekter"
+        options={{
           title: "Prosjekter",
           tabBarIcon: ({ color, focused }) => (
             <TabIcon name="list-outline" focusedName="list" label="Prosjekter" color={color} focused={focused} />
@@ -103,10 +117,8 @@ function ClassicTabLayout() {
         }}
       />
       <Tabs.Screen
-        name="prosjekter"
-        options={{
-          href: null,
-        }}
+        name="profil"
+        options={{ href: null }}
       />
       <Tabs.Screen
         name="verktoy"
@@ -116,10 +128,6 @@ function ClassicTabLayout() {
             <TabIcon name="construct-outline" focusedName="construct" label="Verktøy" color={color} focused={focused} />
           ),
         }}
-      />
-      <Tabs.Screen
-        name="profil"
-        options={{ href: null }}
       />
       <Tabs.Screen
         name="innstillinger"

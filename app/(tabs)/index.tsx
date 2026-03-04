@@ -22,6 +22,12 @@ import Colors from '@/constants/colors';
 import { useKnitting, Project, ProjectStatus } from '@/context/KnittingContext';
 import { useUser, getGreeting } from '@/context/UserContext';
 
+const ADD_STATUS_LABELS: Record<ProjectStatus, string> = {
+  planlagt: 'Planlagt',
+  aktiv: 'Aktiv',
+  ferdig: 'Ferdig',
+};
+
 const STATUS_LABELS: Record<ProjectStatus, string> = {
   planlagt: 'Planlagt',
   aktiv: 'Aktiv',
@@ -203,17 +209,19 @@ function NameOnboardingModal({ visible, onDone }: { visible: boolean; onDone: (n
   );
 }
 
-function SettingsModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
+function AddProjectModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const colors = Colors.light;
-  const { firstName, setFirstName } = useUser();
-  const [name, setName] = useState(firstName);
+  const { addProject } = useKnitting();
+  const [name, setName] = useState('');
+  const [status, setStatus] = useState<ProjectStatus>('planlagt');
   const insets = useSafeAreaInsets();
 
-  useEffect(() => { setName(firstName); }, [firstName, visible]);
-
   const save = () => {
-    setFirstName(name.trim());
+    if (!name.trim()) return;
+    addProject({ name: name.trim(), status, yarnAllocations: [], notes: '' });
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    setName('');
+    setStatus('planlagt');
     onClose();
   };
 
@@ -222,23 +230,47 @@ function SettingsModal({ visible, onClose }: { visible: boolean; onClose: () => 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalOverlay}>
         <View style={[styles.modalSheet, { backgroundColor: colors.surface, paddingBottom: Math.max(insets.bottom, 24) }]}>
           <View style={styles.modalHandle} />
-          <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Innstillinger</Text>
-          <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Ditt fornavn</Text>
+          <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Nytt prosjekt</Text>
           <TextInput
             style={[styles.input, { color: colors.text, backgroundColor: colors.background, fontFamily: 'Inter_400Regular' }]}
-            placeholder="Fornavn"
+            placeholder="Prosjektnavn"
             placeholderTextColor={colors.textTertiary}
             value={name}
             onChangeText={setName}
-            autoCapitalize="words"
+            autoFocus
+            autoCapitalize="sentences"
             returnKeyType="done"
             onSubmitEditing={save}
           />
+          <View style={{ flexDirection: 'row', gap: 8, marginBottom: 16 }}>
+            {(['planlagt', 'aktiv', 'ferdig'] as ProjectStatus[]).map(s => (
+              <Pressable
+                key={s}
+                onPress={() => setStatus(s)}
+                style={({ pressed }) => ({
+                  flex: 1,
+                  paddingVertical: 10,
+                  borderRadius: 12,
+                  alignItems: 'center',
+                  backgroundColor: status === s ? colors.primaryBtn : colors.background,
+                  opacity: pressed ? 0.8 : 1,
+                })}
+              >
+                <Text style={{
+                  fontSize: 13,
+                  fontFamily: status === s ? 'Inter_600SemiBold' : 'Inter_400Regular',
+                  color: status === s ? '#fff' : colors.textSecondary,
+                }}>
+                  {ADD_STATUS_LABELS[s]}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
           <Pressable
             style={({ pressed }) => [styles.primaryBtn, { backgroundColor: colors.primaryBtn, opacity: pressed ? 0.85 : 1 }]}
             onPress={save}
           >
-            <Text style={[styles.primaryBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Lagre</Text>
+            <Text style={[styles.primaryBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Legg til</Text>
           </Pressable>
           <Pressable style={styles.cancelBtn} onPress={onClose}>
             <Text style={[styles.cancelBtnText, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>Avbryt</Text>
@@ -255,7 +287,7 @@ export default function HomeScreen() {
   const { yarnStock, needles, projects, getTotalStats } = useKnitting();
   const { firstName, setFirstName, isLoading } = useUser();
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
+  const [showAddProject, setShowAddProject] = useState(false);
 
   useEffect(() => {
     if (!isLoading && firstName === '') setShowOnboarding(true);
@@ -278,7 +310,7 @@ export default function HomeScreen() {
         visible={showOnboarding}
         onDone={(name) => { if (name) setFirstName(name); setShowOnboarding(false); }}
       />
-      <SettingsModal visible={showSettings} onClose={() => setShowSettings(false)} />
+      <AddProjectModal visible={showAddProject} onClose={() => setShowAddProject(false)} />
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 34 : 16 }}
@@ -290,13 +322,6 @@ export default function HomeScreen() {
           style={[styles.header, { paddingTop: topInset + 16 }]}
         >
           <View style={styles.headerTopRow}>
-            <Pressable
-              style={styles.gearBtn}
-              onPress={() => setShowSettings(true)}
-              hitSlop={10}
-            >
-              <Ionicons name="settings-outline" size={22} color={Colors.palette.navy} />
-            </Pressable>
             <Text style={[styles.greetingLarge, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold', textAlign: 'center' }]}>
               {greeting}
             </Text>
@@ -349,18 +374,27 @@ export default function HomeScreen() {
               </View>
               <Pressable
                 style={({ pressed }) => [styles.seeAllBtn, { backgroundColor: colors.surface, opacity: pressed ? 0.85 : 1 }]}
-                onPress={() => router.push('/(tabs)/prosjekter')}
+                onPress={() => router.navigate('/(tabs)/prosjekter')}
               >
                 <Text style={[styles.seeAllText, { color: colors.primaryBtn, fontFamily: 'Inter_600SemiBold' }]}>
                   Se alle prosjekter
                 </Text>
                 <Ionicons name="chevron-forward" size={16} color={colors.primaryBtn} />
               </Pressable>
+              <Pressable
+                style={({ pressed }) => [styles.addProjectBtn, { opacity: pressed ? 0.75 : 1 }]}
+                onPress={() => setShowAddProject(true)}
+              >
+                <Ionicons name="add" size={18} color={colors.primaryBtn} />
+                <Text style={[styles.addProjectText, { color: colors.primaryBtn, fontFamily: 'Inter_600SemiBold' }]}>
+                  Legg til nytt prosjekt
+                </Text>
+              </Pressable>
             </>
           ) : (
             <Pressable
               style={({ pressed }) => [styles.emptyProjects, { backgroundColor: colors.surface, opacity: pressed ? 0.85 : 1 }]}
-              onPress={() => router.push('/(tabs)/prosjekter')}
+              onPress={() => setShowAddProject(true)}
             >
               <Ionicons name="add-circle-outline" size={28} color={colors.primaryBtn} />
               <Text style={[styles.emptyProjectsText, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>
@@ -480,6 +514,15 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   seeAllText: { fontSize: 15 },
+  addProjectBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 12,
+    marginTop: 8,
+  },
+  addProjectText: { fontSize: 15 },
   emptyProjects: {
     flexDirection: 'row',
     alignItems: 'center',
