@@ -79,7 +79,7 @@ function BrandCard({ brand }: { brand: Brand }) {
           {sampleColors.length > 0 && (
             <View style={styles.colorStrip}>
               {sampleColors.map((hex, i) => (
-                <View key={i} style={[styles.colorDot, { backgroundColor: hex }]} />
+                <View key={i} style={[styles.colorDot, { backgroundColor: hex, marginLeft: i > 0 ? -5 : 0, zIndex: sampleColors.length - i }]} />
               ))}
             </View>
           )}

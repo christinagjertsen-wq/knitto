@@ -219,7 +219,7 @@ function YarnStats() {
           <Text style={[styles.summaryLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>nøster brukt</Text>
         </View>
         <View style={[styles.summaryChip, { backgroundColor: colors.surface }]}>
-          <Text style={[styles.summaryNum, { color: '#7B9E87', fontFamily: 'Inter_700Bold' }]}>{usedYarn.length}</Text>
+          <Text style={[styles.summaryNum, { color: '#6A8EC8', fontFamily: 'Inter_700Bold' }]}>{usedYarn.length}</Text>
           <Text style={[styles.summaryLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>garntyper</Text>
         </View>
       </View>
@@ -299,7 +299,7 @@ export default function VerktoyScreen() {
         {activeSection === 'tellere' && (
           <>
             <Counter label="Radteller" color={colors.primaryBtn} />
-            <Counter label="Masketeller" color="#7B9E87" />
+            <Counter label="Masketeller" color="#6A8EC8" />
           </>
         )}
 
