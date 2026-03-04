@@ -67,6 +67,17 @@ function YarnCard({ yarn, onDelete, onSkeinChange }: { yarn: YarnStock; onDelete
   const isDark = colorScheme === 'dark';
   const colors = isDark ? Colors.dark : Colors.light;
 
+  const handleSkeinChange = (v: number) => {
+    if (v <= 0) {
+      Alert.alert('Slett farge', `Er du sikker på at du vil slette ${yarn.colorName}?`, [
+        { text: 'Avbryt', style: 'cancel' },
+        { text: 'Slett', style: 'destructive', onPress: onDelete },
+      ]);
+    } else {
+      onSkeinChange(v);
+    }
+  };
+
   return (
     <View style={[styles.yarnCard, { backgroundColor: colors.surface }]}>
       <View style={[styles.colorSwatch, { backgroundColor: yarn.colorHex }]} />
@@ -79,18 +90,7 @@ function YarnCard({ yarn, onDelete, onSkeinChange }: { yarn: YarnStock; onDelete
         </Text>
       </View>
       <View style={styles.yarnCardRight}>
-        <SkeinCounter value={yarn.skeins} onChange={onSkeinChange} />
-        <Pressable
-          onPress={() => {
-            Alert.alert('Slett farge', `Slett ${yarn.colorName}?`, [
-              { text: 'Avbryt', style: 'cancel' },
-              { text: 'Slett', style: 'destructive', onPress: onDelete },
-            ]);
-          }}
-          hitSlop={8}
-        >
-          <Ionicons name="trash-outline" size={15} color={colors.textTertiary} />
-        </Pressable>
+        <SkeinCounter value={yarn.skeins} onChange={handleSkeinChange} />
       </View>
     </View>
   );
