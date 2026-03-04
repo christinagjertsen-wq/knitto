@@ -1,6 +1,6 @@
 import { isLiquidGlassAvailable } from "expo-glass-effect";
 import { Tabs } from "expo-router";
-import { NativeTabs, Icon, Label } from "expo-router/unstable-native-tabs";
+import { NativeTabs, Icon } from "expo-router/unstable-native-tabs";
 import { BlurView } from "expo-blur";
 import { Platform, StyleSheet, View } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -8,20 +8,35 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/colors";
 
+function TabIcon({ name, focusedName, color, focused }: { name: any; focusedName: any; color: string; focused: boolean }) {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
+  const colors = isDark ? Colors.dark : Colors.light;
+
+  return (
+    <View style={{ alignItems: "center", gap: 4 }}>
+      <Ionicons name={focused ? focusedName : name} size={24} color={color} />
+      <View style={{
+        width: 4,
+        height: 4,
+        borderRadius: 2,
+        backgroundColor: focused ? colors.tint : "transparent",
+      }} />
+    </View>
+  );
+}
+
 function NativeTabLayout() {
   return (
     <NativeTabs>
       <NativeTabs.Trigger name="index">
         <Icon sf={{ default: "house", selected: "house.fill" }} />
-        <Label>Hjem</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="lager">
         <Icon sf={{ default: "archivebox", selected: "archivebox.fill" }} />
-        <Label>Lager</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="prosjekter">
         <Icon sf={{ default: "list.clipboard", selected: "list.clipboard.fill" }} />
-        <Label>Prosjekter</Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );
@@ -40,6 +55,7 @@ function ClassicTabLayout() {
         headerShown: false,
         tabBarActiveTintColor: colors.tint,
         tabBarInactiveTintColor: colors.tabIconDefault,
+        tabBarShowLabel: false,
         tabBarStyle: {
           position: "absolute",
           backgroundColor: isIOS ? "transparent" : isDark ? "#0D1220" : "#fff",
@@ -58,10 +74,6 @@ function ClassicTabLayout() {
           ) : isWeb ? (
             <View style={[StyleSheet.absoluteFill, { backgroundColor: isDark ? "#0D1220" : "#fff" }]} />
           ) : null,
-        tabBarLabelStyle: {
-          fontFamily: "Inter_500Medium",
-          fontSize: 11,
-        },
       }}
     >
       <Tabs.Screen
@@ -69,7 +81,7 @@ function ClassicTabLayout() {
         options={{
           title: "Hjem",
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? "home" : "home-outline"} size={24} color={color} />
+            <TabIcon name="home-outline" focusedName="home" color={color} focused={focused} />
           ),
         }}
       />
@@ -78,7 +90,7 @@ function ClassicTabLayout() {
         options={{
           title: "Lager",
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? "archive" : "archive-outline"} size={24} color={color} />
+            <TabIcon name="archive-outline" focusedName="archive" color={color} focused={focused} />
           ),
         }}
       />
@@ -87,7 +99,7 @@ function ClassicTabLayout() {
         options={{
           title: "Prosjekter",
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? "list" : "list-outline"} size={24} color={color} />
+            <TabIcon name="list-outline" focusedName="list" color={color} focused={focused} />
           ),
         }}
       />
