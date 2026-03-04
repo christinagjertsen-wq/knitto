@@ -210,42 +210,44 @@ function EditDetailsModal({
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalOverlay}>
-        <View style={[styles.modalSheet, { backgroundColor: colors.surface, maxHeight: '90%' }]}>
-          <View style={styles.modalHandle} />
-          <View style={styles.modalHeaderRow}>
-            <Pressable onPress={onClose}>
-              <Ionicons name="chevron-back" size={22} color={colors.text} />
-            </Pressable>
-            <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold', flex: 1, marginLeft: 4 }]}>Detaljer</Text>
-          </View>
-          <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }} keyboardShouldPersistTaps="handled">
-            <View style={{ gap: 14 }}>
-              <Field label="Til" value={recipient} onChangeText={setRecipient} placeholder="Hvem strikker du til?" />
-              <Field label="Størrelse" value={size} onChangeText={setSize} placeholder="f.eks. M, 38, Barn 4 år" />
-              <Field label="Strikkefasthet" value={gauge} onChangeText={setGauge} placeholder="f.eks. 22 m / 10 cm" hint="Masker per 10 cm" />
-              <Field label="Pinnestørrelse" value={patternNeedleSize} onChangeText={setPatternNeedleSize} placeholder="f.eks. 3,5 mm" hint="Fra oppskriften" />
-              <Field label="Startet" value={startDate} onChangeText={setStartDate} placeholder="DD.MM.ÅÅÅÅ" />
-              <Field label="Fullført" value={endDate} onChangeText={setEndDate} placeholder="DD.MM.ÅÅÅÅ" />
-              <View style={{ gap: 4 }}>
-                <Text style={[styles.detailFieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Notater</Text>
-                <TextInput
-                  style={[styles.detailInput, styles.notesInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border, fontFamily: 'Inter_400Regular' }]}
-                  value={notes}
-                  onChangeText={setNotes}
-                  placeholder="Notater, tanker, tilpasninger..."
-                  placeholderTextColor={colors.textTertiary}
-                  multiline
-                  numberOfLines={4}
-                />
-              </View>
-            </View>
-          </ScrollView>
-          <Pressable
-            style={({ pressed }) => [styles.modalBtn, { backgroundColor: colors.primaryBtn, opacity: pressed ? 0.85 : 1, marginTop: 16 }]}
-            onPress={handleSave}
+        <View style={[styles.editModalSheet, { backgroundColor: colors.surface }]}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+            contentContainerStyle={styles.editModalContent}
           >
-            <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Lagre</Text>
-          </Pressable>
+            <View style={styles.modalHandle} />
+            <View style={[styles.modalHeaderRow, { marginBottom: 16 }]}>
+              <Pressable onPress={onClose} hitSlop={8}>
+                <Ionicons name="chevron-back" size={22} color={colors.text} />
+              </Pressable>
+              <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold', flex: 1, marginLeft: 4 }]}>Detaljer</Text>
+            </View>
+            <Field label="Til" value={recipient} onChangeText={setRecipient} placeholder="Hvem strikker du til?" />
+            <Field label="Størrelse" value={size} onChangeText={setSize} placeholder="f.eks. M, 38, Barn 4 år" />
+            <Field label="Strikkefasthet" value={gauge} onChangeText={setGauge} placeholder="f.eks. 22 m / 10 cm" hint="Masker per 10 cm" />
+            <Field label="Pinnestørrelse" value={patternNeedleSize} onChangeText={setPatternNeedleSize} placeholder="f.eks. 3,5 mm" hint="Fra oppskriften" />
+            <Field label="Startet" value={startDate} onChangeText={setStartDate} placeholder="DD.MM.ÅÅÅÅ" />
+            <Field label="Fullført" value={endDate} onChangeText={setEndDate} placeholder="DD.MM.ÅÅÅÅ" />
+            <View style={{ gap: 4 }}>
+              <Text style={[styles.detailFieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Notater</Text>
+              <TextInput
+                style={[styles.detailInput, styles.notesInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border, fontFamily: 'Inter_400Regular' }]}
+                value={notes}
+                onChangeText={setNotes}
+                placeholder="Notater, tanker, tilpasninger..."
+                placeholderTextColor={colors.textTertiary}
+                multiline
+                numberOfLines={4}
+              />
+            </View>
+            <Pressable
+              style={({ pressed }) => [styles.modalBtn, { backgroundColor: colors.primaryBtn, opacity: pressed ? 0.85 : 1, marginTop: 8 }]}
+              onPress={handleSave}
+            >
+              <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Lagre</Text>
+            </Pressable>
+          </ScrollView>
         </View>
       </KeyboardAvoidingView>
     </Modal>
@@ -677,6 +679,8 @@ const styles = StyleSheet.create({
   planBtnText: { fontSize: 14 },
   modalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.4)' },
   modalSheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40, gap: 12 },
+  editModalSheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: '92%' },
+  editModalContent: { padding: 24, paddingBottom: 40, gap: 14 },
   modalHandle: { width: 36, height: 4, borderRadius: 2, backgroundColor: '#ccc', alignSelf: 'center', marginBottom: 8 },
   modalHeaderRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
   modalTitle: { fontSize: 22 },
