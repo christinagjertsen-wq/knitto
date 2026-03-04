@@ -24,12 +24,15 @@ export function getGreeting(firstName: string): string {
   const day = now.getDay();
   const hour = now.getHours();
   const name = firstName.trim();
-  const suffix = name ? `, ${name}` : '';
+  const suffix = name ? ` ${name}` : '';
 
-  if (day === 0 || day === 6) return `God helg${suffix}`;
-  if (hour >= 5 && hour < 12) return `God morgen${suffix}`;
-  if (hour >= 12 && hour < 18) return `God ettermiddag${suffix}`;
-  return `God kveld${suffix}`;
+  if (day === 6) return `God lørdag${suffix}`;
+  if (day === 0) return `Søndag! Nyt${suffix}`;
+  if (hour >= 5 && hour < 11) return `God morgen${suffix}`;
+  if (hour >= 11 && hour < 13) return `God formiddag${suffix}`;
+  if (hour >= 13 && hour < 18) return `God ettermiddag${suffix}`;
+  if (hour >= 18 && hour < 23) return `God kveld${suffix}`;
+  return `God natt${suffix}`;
 }
 
 export function UserProvider({ children }: { children: ReactNode }) {
