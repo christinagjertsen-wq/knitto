@@ -213,6 +213,7 @@ export default function HomeScreen() {
   const { yarnStock, needles, projects, getTotalStats } = useKnitting();
   const { firstName, setFirstName, isLoading } = useUser();
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
     if (!isLoading && firstName === '') setShowOnboarding(true);
@@ -235,6 +236,7 @@ export default function HomeScreen() {
         visible={showOnboarding}
         onDone={(name) => { if (name) setFirstName(name); setShowOnboarding(false); }}
       />
+      <SettingsModal visible={showSettings} onClose={() => setShowSettings(false)} />
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 34 : 16 }}
@@ -246,6 +248,13 @@ export default function HomeScreen() {
           style={[styles.header, { paddingTop: topInset + 16 }]}
         >
           <View style={styles.headerTopRow}>
+            <Pressable
+              style={styles.gearBtn}
+              onPress={() => setShowSettings(true)}
+              hitSlop={10}
+            >
+              <Ionicons name="settings-outline" size={22} color={Colors.palette.navy} />
+            </Pressable>
             <Text style={[styles.greetingLarge, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold', textAlign: 'center' }]}>
               {greeting}
             </Text>
@@ -359,6 +368,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 24,
     gap: 4,
+  },
+  gearBtn: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 20,
   },
   greetingLarge: {
     fontSize: 32,

@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useCallback, useRef } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
+import Svg, { Circle } from 'react-native-svg';
 import {
   View,
   Text,
@@ -45,6 +46,26 @@ const STATUS_BG: Record<ProjectStatus, string> = {
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SWIPE_THRESHOLD = 80;
 
+function ProgressRing({ progress, color, size = 36 }: { progress: number; color: string; size?: number }) {
+  const r = (size - 5) / 2;
+  const circumference = 2 * Math.PI * r;
+  const dash = circumference * Math.min(Math.max(progress, 0), 1);
+  return (
+    <Svg width={size} height={size} style={{ transform: [{ rotate: '-90deg' }] }}>
+      <Circle cx={size / 2} cy={size / 2} r={r} stroke="rgba(0,0,0,0.08)" strokeWidth={4} fill="none" />
+      <Circle
+        cx={size / 2}
+        cy={size / 2}
+        r={r}
+        stroke={color}
+        strokeWidth={4}
+        fill="none"
+        strokeDasharray={`${dash} ${circumference}`}
+        strokeLinecap="round"
+      />
+    </Svg>
+  );
+}
 
 function SwipeableProjectCard({
   project,
@@ -69,6 +90,17 @@ function SwipeableProjectCard({
   const projectNeedles = useMemo(() =>
     project.needleIds.map(id => needles.find(n => n.id === id)).filter(Boolean),
     [project.needleIds, needles]);
+
+  const ringProgress = useMemo(() => {
+    if (project.status === 'ferdig') return 1;
+    const totalAllocated = project.yarnAllocations.reduce((s, a) => s + a.skeinsAllocated, 0);
+    const totalInStock = project.yarnAllocations.reduce((s, a) => {
+      const yarn = yarnStock.find(y => y.id === a.yarnStockId);
+      return s + (yarn?.skeins ?? 0);
+    }, 0);
+    const total = totalAllocated + totalInStock;
+    return total > 0 ? totalAllocated / total : 0;
+  }, [project, yarnStock]);
 
   const nextStatus: ProjectStatus | null =
     project.status === 'planlagt' ? 'aktiv' :
@@ -163,20 +195,23 @@ function SwipeableProjectCard({
             </Text>
           ) : null}
           <View style={styles.projectFooter}>
-            <View style={styles.footerItem}>
-              <Ionicons name="color-palette-outline" size={13} color={colors.textTertiary} />
-              <Text style={[styles.footerText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                {project.yarnAllocations.length} {project.yarnAllocations.length === 1 ? 'garnfarge' : 'garnfarger'}
-              </Text>
-            </View>
-            {projectNeedles.length > 0 && (
+            <View style={styles.footerLeft}>
               <View style={styles.footerItem}>
-                <Ionicons name="construct-outline" size={13} color={colors.textTertiary} />
+                <Ionicons name="color-palette-outline" size={13} color={colors.textTertiary} />
                 <Text style={[styles.footerText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                  {projectNeedles.map(n => `${n!.size}mm`).join(', ')}
+                  {project.yarnAllocations.length} {project.yarnAllocations.length === 1 ? 'garnfarge' : 'garnfarger'}
                 </Text>
               </View>
-            )}
+              {projectNeedles.length > 0 && (
+                <View style={styles.footerItem}>
+                  <Ionicons name="construct-outline" size={13} color={colors.textTertiary} />
+                  <Text style={[styles.footerText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
+                    {projectNeedles.map(n => `${n!.size}mm`).join(', ')}
+                  </Text>
+                </View>
+              )}
+            </View>
+            <ProgressRing progress={ringProgress} color={STATUS_COLORS[project.status]} size={36} />
           </View>
         </Pressable>
       </Animated.View>
@@ -464,7 +499,8 @@ const styles = StyleSheet.create({
   statusBadgeText: { fontSize: 12 },
   projectName: { fontSize: 18, paddingHorizontal: 18 },
   projectNotes: { fontSize: 13, lineHeight: 18, paddingHorizontal: 18 },
-  projectFooter: { flexDirection: 'row', gap: 16, paddingHorizontal: 18, paddingBottom: 16 },
+  projectFooter: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 18, paddingBottom: 16 },
+  footerLeft: { flex: 1, gap: 4 },
   footerItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   footerText: { fontSize: 12 },
   emptyState: { alignItems: 'center', paddingVertical: 80, gap: 12 },
