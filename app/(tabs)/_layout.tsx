@@ -49,8 +49,8 @@ function NativeTabLayout() {
       <NativeTabs.Trigger name="verktoy">
         <Icon sf={{ default: "wrench", selected: "wrench.fill" }} />
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="profil">
-        <Icon sf={{ default: "person", selected: "person.fill" }} />
+      <NativeTabs.Trigger name="innstillinger">
+        <Icon sf={{ default: "gearshape", selected: "gearshape.fill" }} />
       </NativeTabs.Trigger>
     </NativeTabs>
   );
@@ -119,10 +119,14 @@ function ClassicTabLayout() {
       />
       <Tabs.Screen
         name="profil"
+        options={{ href: null }}
+      />
+      <Tabs.Screen
+        name="innstillinger"
         options={{
-          title: "Profil",
+          title: "Innstillinger",
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon name="person-outline" focusedName="person" label="Profil" color={color} focused={focused} />
+            <TabIcon name="settings-outline" focusedName="settings" label="Innstillinger" color={color} focused={focused} />
           ),
         }}
       />
