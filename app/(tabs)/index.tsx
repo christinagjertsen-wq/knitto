@@ -212,7 +212,6 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const { yarnStock, needles, projects, getTotalStats } = useKnitting();
   const { firstName, setFirstName, isLoading } = useUser();
-  const [showSettings, setShowSettings] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
 
   useEffect(() => {
@@ -236,8 +235,6 @@ export default function HomeScreen() {
         visible={showOnboarding}
         onDone={(name) => { if (name) setFirstName(name); setShowOnboarding(false); }}
       />
-      <SettingsModal visible={showSettings} onClose={() => setShowSettings(false)} />
-
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 34 : 16 }}
@@ -257,13 +254,6 @@ export default function HomeScreen() {
                 På tide å strikke litt?
               </Text>
             </View>
-            <Pressable
-              style={[styles.settingsBtn, { backgroundColor: 'rgba(26,35,64,0.08)' }]}
-              onPress={() => setShowSettings(true)}
-              hitSlop={8}
-            >
-              <Ionicons name="settings-outline" size={20} color={Colors.palette.navy} />
-            </Pressable>
           </View>
 
           <View style={[styles.headerStats, { backgroundColor: 'rgba(26,35,64,0.05)' }]}>
@@ -371,13 +361,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     marginBottom: 24,
-  },
-  settingsBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   greetingLarge: {
     fontSize: 32,
