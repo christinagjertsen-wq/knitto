@@ -7,11 +7,11 @@ import {
   Pressable,
   TextInput,
   Platform,
-  useColorScheme,
   Modal,
   KeyboardAvoidingView,
   Alert,
 } from 'react-native';
+import { useColorScheme } from '@/hooks/useColorScheme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
