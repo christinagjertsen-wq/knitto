@@ -49,6 +49,10 @@ export interface Project {
   startDate?: string;
   endDate?: string;
   notes: string;
+  recipient?: string;
+  size?: string;
+  gauge?: string;
+  patternNeedleSize?: string;
   yarnAllocations: YarnAllocation[];
   needleIds: string[];
 }

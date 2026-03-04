@@ -120,37 +120,16 @@ function AddProjectModal({ visible, onClose }: { visible: boolean; onClose: () =
   const isDark = colorScheme === 'dark';
   const colors = isDark ? Colors.dark : Colors.light;
   const [name, setName] = useState('');
-  const [status, setStatus] = useState<ProjectStatus>('planlagt');
-  const [notes, setNotes] = useState('');
+  const [status, setStatus] = useState<ProjectStatus>('aktiv');
   const { addProject } = useKnitting();
 
   const handleAdd = useCallback(() => {
     if (!name.trim()) return;
-    addProject({ name: name.trim(), status, notes: notes.trim(), yarnAllocations: [], needleIds: [] });
+    addProject({ name: name.trim(), status, notes: '', yarnAllocations: [], needleIds: [], startDate: new Date().toLocaleDateString('nb-NO') });
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    setName(''); setNotes(''); setStatus('planlagt');
+    setName(''); setStatus('aktiv');
     onClose();
-  }, [name, status, notes, addProject, onClose]);
-
-  const StatusPill = ({ s }: { s: ProjectStatus }) => (
-    <Pressable
-      onPress={() => setStatus(s)}
-      style={[
-        styles.optionPill,
-        {
-          backgroundColor: status === s ? STATUS_COLORS[s] : colors.background,
-          borderColor: status === s ? STATUS_COLORS[s] : colors.border,
-        },
-      ]}
-    >
-      <Text style={[styles.optionPillText, {
-        color: status === s ? '#fff' : colors.textSecondary,
-        fontFamily: status === s ? 'Inter_600SemiBold' : 'Inter_400Regular',
-      }]}>
-        {STATUS_LABELS[s]}
-      </Text>
-    </Pressable>
-  );
+  }, [name, status, addProject, onClose]);
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
@@ -163,6 +142,7 @@ function AddProjectModal({ visible, onClose }: { visible: boolean; onClose: () =
           <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>
             Nytt prosjekt
           </Text>
+          <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Prosjektnavn</Text>
           <TextInput
             style={[styles.input, { color: colors.text, backgroundColor: colors.background, fontFamily: 'Inter_400Regular' }]}
             placeholder="Prosjektnavn"
@@ -170,28 +150,37 @@ function AddProjectModal({ visible, onClose }: { visible: boolean; onClose: () =
             value={name}
             onChangeText={setName}
             autoFocus
+            returnKeyType="done"
+            onSubmitEditing={handleAdd}
           />
           <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Status</Text>
           <View style={styles.pillRow}>
-            {(['planlagt', 'aktiv', 'ferdig'] as ProjectStatus[]).map(s => (
-              <StatusPill key={s} s={s} />
+            {(['planlagt', 'aktiv'] as ProjectStatus[]).map(s => (
+              <Pressable
+                key={s}
+                onPress={() => setStatus(s)}
+                style={[
+                  styles.optionPill,
+                  {
+                    backgroundColor: status === s ? STATUS_COLORS[s] : colors.background,
+                    borderColor: status === s ? STATUS_COLORS[s] : colors.border,
+                  },
+                ]}
+              >
+                <Text style={[styles.optionPillText, {
+                  color: status === s ? '#fff' : colors.textSecondary,
+                  fontFamily: status === s ? 'Inter_600SemiBold' : 'Inter_400Regular',
+                }]}>
+                  {STATUS_LABELS[s]}
+                </Text>
+              </Pressable>
             ))}
           </View>
-          <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Notater</Text>
-          <TextInput
-            style={[styles.input, styles.textArea, { color: colors.text, backgroundColor: colors.background, fontFamily: 'Inter_400Regular' }]}
-            placeholder="Beskriv prosjektet..."
-            placeholderTextColor={colors.textTertiary}
-            value={notes}
-            onChangeText={setNotes}
-            multiline
-            numberOfLines={3}
-          />
           <Pressable
             style={({ pressed }) => [styles.modalBtn, { backgroundColor: colors.primaryBtn, opacity: pressed ? 0.85 : 1 }]}
             onPress={handleAdd}
           >
-            <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Opprett prosjekt</Text>
+            <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Opprett</Text>
           </Pressable>
           <Pressable style={styles.cancelBtn} onPress={onClose}>
             <Text style={[styles.cancelBtnText, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>Avbryt</Text>
