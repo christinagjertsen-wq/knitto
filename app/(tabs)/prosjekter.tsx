@@ -87,7 +87,7 @@ function SwipeableProjectCard({
   const colors = Colors.light;
   const { yarnStock, needles } = useKnitting();
   const translateX = useRef(new Animated.Value(0)).current;
-  const [swiping, setSwiping] = useState(false);
+  const swiping = useRef(false);
 
   const yarnColors = useMemo(() =>
     project.yarnAllocations.slice(0, 5).map(alloc => {
@@ -110,63 +110,53 @@ function SwipeableProjectCard({
     project.status === 'planlagt' ? 'aktiv' :
     project.status === 'aktiv' ? 'ferdig' : null;
 
+  const snapBack = () => {
+    Animated.spring(translateX, { toValue: 0, useNativeDriver: true, tension: 120, friction: 10 }).start();
+  };
+
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: (_, g) =>
-        Math.abs(g.dx) > 8 && Math.abs(g.dy) < 20,
-      onPanResponderGrant: () => setSwiping(true),
+        Math.abs(g.dx) > 10 && Math.abs(g.dy) < 15,
+      onPanResponderGrant: () => { swiping.current = true; },
       onPanResponderMove: (_, g) => {
-        translateX.setValue(Math.max(Math.min(g.dx, 90), -90));
+        const limit = nextStatus ? 100 : 0;
+        translateX.setValue(Math.max(Math.min(g.dx, limit), -100));
       },
       onPanResponderRelease: (_, g) => {
-        setSwiping(false);
+        swiping.current = false;
         if (g.dx < -SWIPE_THRESHOLD) {
-          Animated.spring(translateX, { toValue: -80, useNativeDriver: true }).start();
+          Animated.timing(translateX, { toValue: -400, duration: 200, useNativeDriver: true }).start(() => {
+            translateX.setValue(0);
+            onDelete();
+          });
         } else if (g.dx > SWIPE_THRESHOLD && nextStatus) {
-          Animated.spring(translateX, { toValue: 80, useNativeDriver: true }).start();
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          snapBack();
+          onStatusToggle();
         } else {
-          Animated.spring(translateX, { toValue: 0, useNativeDriver: true }).start();
+          snapBack();
         }
+      },
+      onPanResponderTerminate: () => {
+        swiping.current = false;
+        snapBack();
       },
     })
   ).current;
 
-  const resetSwipe = () => {
-    Animated.spring(translateX, { toValue: 0, useNativeDriver: true }).start();
-  };
-
   return (
     <View style={styles.swipeContainer}>
-      <View style={styles.swipeActions}>
-        <Pressable
-          style={[styles.swipeActionLeft, { backgroundColor: nextStatus ? STATUS_COLORS[nextStatus] : '#ccc' }]}
-          onPress={() => { resetSwipe(); onStatusToggle(); }}
-        >
-          <Ionicons
-            name={project.status === 'planlagt' ? 'play' : 'checkmark'}
-            size={18}
-            color="#fff"
-          />
-        </Pressable>
-        <Pressable
-          style={[styles.swipeActionRight, { backgroundColor: '#E05C6B' }]}
-          onPress={() => { resetSwipe(); onDelete(); }}
-        >
-          <Ionicons name="trash" size={18} color="#fff" />
-        </Pressable>
-      </View>
-
       <Animated.View style={{ transform: [{ translateX }] }} {...panResponder.panHandlers}>
         <Pressable
           style={[styles.projectCard, { backgroundColor: colors.surface }]}
           onPress={() => {
-            if (swiping) return;
-            resetSwipe();
+            if (swiping.current) return;
             router.push({ pathname: '/prosjekt/[id]', params: { id: project.id } });
           }}
           delayLongPress={400}
           onLongPress={() => {
-            resetSwipe();
+            snapBack();
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
             Alert.alert(project.name, 'Hva vil du gjøre?', [
               { text: 'Avbryt', style: 'cancel' },
@@ -480,30 +470,7 @@ const styles = StyleSheet.create({
   filterCount: { minWidth: 20, height: 20, borderRadius: 10, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 5 },
   filterCountText: { fontSize: 11 },
   listContent: { padding: 20, paddingTop: 12, gap: 12 },
-  swipeContainer: { position: 'relative', borderRadius: 20, overflow: 'hidden' },
-  swipeActions: {
-    position: 'absolute',
-    top: 0, bottom: 0, left: 0, right: 0,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  swipeActionLeft: {
-    width: 80,
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderTopLeftRadius: 20,
-    borderBottomLeftRadius: 20,
-  },
-  swipeActionRight: {
-    width: 80,
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderTopRightRadius: 20,
-    borderBottomRightRadius: 20,
-  },
+  swipeContainer: { borderRadius: 20, overflow: 'hidden' },
   projectCard: {
     borderRadius: 20,
     overflow: 'hidden',
