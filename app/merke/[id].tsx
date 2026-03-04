@@ -198,15 +198,6 @@ export default function MerkeScreen() {
           </Text>
         </View>
         <Pressable
-          style={[styles.addBtn, { backgroundColor: colors.primaryBtn }]}
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            setShowAdd(true);
-          }}
-        >
-          <Ionicons name="add" size={20} color="#fff" />
-        </Pressable>
-        <Pressable
           style={styles.deleteBtn}
           onPress={() => {
             Alert.alert(`Slett ${brand.name}`, 'Dette sletter merket og alle tilknyttede kvaliteter og farger.', [
@@ -231,12 +222,6 @@ export default function MerkeScreen() {
             <Text style={[styles.emptyText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
               Ingen kvaliteter ennå
             </Text>
-            <Pressable
-              style={[styles.emptyBtn, { backgroundColor: colors.primaryBtn }]}
-              onPress={() => setShowAdd(true)}
-            >
-              <Text style={[styles.emptyBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Legg til kvalitet</Text>
-            </Pressable>
           </View>
         ) : (
           qualities.map(q => (
@@ -252,6 +237,16 @@ export default function MerkeScreen() {
           ))
         )}
       </ScrollView>
+
+      <Pressable
+        style={[styles.fab, { backgroundColor: colors.primaryBtn, bottom: (Platform.OS === 'web' ? 34 : insets.bottom) + 24 }]}
+        onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          setShowAdd(true);
+        }}
+      >
+        <Ionicons name="add" size={28} color="#fff" />
+      </Pressable>
 
       <AddQualityModal brandId={id} visible={showAdd} onClose={() => setShowAdd(false)} />
     </View>
@@ -270,8 +265,21 @@ const styles = StyleSheet.create({
   backBtn: { padding: 4 },
   brandTitle: { fontSize: 22 },
   brandSub: { fontSize: 13, marginTop: 2 },
-  addBtn: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
   deleteBtn: { padding: 8 },
+  fab: {
+    position: 'absolute',
+    right: 20,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.22,
+    shadowRadius: 10,
+    elevation: 8,
+  },
   listContent: { padding: 20, gap: 10 },
   qualityCard: {
     flexDirection: 'row',
@@ -293,8 +301,6 @@ const styles = StyleSheet.create({
   skeinCount: { fontSize: 12 },
   emptyState: { alignItems: 'center', paddingVertical: 80, gap: 12 },
   emptyText: { fontSize: 16 },
-  emptyBtn: { paddingHorizontal: 20, paddingVertical: 12, borderRadius: 12, marginTop: 4 },
-  emptyBtnText: { color: '#fff', fontSize: 15 },
   modalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.4)' },
   modalSheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40, gap: 10 },
   modalHandle: { width: 36, height: 4, borderRadius: 2, backgroundColor: '#ccc', alignSelf: 'center', marginBottom: 8 },
