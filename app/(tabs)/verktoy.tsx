@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, useEffect } from 'react';
 import {
   View,
   Text,
@@ -254,6 +254,13 @@ export default function VerktoyScreen() {
   const insets = useSafeAreaInsets();
   const topInset = Platform.OS === 'web' ? 67 : insets.top;
   const [activeSection, setActiveSection] = useState<'tellere' | 'kalkulator' | 'statistikk' | 'naaler'>('tellere');
+  const tabScrollRef = useRef<ScrollView>(null);
+  const chipOffsets = useRef<Record<string, number>>({});
+
+  useEffect(() => {
+    const x = chipOffsets.current[activeSection] ?? 0;
+    tabScrollRef.current?.scrollTo({ x: Math.max(0, x - 20), animated: true });
+  }, [activeSection]);
 
   const sections = [
     { key: 'tellere', label: 'Tellere', icon: 'add-circle-outline' as const },
@@ -269,6 +276,7 @@ export default function VerktoyScreen() {
       </View>
 
       <ScrollView
+        ref={tabScrollRef}
         horizontal
         showsHorizontalScrollIndicator={false}
         style={styles.tabScroll}
@@ -279,6 +287,7 @@ export default function VerktoyScreen() {
             key={s.key}
             style={[styles.tabChip, activeSection === s.key && { backgroundColor: colors.primaryBtn }]}
             onPress={() => { setActiveSection(s.key); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
+            onLayout={(e) => { chipOffsets.current[s.key] = e.nativeEvent.layout.x; }}
           >
             <Ionicons name={s.icon} size={15} color={activeSection === s.key ? '#fff' : colors.textSecondary} />
             <Text style={[styles.tabChipText, {
