@@ -51,9 +51,6 @@ function NativeTabLayout() {
       <NativeTabs.Trigger name="lager" title="Lager">
         <Icon sf={{ default: "archivebox", selected: "archivebox.fill" }} />
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="verktoy" title="Verktøy">
-        <Icon sf={{ default: "wrench", selected: "wrench.fill" }} />
-      </NativeTabs.Trigger>
       <NativeTabs.Trigger name="innstillinger" title="Innstillinger">
         <Icon sf={{ default: "gearshape", selected: "gearshape.fill" }} />
       </NativeTabs.Trigger>
@@ -122,12 +119,7 @@ function ClassicTabLayout() {
       />
       <Tabs.Screen
         name="verktoy"
-        options={{
-          title: "Verktøy",
-          tabBarIcon: ({ color, focused }) => (
-            <TabIcon name="construct-outline" focusedName="construct" label="Verktøy" color={color} focused={focused} />
-          ),
-        }}
+        options={{ href: null }}
       />
       <Tabs.Screen
         name="innstillinger"
