@@ -10,6 +10,7 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Image,
+  Animated,
 } from 'react-native';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -81,6 +82,44 @@ function AnimatedStatCard({ label, target }: { label: string; target: number }) 
   );
 }
 
+function PulsingDot({ color }: { color: string }) {
+  const scale = useRef(new Animated.Value(1)).current;
+  const opacity = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    const pulse = Animated.loop(
+      Animated.sequence([
+        Animated.parallel([
+          Animated.timing(scale, { toValue: 2, duration: 700, useNativeDriver: true }),
+          Animated.timing(opacity, { toValue: 0, duration: 700, useNativeDriver: true }),
+        ]),
+        Animated.parallel([
+          Animated.timing(scale, { toValue: 1, duration: 0, useNativeDriver: true }),
+          Animated.timing(opacity, { toValue: 1, duration: 0, useNativeDriver: true }),
+        ]),
+        Animated.delay(400),
+      ])
+    );
+    pulse.start();
+    return () => pulse.stop();
+  }, []);
+
+  return (
+    <View style={{ width: 10, height: 10, alignItems: 'center', justifyContent: 'center' }}>
+      <Animated.View style={{
+        position: 'absolute',
+        width: 10,
+        height: 10,
+        borderRadius: 5,
+        backgroundColor: color,
+        transform: [{ scale }],
+        opacity,
+      }} />
+      <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: color }} />
+    </View>
+  );
+}
+
 function ProjectRow({ project }: { project: Project }) {
   const colors = Colors.light;
   const { yarnStock } = useKnitting();
@@ -113,7 +152,10 @@ function ProjectRow({ project }: { project: Project }) {
           {project.name}
         </Text>
         <View style={styles.statusPill}>
-          <View style={[styles.statusDot, { backgroundColor: STATUS_COLORS[project.status] }]} />
+          {project.status === 'aktiv'
+            ? <PulsingDot color={STATUS_COLORS.aktiv} />
+            : <View style={[styles.statusDot, { backgroundColor: STATUS_COLORS[project.status] }]} />
+          }
           <Text style={[styles.statusText, { color: STATUS_COLORS[project.status], fontFamily: 'Inter_500Medium' }]}>
             {STATUS_LABELS[project.status]}
           </Text>
