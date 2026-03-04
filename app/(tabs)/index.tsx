@@ -155,7 +155,7 @@ export default function HomeScreen() {
           <Pressable
             style={({ pressed }) => [
               styles.lagerButton,
-              { backgroundColor: isDark ? Colors.palette.navyLight : Colors.palette.navy, opacity: pressed ? 0.85 : 1 },
+              { backgroundColor: colors.primaryBtn, opacity: pressed ? 0.85 : 1 },
             ]}
             onPress={() => router.push('/(tabs)/lager')}
           >

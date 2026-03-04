@@ -168,7 +168,7 @@ function AddYarnModal({ qualityId, visible, onClose }: { qualityId: string; visi
             <SkeinCounter value={skeins} onChange={setSkeins} />
 
             <Pressable
-              style={({ pressed }) => [styles.modalBtn, { backgroundColor: Colors.palette.navy, opacity: pressed ? 0.85 : 1 }]}
+              style={({ pressed }) => [styles.modalBtn, { backgroundColor: colors.primaryBtn, opacity: pressed ? 0.85 : 1 }]}
               onPress={handleAdd}
             >
               <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Legg til</Text>
@@ -224,7 +224,7 @@ export default function KvalitetScreen() {
           </Text>
         </View>
         <Pressable
-          style={[styles.addBtn, { backgroundColor: Colors.palette.navy }]}
+          style={[styles.addBtn, { backgroundColor: colors.primaryBtn }]}
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             setShowAdd(true);
@@ -289,7 +289,7 @@ export default function KvalitetScreen() {
               Ingen farger ennå
             </Text>
             <Pressable
-              style={[styles.emptyBtn, { backgroundColor: Colors.palette.navy }]}
+              style={[styles.emptyBtn, { backgroundColor: colors.primaryBtn }]}
               onPress={() => setShowAdd(true)}
             >
               <Text style={[styles.emptyBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Legg til farge</Text>

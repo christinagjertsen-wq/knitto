@@ -91,8 +91,8 @@ function AddYarnModal({
                     style={[
                       styles.yarnOption,
                       {
-                        backgroundColor: selected === yarn.id ? (isDark ? Colors.palette.navyLight : '#EEF2FF') : colors.background,
-                        borderColor: selected === yarn.id ? Colors.palette.navy : colors.border,
+                        backgroundColor: selected === yarn.id ? colors.badgeBg : colors.background,
+                        borderColor: selected === yarn.id ? colors.primaryBtn : colors.border,
                       },
                     ]}
                     onPress={() => { setSelected(yarn.id); Haptics.selectionAsync(); }}
@@ -107,7 +107,7 @@ function AddYarnModal({
                       </Text>
                     </View>
                     {selected === yarn.id && (
-                      <Ionicons name="checkmark-circle" size={20} color={Colors.palette.navy} />
+                      <Ionicons name="checkmark-circle" size={20} color={colors.primaryBtn} />
                     )}
                   </Pressable>
                 ))}
@@ -146,7 +146,7 @@ function AddYarnModal({
 
           {availableYarn.length > 0 && (
             <Pressable
-              style={({ pressed }) => [styles.modalBtn, { backgroundColor: selected ? Colors.palette.navy : colors.border, opacity: pressed ? 0.85 : 1 }]}
+              style={({ pressed }) => [styles.modalBtn, { backgroundColor: selected ? colors.primaryBtn : colors.border, opacity: pressed ? 0.85 : 1 }]}
               onPress={handleAdd}
               disabled={!selected}
             >
@@ -288,7 +288,7 @@ export default function ProsjektScreen() {
               />
               <View style={{ flexDirection: 'row', gap: 8 }}>
                 <Pressable
-                  style={[styles.smallBtn, { backgroundColor: Colors.palette.navy }]}
+                  style={[styles.smallBtn, { backgroundColor: colors.primaryBtn }]}
                   onPress={() => { updateProject(id, { notes: notesText }); setEditingNotes(false); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); }}
                 >
                   <Text style={[styles.smallBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Lagre</Text>
@@ -314,7 +314,7 @@ export default function ProsjektScreen() {
               Garn ({allocatedYarn.length})
             </Text>
             <Pressable
-              style={[styles.addSmallBtn, { backgroundColor: Colors.palette.navy }]}
+              style={[styles.addSmallBtn, { backgroundColor: colors.primaryBtn }]}
               onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setShowAddYarn(true); }}
             >
               <Ionicons name="add" size={16} color="#fff" />
@@ -389,16 +389,16 @@ export default function ProsjektScreen() {
                     Haptics.selectionAsync();
                   }}
                 >
-                  <View style={[styles.needleSize, { backgroundColor: isDark ? Colors.palette.navyLight : Colors.palette.navy }]}>
-                    <Text style={[styles.needleSizeText, { fontFamily: 'Inter_700Bold' }]}>{needle.size}</Text>
+                  <View style={[styles.needleSize, { backgroundColor: colors.badgeBg }]}>
+                    <Text style={[styles.needleSizeText, { color: colors.badgeText, fontFamily: 'Inter_700Bold' }]}>{needle.size}</Text>
                   </View>
                   <Text style={[styles.needleLabel, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>
                     {needle.size}mm {needle.type === 'rundpinne' ? 'rundpinne' : needle.type === 'strømpepinner' ? 'strømpepinner' : 'rett'}, {needle.lengthCm}cm
                   </Text>
                   <View style={[
                     styles.checkbox,
-                    { borderColor: isLinked ? Colors.palette.navy : colors.border },
-                    isLinked && { backgroundColor: Colors.palette.navy },
+                    { borderColor: isLinked ? colors.primaryBtn : colors.border },
+                    isLinked && { backgroundColor: colors.primaryBtn },
                   ]}>
                     {isLinked && <Ionicons name="checkmark" size={14} color="#fff" />}
                   </View>

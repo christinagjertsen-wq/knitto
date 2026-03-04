@@ -188,7 +188,7 @@ function AddProjectModal({ visible, onClose }: { visible: boolean; onClose: () =
             numberOfLines={3}
           />
           <Pressable
-            style={({ pressed }) => [styles.modalBtn, { backgroundColor: Colors.palette.navy, opacity: pressed ? 0.85 : 1 }]}
+            style={({ pressed }) => [styles.modalBtn, { backgroundColor: colors.primaryBtn, opacity: pressed ? 0.85 : 1 }]}
             onPress={handleAdd}
           >
             <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Opprett prosjekt</Text>
@@ -229,7 +229,7 @@ export default function ProsjekterScreen() {
       <View style={[styles.topBar, { paddingTop: topInset + 8 }]}>
         <Text style={[styles.screenTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Prosjekter</Text>
         <Pressable
-          style={[styles.addBtn, { backgroundColor: Colors.palette.navy }]}
+          style={[styles.addBtn, { backgroundColor: colors.primaryBtn }]}
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             setShowAdd(true);
@@ -247,7 +247,7 @@ export default function ProsjekterScreen() {
       >
         {(['alle', 'planlagt', 'aktiv', 'ferdig'] as (ProjectStatus | 'alle')[]).map(f => {
           const label = f === 'alle' ? 'Alle' : STATUS_LABELS[f as ProjectStatus];
-          const color = f === 'alle' ? Colors.palette.navy : STATUS_COLORS[f as ProjectStatus];
+          const color = f === 'alle' ? colors.primaryBtn : STATUS_COLORS[f as ProjectStatus];
           const isActive = activeFilter === f;
           return (
             <Pressable
@@ -294,7 +294,7 @@ export default function ProsjekterScreen() {
             </Text>
             {activeFilter === 'alle' && (
               <Pressable
-                style={[styles.emptyBtn, { backgroundColor: Colors.palette.navy }]}
+                style={[styles.emptyBtn, { backgroundColor: colors.primaryBtn }]}
                 onPress={() => setShowAdd(true)}
               >
                 <Text style={[styles.emptyBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Opprett prosjekt</Text>

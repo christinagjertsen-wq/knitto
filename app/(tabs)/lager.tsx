@@ -60,8 +60,8 @@ function BrandCard({ brand }: { brand: Brand }) {
       onPress={() => router.push({ pathname: '/merke/[id]', params: { id: brand.id } })}
     >
       <View style={styles.brandCardLeft}>
-        <View style={[styles.brandInitial, { backgroundColor: Colors.palette.navy }]}>
-          <Text style={[styles.brandInitialText, { fontFamily: 'Inter_700Bold' }]}>
+        <View style={[styles.brandInitial, { backgroundColor: colors.badgeBg }]}>
+          <Text style={[styles.brandInitialText, { color: colors.badgeText, fontFamily: 'Inter_700Bold' }]}>
             {brand.name.charAt(0)}
           </Text>
         </View>
@@ -94,9 +94,9 @@ function NeedleCard({ needle, onDelete }: { needle: Needle; onDelete: () => void
 
   return (
     <View style={[styles.needleCard, { backgroundColor: colors.surface }]}>
-      <View style={[styles.needleSize, { backgroundColor: isDark ? Colors.palette.navyLight : Colors.palette.navyMid }]}>
-        <Text style={[styles.needleSizeText, { fontFamily: 'Inter_700Bold' }]}>{needle.size}</Text>
-        <Text style={[styles.needleSizeUnit, { fontFamily: 'Inter_400Regular' }]}>mm</Text>
+      <View style={[styles.needleSize, { backgroundColor: colors.badgeBg }]}>
+        <Text style={[styles.needleSizeText, { color: colors.badgeText, fontFamily: 'Inter_700Bold' }]}>{needle.size}</Text>
+        <Text style={[styles.needleSizeUnit, { color: colors.badgeText, fontFamily: 'Inter_400Regular' }]}>mm</Text>
       </View>
       <View style={styles.needleInfo}>
         <Text style={[styles.needleType, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
@@ -165,7 +165,7 @@ function AddBrandModal({ visible, onClose }: { visible: boolean; onClose: () => 
             onSubmitEditing={handleAdd}
           />
           <Pressable
-            style={({ pressed }) => [styles.modalBtn, { backgroundColor: Colors.palette.navy, opacity: pressed ? 0.85 : 1 }]}
+            style={({ pressed }) => [styles.modalBtn, { backgroundColor: colors.primaryBtn, opacity: pressed ? 0.85 : 1 }]}
             onPress={handleAdd}
           >
             <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Legg til</Text>
@@ -210,8 +210,8 @@ function AddNeedleModal({ visible, onClose }: { visible: boolean; onClose: () =>
       style={[
         styles.optionPill,
         {
-          backgroundColor: selected ? Colors.palette.navy : colors.background,
-          borderColor: selected ? Colors.palette.navy : colors.border,
+          backgroundColor: selected ? colors.primaryBtn : colors.background,
+          borderColor: selected ? colors.primaryBtn : colors.border,
         },
       ]}
     >
@@ -285,7 +285,7 @@ function AddNeedleModal({ visible, onClose }: { visible: boolean; onClose: () =>
             />
 
             <Pressable
-              style={({ pressed }) => [styles.modalBtn, { backgroundColor: Colors.palette.navy, opacity: pressed ? 0.85 : 1 }]}
+              style={({ pressed }) => [styles.modalBtn, { backgroundColor: colors.primaryBtn, opacity: pressed ? 0.85 : 1 }]}
               onPress={handleAdd}
             >
               <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Legg til</Text>
@@ -329,7 +329,7 @@ export default function LagerScreen() {
       <View style={[styles.topBar, { paddingTop: topInset + 8 }]}>
         <Text style={[styles.screenTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Lager</Text>
         <Pressable
-          style={[styles.addBtn, { backgroundColor: Colors.palette.navy }]}
+          style={[styles.addBtn, { backgroundColor: colors.primaryBtn }]}
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             activeTab === 'garn' ? setShowAddBrand(true) : setShowAddNeedle(true);
@@ -415,7 +415,7 @@ export default function LagerScreen() {
                 </Text>
                 {!search && (
                   <Pressable
-                    style={[styles.emptyBtn, { backgroundColor: Colors.palette.navy }]}
+                    style={[styles.emptyBtn, { backgroundColor: colors.primaryBtn }]}
                     onPress={() => setShowAddBrand(true)}
                   >
                     <Text style={[styles.emptyBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Legg til merke</Text>
@@ -437,7 +437,7 @@ export default function LagerScreen() {
                   Ingen pinner registrert
                 </Text>
                 <Pressable
-                  style={[styles.emptyBtn, { backgroundColor: Colors.palette.navy }]}
+                  style={[styles.emptyBtn, { backgroundColor: colors.primaryBtn }]}
                   onPress={() => setShowAddNeedle(true)}
                 >
                   <Text style={[styles.emptyBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Legg til pinne</Text>

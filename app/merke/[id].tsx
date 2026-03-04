@@ -19,7 +19,6 @@ import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
 import { useKnitting, Quality } from '@/context/KnittingContext';
 
-const WEIGHT_CATEGORIES = ['Lace', 'Fingering', 'Sport', 'DK', 'Worsted', 'Bulky', 'Super Bulky'];
 
 function QualityCard({ quality, onPress, onDelete }: { quality: Quality; onPress: () => void; onDelete: () => void }) {
   const colorScheme = useColorScheme();
@@ -41,7 +40,7 @@ function QualityCard({ quality, onPress, onDelete }: { quality: Quality; onPress
         ]);
       }}
     >
-      <View style={styles.qualityCardLeft}>
+      <View style={{ flex: 1 }}>
         <View style={{ flex: 1 }}>
           <Text style={[styles.qualityName, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]} numberOfLines={1}>
             {quality.name}
@@ -147,7 +146,7 @@ function AddQualityModal({ brandId, visible, onClose }: { brandId: string; visib
             </View>
 
             <Pressable
-              style={({ pressed }) => [styles.modalBtn, { backgroundColor: Colors.palette.navy, opacity: pressed ? 0.85 : 1 }]}
+              style={({ pressed }) => [styles.modalBtn, { backgroundColor: colors.primaryBtn, opacity: pressed ? 0.85 : 1 }]}
               onPress={handleAdd}
             >
               <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Legg til</Text>
@@ -199,7 +198,7 @@ export default function MerkeScreen() {
           </Text>
         </View>
         <Pressable
-          style={[styles.addBtn, { backgroundColor: Colors.palette.navy }]}
+          style={[styles.addBtn, { backgroundColor: colors.primaryBtn }]}
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             setShowAdd(true);
@@ -233,7 +232,7 @@ export default function MerkeScreen() {
               Ingen kvaliteter ennå
             </Text>
             <Pressable
-              style={[styles.emptyBtn, { backgroundColor: Colors.palette.navy }]}
+              style={[styles.emptyBtn, { backgroundColor: colors.primaryBtn }]}
               onPress={() => setShowAdd(true)}
             >
               <Text style={[styles.emptyBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Legg til kvalitet</Text>
