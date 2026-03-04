@@ -31,36 +31,88 @@ const STATUS_COLORS: Record<ProjectStatus, string> = {
   ferdig: '#4A6898',
 };
 
+function Counter({ value, onChange, max }: { value: number; onChange: (v: number) => void; max?: number }) {
+  const colorScheme = useColorScheme();
+  const colors = colorScheme === 'dark' ? Colors.dark : Colors.light;
+  return (
+    <View style={styles.counter}>
+      <Pressable
+        style={[styles.counterBtn, { backgroundColor: colors.background }]}
+        onPress={() => { onChange(Math.max(1, value - 1)); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
+      >
+        <Ionicons name="remove" size={20} color={colors.text} />
+      </Pressable>
+      <Text style={[styles.counterValue, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{value}</Text>
+      <Pressable
+        style={[styles.counterBtn, { backgroundColor: colors.background }]}
+        onPress={() => { if (max === undefined || value < max) { onChange(value + 1); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); } }}
+      >
+        <Ionicons name="add" size={20} color={colors.text} />
+      </Pressable>
+    </View>
+  );
+}
+
 function AddYarnModal({
   visible,
   onClose,
   onAdd,
+  onAddNew,
   excludeIds,
 }: {
   visible: boolean;
   onClose: () => void;
   onAdd: (yarnStockId: string, skeins: number) => void;
+  onAddNew: (qualityId: string, colorName: string, colorHex: string, skeinsTotal: number, skeinsForProject: number) => void;
   excludeIds: string[];
 }) {
   const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
-  const colors = isDark ? Colors.dark : Colors.light;
-  const { yarnStock, qualities, brands, getQualityById } = useKnitting();
+  const colors = colorScheme === 'dark' ? Colors.dark : Colors.light;
+  const { yarnStock, qualities, brands, getQualityById, getQualitiesForBrand } = useKnitting();
+
+  const [mode, setMode] = useState<'lager' | 'nytt'>('lager');
+
   const [selected, setSelected] = useState<string | null>(null);
   const [skeins, setSkeins] = useState(1);
+
+  const [newBrandId, setNewBrandId] = useState<string | null>(null);
+  const [newQualityId, setNewQualityId] = useState<string | null>(null);
+  const [newColorName, setNewColorName] = useState('');
+  const [newColorHex, setNewColorHex] = useState('#CCCCCC');
+  const [newSkeinsTotal, setNewSkeinsTotal] = useState(1);
+  const [newSkeinsProject, setNewSkeinsProject] = useState(1);
 
   const availableYarn = useMemo(() =>
     yarnStock.filter(y => !excludeIds.includes(y.id) && y.skeins > 0),
     [yarnStock, excludeIds]
   );
 
-  const handleAdd = useCallback(() => {
+  const qualitiesForBrand = useMemo(() =>
+    newBrandId ? getQualitiesForBrand(newBrandId) : [],
+    [newBrandId, qualities]
+  );
+
+  const reset = () => {
+    setSelected(null); setSkeins(1);
+    setNewBrandId(null); setNewQualityId(null);
+    setNewColorName(''); setNewColorHex('#CCCCCC');
+    setNewSkeinsTotal(1); setNewSkeinsProject(1);
+    setMode('lager');
+  };
+
+  const handleClose = () => { reset(); onClose(); };
+
+  const handleAddFromStock = () => {
     if (!selected) return;
     onAdd(selected, skeins);
-    setSelected(null);
-    setSkeins(1);
-    onClose();
-  }, [selected, skeins, onAdd, onClose]);
+    reset(); onClose();
+  };
+
+  const handleAddNew = () => {
+    if (!newQualityId || !newColorName.trim()) return;
+    onAddNew(newQualityId, newColorName.trim(), newColorHex, newSkeinsTotal, newSkeinsProject);
+    reset(); onClose();
+  };
 
   const getYarnLabel = (yarn: YarnStock) => {
     const quality = getQualityById(yarn.qualityId);
@@ -69,93 +121,183 @@ function AddYarnModal({
   };
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={handleClose}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalOverlay}>
-        <View style={[styles.modalSheet, { backgroundColor: colors.surface, maxHeight: '85%' }]}>
-          <View style={styles.modalHandle} />
-          <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Legg til garn</Text>
+        <View style={[styles.editModalSheet, { backgroundColor: colors.surface }]}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+            contentContainerStyle={[styles.editModalContent, { gap: 12 }]}
+          >
+            <View style={styles.modalHandle} />
+            <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Legg til garn</Text>
 
-          {availableYarn.length === 0 ? (
-            <View style={{ padding: 20, alignItems: 'center' }}>
-              <Ionicons name="archive-outline" size={32} color={colors.textTertiary} />
-              <Text style={[{ color: colors.textTertiary, marginTop: 8, fontFamily: 'Inter_400Regular', textAlign: 'center' }]}>
-                Ingen tilgjengelig garn på lager.{'\n'}Legg til garn i Lager-fanen først.
-              </Text>
-            </View>
-          ) : (
-            <>
-              <ScrollView style={{ maxHeight: 300 }} showsVerticalScrollIndicator={false}>
-                {availableYarn.map(yarn => (
-                  <Pressable
-                    key={yarn.id}
-                    style={[
-                      styles.yarnOption,
-                      {
-                        backgroundColor: selected === yarn.id ? colors.badgeBg : colors.background,
-                        borderColor: selected === yarn.id ? colors.primaryBtn : colors.border,
-                      },
-                    ]}
-                    onPress={() => { setSelected(yarn.id); Haptics.selectionAsync(); }}
-                  >
-                    <View style={[styles.yarnOptionDot, { backgroundColor: yarn.colorHex }]} />
-                    <View style={{ flex: 1 }}>
-                      <Text style={[styles.yarnOptionName, { color: colors.text, fontFamily: 'Inter_500Medium' }]} numberOfLines={1}>
-                        {getYarnLabel(yarn)}
-                      </Text>
-                      <Text style={[styles.yarnOptionSub, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                        {yarn.skeins} nøster tilgjengelig
-                      </Text>
-                    </View>
-                    {selected === yarn.id && (
-                      <Ionicons name="checkmark-circle" size={20} color={colors.primaryBtn} />
-                    )}
-                  </Pressable>
-                ))}
-              </ScrollView>
-
-              {selected && (
-                <>
-                  <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>
-                    Antall nøster til prosjektet
+            <View style={[styles.modeToggle, { backgroundColor: colors.background }]}>
+              {(['lager', 'nytt'] as const).map(m => (
+                <Pressable
+                  key={m}
+                  style={[styles.modeBtn, mode === m && { backgroundColor: colors.primaryBtn }]}
+                  onPress={() => setMode(m)}
+                >
+                  <Text style={[styles.modeBtnText, {
+                    color: mode === m ? '#fff' : colors.textSecondary,
+                    fontFamily: mode === m ? 'Inter_600SemiBold' : 'Inter_400Regular',
+                  }]}>
+                    {m === 'lager' ? 'Fra lager' : 'Nytt garn'}
                   </Text>
-                  <View style={styles.counter}>
-                    <Pressable
-                      style={[styles.counterBtn, { backgroundColor: colors.background }]}
-                      onPress={() => { setSkeins(Math.max(1, skeins - 1)); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
-                    >
-                      <Ionicons name="remove" size={20} color={colors.text} />
-                    </Pressable>
-                    <Text style={[styles.counterValue, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{skeins}</Text>
-                    <Pressable
-                      style={[styles.counterBtn, { backgroundColor: colors.background }]}
-                      onPress={() => {
-                        const yarn = yarnStock.find(y => y.id === selected);
-                        if (yarn && skeins < yarn.skeins) {
-                          setSkeins(skeins + 1);
-                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                        }
-                      }}
-                    >
-                      <Ionicons name="add" size={20} color={colors.text} />
-                    </Pressable>
-                  </View>
-                </>
-              )}
-            </>
-          )}
+                </Pressable>
+              ))}
+            </View>
 
-          {availableYarn.length > 0 && (
-            <Pressable
-              style={({ pressed }) => [styles.modalBtn, { backgroundColor: selected ? colors.primaryBtn : colors.border, opacity: pressed ? 0.85 : 1 }]}
-              onPress={handleAdd}
-              disabled={!selected}
-            >
-              <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Legg til</Text>
+            {mode === 'lager' ? (
+              availableYarn.length === 0 ? (
+                <View style={{ paddingVertical: 24, alignItems: 'center', gap: 8 }}>
+                  <Ionicons name="archive-outline" size={32} color={colors.textTertiary} />
+                  <Text style={[{ color: colors.textTertiary, fontFamily: 'Inter_400Regular', textAlign: 'center' }]}>
+                    Ingen tilgjengelig garn på lager.{'\n'}Bruk «Nytt garn» for å legge til.
+                  </Text>
+                </View>
+              ) : (
+                <>
+                  {availableYarn.map(yarn => (
+                    <Pressable
+                      key={yarn.id}
+                      style={[
+                        styles.yarnOption,
+                        {
+                          backgroundColor: selected === yarn.id ? colors.badgeBg : colors.background,
+                          borderColor: selected === yarn.id ? colors.primaryBtn : colors.border,
+                        },
+                      ]}
+                      onPress={() => { setSelected(yarn.id); setSkeins(1); Haptics.selectionAsync(); }}
+                    >
+                      <View style={[styles.yarnOptionDot, { backgroundColor: yarn.colorHex, borderWidth: 0.5, borderColor: 'rgba(0,0,0,0.1)' }]} />
+                      <View style={{ flex: 1 }}>
+                        <Text style={[styles.yarnOptionName, { color: colors.text, fontFamily: 'Inter_500Medium' }]} numberOfLines={1}>
+                          {getYarnLabel(yarn)}
+                        </Text>
+                        <Text style={[styles.yarnOptionSub, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
+                          {yarn.skeins} nøster tilgjengelig
+                        </Text>
+                      </View>
+                      {selected === yarn.id && <Ionicons name="checkmark-circle" size={20} color={colors.primaryBtn} />}
+                    </Pressable>
+                  ))}
+                  {selected && (
+                    <View>
+                      <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>
+                        Antall nøster til prosjektet
+                      </Text>
+                      <Counter
+                        value={skeins}
+                        onChange={setSkeins}
+                        max={yarnStock.find(y => y.id === selected)?.skeins}
+                      />
+                    </View>
+                  )}
+                  <Pressable
+                    style={({ pressed }) => [styles.modalBtn, { backgroundColor: selected ? colors.primaryBtn : colors.border, opacity: pressed ? 0.85 : 1 }]}
+                    onPress={handleAddFromStock}
+                    disabled={!selected}
+                  >
+                    <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Legg til</Text>
+                  </Pressable>
+                </>
+              )
+            ) : (
+              <>
+                <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Merke</Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -4 }}>
+                  <View style={{ flexDirection: 'row', gap: 8, paddingHorizontal: 4 }}>
+                    {brands.map(b => (
+                      <Pressable
+                        key={b.id}
+                        onPress={() => { setNewBrandId(b.id); setNewQualityId(null); Haptics.selectionAsync(); }}
+                        style={[styles.pill, {
+                          backgroundColor: newBrandId === b.id ? colors.primaryBtn : colors.background,
+                          borderColor: newBrandId === b.id ? colors.primaryBtn : colors.border,
+                        }]}
+                      >
+                        <Text style={[styles.pillText, {
+                          color: newBrandId === b.id ? '#fff' : colors.text,
+                          fontFamily: newBrandId === b.id ? 'Inter_600SemiBold' : 'Inter_400Regular',
+                        }]}>{b.name}</Text>
+                      </Pressable>
+                    ))}
+                  </View>
+                </ScrollView>
+
+                {newBrandId && qualitiesForBrand.length > 0 && (
+                  <>
+                    <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Kvalitet</Text>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -4 }}>
+                      <View style={{ flexDirection: 'row', gap: 8, paddingHorizontal: 4 }}>
+                        {qualitiesForBrand.map(q => (
+                          <Pressable
+                            key={q.id}
+                            onPress={() => { setNewQualityId(q.id); Haptics.selectionAsync(); }}
+                            style={[styles.pill, {
+                              backgroundColor: newQualityId === q.id ? colors.primaryBtn : colors.background,
+                              borderColor: newQualityId === q.id ? colors.primaryBtn : colors.border,
+                            }]}
+                          >
+                            <Text style={[styles.pillText, {
+                              color: newQualityId === q.id ? '#fff' : colors.text,
+                              fontFamily: newQualityId === q.id ? 'Inter_600SemiBold' : 'Inter_400Regular',
+                            }]}>{q.name}</Text>
+                          </Pressable>
+                        ))}
+                      </View>
+                    </ScrollView>
+                  </>
+                )}
+
+                <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Fargenavn</Text>
+                <TextInput
+                  style={[styles.detailInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border, fontFamily: 'Inter_400Regular' }]}
+                  value={newColorName}
+                  onChangeText={setNewColorName}
+                  placeholder="f.eks. Natthimmel"
+                  placeholderTextColor={colors.textTertiary}
+                />
+
+                <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Fargekode (valgfritt)</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                  <View style={[styles.yarnOptionDot, { backgroundColor: newColorHex, borderWidth: 0.5, borderColor: 'rgba(0,0,0,0.1)' }]} />
+                  <TextInput
+                    style={[styles.detailInput, { flex: 1, color: colors.text, backgroundColor: colors.background, borderColor: colors.border, fontFamily: 'Inter_400Regular' }]}
+                    value={newColorHex}
+                    onChangeText={setNewColorHex}
+                    placeholder="#RRGGBB"
+                    placeholderTextColor={colors.textTertiary}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                  />
+                </View>
+
+                <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Kjøpte nøster totalt</Text>
+                <Counter value={newSkeinsTotal} onChange={v => { setNewSkeinsTotal(v); setNewSkeinsProject(Math.min(newSkeinsProject, v)); }} />
+
+                <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Nøster til dette prosjektet</Text>
+                <Counter value={newSkeinsProject} onChange={setNewSkeinsProject} max={newSkeinsTotal} />
+
+                <Pressable
+                  style={({ pressed }) => [styles.modalBtn, {
+                    backgroundColor: (newQualityId && newColorName.trim()) ? colors.primaryBtn : colors.border,
+                    opacity: pressed ? 0.85 : 1,
+                  }]}
+                  onPress={handleAddNew}
+                  disabled={!newQualityId || !newColorName.trim()}
+                >
+                  <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Legg til og alloker</Text>
+                </Pressable>
+              </>
+            )}
+
+            <Pressable style={styles.cancelBtn} onPress={handleClose}>
+              <Text style={[styles.cancelBtnText, { color: colors.textSecondary }]}>Avbryt</Text>
             </Pressable>
-          )}
-          <Pressable style={styles.cancelBtn} onPress={onClose}>
-            <Text style={[styles.cancelBtnText, { color: colors.textSecondary }]}>Avbryt</Text>
-          </Pressable>
+          </ScrollView>
         </View>
       </KeyboardAvoidingView>
     </Modal>
@@ -268,7 +410,7 @@ export default function ProsjektScreen() {
     getProjectById, updateProject, deleteProject,
     yarnStock, qualities, brands, needles,
     allocateYarnToProject, removeYarnFromProject,
-    getQualityById,
+    addYarnStock, getQualityById,
   } = useKnitting();
 
   const project = getProjectById(id);
@@ -535,6 +677,11 @@ export default function ProsjektScreen() {
           allocateYarnToProject(id, yarnStockId, skeins);
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         }}
+        onAddNew={(qualityId, colorName, colorHex, skeinsTotal, skeinsForProject) => {
+          const newYarn = addYarnStock({ qualityId, colorName, colorHex, skeins: skeinsTotal });
+          allocateYarnToProject(id, newYarn.id, skeinsForProject);
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        }}
         excludeIds={project.yarnAllocations.map(a => a.yarnStockId)}
       />
 
@@ -677,6 +824,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   planBtnText: { fontSize: 14 },
+  modeToggle: { flexDirection: 'row', borderRadius: 12, padding: 3, gap: 3 },
+  modeBtn: { flex: 1, paddingVertical: 9, borderRadius: 10, alignItems: 'center' },
+  modeBtnText: { fontSize: 14 },
+  pill: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1.5 },
+  pillText: { fontSize: 13 },
   modalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.4)' },
   modalSheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40, gap: 12 },
   editModalSheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: '92%' },
