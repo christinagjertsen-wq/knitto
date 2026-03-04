@@ -112,17 +112,6 @@ function NeedleCard({ needle, onDelete }: { needle: Needle; onDelete: () => void
             {needle.quantity}
           </Text>
         </View>
-        <Pressable
-          onPress={() => {
-            Alert.alert('Slett pinne', 'Er du sikker?', [
-              { text: 'Avbryt', style: 'cancel' },
-              { text: 'Slett', style: 'destructive', onPress: onDelete },
-            ]);
-          }}
-          hitSlop={8}
-        >
-          <Ionicons name="trash-outline" size={16} color={colors.textTertiary} />
-        </Pressable>
       </View>
     </View>
   );
