@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -15,7 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
 import { useKnitting } from '@/context/KnittingContext';
-import { useUser, getGreeting } from '@/context/UserContext';
+import { useUser } from '@/context/UserContext';
 
 const colors = Colors.light;
 
@@ -27,7 +27,18 @@ export default function InnstillingerScreen() {
   const [showEditName, setShowEditName] = useState(false);
   const [nameInput, setNameInput] = useState('');
 
-  const greeting = getGreeting(firstName);
+  const QUOTES = [
+    'Å strikke, det er å være',
+    'Garn er kjærlighet i tråd',
+    'Masken for masken — det er livet',
+    'I hvert nøste bor en drøm',
+    'Strikk sakte, lev godt',
+    'Hendene er rolige når hjertet er urolig',
+    'Ull varmer dobbelt — i lammingen og i genseren',
+  ];
+
+  const quote = useMemo(() => QUOTES[new Date().getDay() % QUOTES.length], []);
+
   const activeProjects = projects.filter(p => p.status === 'aktiv').length;
   const finishedProjects = projects.filter(p => p.status === 'ferdig').length;
   const totalSkeins = yarnStock.reduce((s, y) => s + y.skeins, 0);
@@ -60,9 +71,11 @@ export default function InnstillingerScreen() {
             </Text>
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={[styles.greetingText, { fontFamily: 'Inter_400Regular' }]}>{greeting}</Text>
             <Text style={[styles.nameText, { fontFamily: 'Inter_700Bold' }]}>
               {firstName || 'Legg til navn'}
+            </Text>
+            <Text style={[styles.quoteText, { fontFamily: 'Inter_400Regular' }]}>
+              {quote}
             </Text>
           </View>
           <Pressable
@@ -166,8 +179,8 @@ const styles = StyleSheet.create({
   profileCard: { borderRadius: 20, padding: 20, flexDirection: 'row', alignItems: 'center', gap: 14 },
   avatarCircle: { width: 52, height: 52, borderRadius: 26, backgroundColor: 'rgba(255,255,255,0.25)', alignItems: 'center', justifyContent: 'center' },
   avatarLetter: { fontSize: 24, color: '#fff' },
-  greetingText: { fontSize: 13, color: 'rgba(255,255,255,0.7)', marginBottom: 2 },
   nameText: { fontSize: 20, color: '#fff' },
+  quoteText: { fontSize: 12, color: 'rgba(255,255,255,0.65)', marginTop: 4, fontStyle: 'italic', lineHeight: 17 },
   editNameBtn: { padding: 8 },
   card: { borderRadius: 16, overflow: 'hidden', shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 16, paddingVertical: 14 },
