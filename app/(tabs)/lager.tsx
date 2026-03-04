@@ -392,15 +392,15 @@ export default function LagerScreen() {
           <>
             <View style={styles.miniStatsRow}>
               <View style={[styles.miniStat, { backgroundColor: colors.surface }]}>
-                <Text style={[styles.miniStatNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{stats.totalSkeins}</Text>
+                <Text style={[styles.miniStatNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{stats.totalSkeins.toLocaleString('nb-NO')}</Text>
                 <Text style={[styles.miniStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>nøster</Text>
               </View>
               <View style={[styles.miniStat, { backgroundColor: colors.surface }]}>
-                <Text style={[styles.miniStatNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{stats.totalGrams}g</Text>
+                <Text style={[styles.miniStatNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{stats.totalGrams.toLocaleString('nb-NO')}</Text>
                 <Text style={[styles.miniStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>gram</Text>
               </View>
               <View style={[styles.miniStat, { backgroundColor: colors.surface }]}>
-                <Text style={[styles.miniStatNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{stats.totalMeters}m</Text>
+                <Text style={[styles.miniStatNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{stats.totalMeters.toLocaleString('nb-NO')}</Text>
                 <Text style={[styles.miniStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>meter</Text>
               </View>
             </View>
