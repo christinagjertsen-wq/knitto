@@ -12,7 +12,6 @@ import {
   Alert,
   Image,
 } from 'react-native';
-import Svg, { Circle } from 'react-native-svg';
 import * as ImagePicker from 'expo-image-picker';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -28,26 +27,6 @@ const STATUS_LABELS: Record<ProjectStatus, string> = {
   ferdig: 'Ferdig',
 };
 
-function ProgressRing({ progress, color, size = 56 }: { progress: number; color: string; size?: number }) {
-  const r = (size - 6) / 2;
-  const circumference = 2 * Math.PI * r;
-  const dash = circumference * Math.min(Math.max(progress, 0), 1);
-  return (
-    <Svg width={size} height={size} style={{ transform: [{ rotate: '-90deg' }] }}>
-      <Circle cx={size / 2} cy={size / 2} r={r} stroke="rgba(0,0,0,0.08)" strokeWidth={5} fill="none" />
-      <Circle
-        cx={size / 2}
-        cy={size / 2}
-        r={r}
-        stroke={color}
-        strokeWidth={5}
-        fill="none"
-        strokeDasharray={`${dash} ${circumference}`}
-        strokeLinecap="round"
-      />
-    </Svg>
-  );
-}
 
 const STATUS_COLORS: Record<ProjectStatus, string> = {
   planlagt: '#9AADC8',
@@ -667,17 +646,6 @@ export default function ProsjektScreen() {
     }
   }, [id, updateProject]);
 
-  const ringProgress = useMemo(() => {
-    if (!project) return 0;
-    if (project.status === 'ferdig') return 1;
-    const totalAllocated = project.yarnAllocations.reduce((s, a) => s + a.skeinsAllocated, 0);
-    const totalInStock = project.yarnAllocations.reduce((s, a) => {
-      const yarn = yarnStock.find(y => y.id === a.yarnStockId);
-      return s + (yarn?.skeins ?? 0);
-    }, 0);
-    const total = totalAllocated + totalInStock;
-    return total > 0 ? totalAllocated / total : 0;
-  }, [project, yarnStock]);
 
   const allocatedYarn = useMemo(() => {
     if (!project) return [];
@@ -806,12 +774,6 @@ export default function ProsjektScreen() {
                 <StatusButton s="aktiv" />
                 <StatusButton s="ferdig" />
               </View>
-            </View>
-            <View style={styles.progressRingWrap}>
-              <ProgressRing progress={ringProgress} color={STATUS_COLORS[project.status]} size={56} />
-              <Text style={[styles.progressPct, { color: STATUS_COLORS[project.status], fontFamily: 'Inter_600SemiBold' }]}>
-                {Math.round(ringProgress * 100)}%
-              </Text>
             </View>
           </View>
         </View>
@@ -1113,8 +1075,6 @@ const styles = StyleSheet.create({
   cardLabel: { fontSize: 13, textTransform: 'uppercase', letterSpacing: 0.5 },
   statusRow: { flexDirection: 'row', gap: 8 },
   statusCardTop: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  progressRingWrap: { alignItems: 'center', gap: 4 },
-  progressPct: { fontSize: 13 },
   statusBtn: { flex: 1, paddingVertical: 10, borderRadius: 12, borderWidth: 1.5, alignItems: 'center' },
   statusBtnText: { fontSize: 13 },
   editCircleBtn: {
