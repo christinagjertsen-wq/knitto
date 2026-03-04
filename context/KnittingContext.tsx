@@ -53,6 +53,7 @@ export interface Project {
   size?: string;
   gauge?: string;
   patternNeedleSize?: string;
+  coverImage?: string;
   yarnAllocations: YarnAllocation[];
   needleIds: string[];
 }

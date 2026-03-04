@@ -10,7 +10,9 @@ import {
   Modal,
   KeyboardAvoidingView,
   Alert,
+  Image,
 } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -533,6 +535,24 @@ export default function ProsjektScreen() {
 
   const project = getProjectById(id);
 
+  const pickImage = useCallback(async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Tillatelse nødvendig', 'Appen trenger tilgang til bilder for å legge til prosjektbilde.');
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.85,
+    });
+    if (!result.canceled && result.assets[0]) {
+      updateProject(id, { coverImage: result.assets[0].uri });
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    }
+  }, [id, updateProject]);
+
   const allocatedYarn = useMemo(() => {
     if (!project) return [];
     return project.yarnAllocations.map(alloc => {
@@ -616,6 +636,41 @@ export default function ProsjektScreen() {
         contentContainerStyle={[styles.listContent, { paddingBottom: Platform.OS === 'web' ? 34 : 20 }]}
         showsVerticalScrollIndicator={false}
       >
+        <Pressable
+          style={[styles.coverImageCard, { backgroundColor: colors.surface }]}
+          onPress={pickImage}
+          testID="cover-image-btn"
+        >
+          {project.coverImage ? (
+            <>
+              <Image
+                source={{ uri: project.coverImage }}
+                style={styles.coverImage}
+                resizeMode="cover"
+              />
+              <Pressable
+                style={[styles.coverImageFab, { backgroundColor: colors.primaryBtn }]}
+                onPress={pickImage}
+                hitSlop={8}
+              >
+                <Ionicons name="camera" size={16} color="#fff" />
+              </Pressable>
+            </>
+          ) : (
+            <View style={[styles.coverImagePlaceholder, { backgroundColor: colors.background }]}>
+              <View style={[styles.coverImageIconWrap, { backgroundColor: colors.border }]}>
+                <Ionicons name="image-outline" size={36} color={colors.textTertiary} />
+              </View>
+              <Text style={[styles.coverImageHint, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
+                Legg til bilde
+              </Text>
+              <View style={[styles.coverImageFab, { backgroundColor: colors.primaryBtn }]}>
+                <Ionicons name="add" size={20} color="#fff" />
+              </View>
+            </View>
+          )}
+        </Pressable>
+
         <View style={[styles.card, { backgroundColor: colors.surface }]}>
           <Text style={[styles.cardLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Status</Text>
           <View style={styles.statusRow}>
@@ -865,6 +920,49 @@ const styles = StyleSheet.create({
   backBtn: { padding: 4 },
   headerTitle: { flex: 1, fontSize: 22 },
   listContent: { padding: 16, gap: 12 },
+  coverImageCard: {
+    borderRadius: 18,
+    overflow: 'hidden',
+    height: 220,
+    position: 'relative',
+  },
+  coverImage: {
+    width: '100%',
+    height: '100%',
+  },
+  coverImagePlaceholder: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    borderRadius: 18,
+  },
+  coverImageIconWrap: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  coverImageHint: {
+    fontSize: 14,
+    marginTop: 2,
+  },
+  coverImageFab: {
+    position: 'absolute',
+    bottom: 12,
+    right: 12,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.18,
+    shadowRadius: 4,
+    elevation: 4,
+  },
   card: {
     borderRadius: 18,
     padding: 16,
