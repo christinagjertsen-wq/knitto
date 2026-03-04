@@ -308,10 +308,12 @@ export default function LagerScreen() {
     [brands, search]
   );
 
-  const sortedNeedles = useMemo(() =>
-    [...needles].sort((a, b) => parseFloat(a.size) - parseFloat(b.size)),
-    [needles]
-  );
+  const sortedNeedles = useMemo(() => {
+    const q = search.toLowerCase();
+    return [...needles]
+      .sort((a, b) => parseFloat(a.size) - parseFloat(b.size))
+      .filter(n => !q || n.size.includes(q) || NEEDLE_TYPE_LABELS[n.type].toLowerCase().includes(q) || NEEDLE_MATERIAL_LABELS[n.material].toLowerCase().includes(q));
+  }, [needles, search]);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -351,23 +353,22 @@ export default function LagerScreen() {
         </View>
       </View>
 
-      {activeTab === 'garn' && (
-        <View style={[styles.searchBar, { backgroundColor: colors.surface }]}>
-          <Ionicons name="search" size={16} color={colors.textTertiary} />
-          <TextInput
-            style={[styles.searchInput, { color: colors.text, fontFamily: 'Inter_400Regular' }]}
-            placeholder="Søk merke..."
-            placeholderTextColor={colors.textTertiary}
-            value={search}
-            onChangeText={setSearch}
-          />
-          {search.length > 0 && (
-            <Pressable onPress={() => setSearch('')}>
-              <Ionicons name="close-circle" size={16} color={colors.textTertiary} />
-            </Pressable>
-          )}
-        </View>
-      )}
+      <View style={[styles.searchBar, { backgroundColor: colors.surface }]}>
+        <Ionicons name="search" size={16} color={colors.textTertiary} />
+        <TextInput
+          style={[styles.searchInput, { color: colors.text, fontFamily: 'Inter_400Regular' }]}
+          placeholder={activeTab === 'garn' ? 'Søk merke...' : 'Søk pinner...'}
+          placeholderTextColor={colors.textTertiary}
+          value={search}
+          onChangeText={setSearch}
+          returnKeyType="search"
+        />
+        {search.length > 0 && (
+          <Pressable onPress={() => setSearch('')} hitSlop={8}>
+            <Ionicons name="close-circle" size={16} color={colors.textTertiary} />
+          </Pressable>
+        )}
+      </View>
 
       <ScrollView
         style={{ flex: 1 }}
@@ -423,14 +424,16 @@ export default function LagerScreen() {
               <View style={styles.emptyState}>
                 <Ionicons name="construct-outline" size={40} color={colors.textTertiary} />
                 <Text style={[styles.emptyText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                  Ingen pinner registrert
+                  {search ? 'Ingen pinner funnet' : 'Ingen pinner registrert'}
                 </Text>
-                <Pressable
-                  style={[styles.emptyBtn, { backgroundColor: colors.primaryBtn }]}
-                  onPress={() => setShowAddNeedle(true)}
-                >
-                  <Text style={[styles.emptyBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Legg til pinne</Text>
-                </Pressable>
+                {!search && (
+                  <Pressable
+                    style={[styles.emptyBtn, { backgroundColor: colors.primaryBtn }]}
+                    onPress={() => setShowAddNeedle(true)}
+                  >
+                    <Text style={[styles.emptyBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Legg til pinne</Text>
+                  </Pressable>
+                )}
               </View>
             ) : (
               sortedNeedles.map(needle => (

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -6,14 +6,21 @@ import {
   StyleSheet,
   Pressable,
   Platform,
+  Modal,
+  TextInput,
+  KeyboardAvoidingView,
+  Animated,
+  Image,
 } from 'react-native';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
 import { useKnitting, Project, ProjectStatus } from '@/context/KnittingContext';
+import { useUser, getGreeting } from '@/context/UserContext';
 
 const STATUS_LABELS: Record<ProjectStatus, string> = {
   planlagt: 'Planlagt',
@@ -22,15 +29,47 @@ const STATUS_LABELS: Record<ProjectStatus, string> = {
 };
 
 const STATUS_COLORS: Record<ProjectStatus, string> = {
-  planlagt: '#8A9BB5',
-  aktiv: '#5C9E8A',
-  ferdig: '#C97B84',
+  planlagt: '#9AADC8',
+  aktiv: '#6A8EC8',
+  ferdig: '#4A6898',
 };
 
-function StatCard({ label, value }: { label: string; value: number }) {
+function useCountUp(target: number, duration = 800) {
+  const [value, setValue] = useState(0);
+  const startRef = useRef<number | null>(null);
+  const rafRef = useRef<number>(0);
+
+  const animate = (timestamp: number) => {
+    if (startRef.current === null) startRef.current = timestamp;
+    const elapsed = timestamp - startRef.current;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    setValue(Math.round(eased * target));
+    if (progress < 1) {
+      rafRef.current = requestAnimationFrame(animate);
+    }
+  };
+
+  const start = () => {
+    setValue(0);
+    startRef.current = null;
+    cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(animate);
+  };
+
+  return { value, start };
+}
+
+function AnimatedStatCard({ label, target }: { label: string; target: number }) {
   const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
-  const colors = isDark ? Colors.dark : Colors.light;
+  const colors = Colors.light;
+  const { value, start } = useCountUp(target, 700);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      start();
+    }, [target])
+  );
 
   return (
     <View style={[styles.statCard, { backgroundColor: colors.surface }]}>
@@ -45,10 +84,8 @@ function StatCard({ label, value }: { label: string; value: number }) {
 }
 
 function ProjectRow({ project }: { project: Project }) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
-  const colors = isDark ? Colors.dark : Colors.light;
-  const { yarnStock, qualities } = useKnitting();
+  const colors = Colors.light;
+  const { yarnStock } = useKnitting();
 
   const yarnColors = useMemo(() => {
     return project.yarnAllocations.slice(0, 3).map(alloc => {
@@ -65,7 +102,13 @@ function ProjectRow({ project }: { project: Project }) {
       ]}
       onPress={() => router.push({ pathname: '/prosjekt/[id]', params: { id: project.id } })}
     >
-      <View style={styles.projectRowLeft}>
+      {project.coverImage ? (
+        <Image
+          source={{ uri: project.coverImage }}
+          style={styles.projectRowThumb}
+          resizeMode="cover"
+        />
+      ) : (
         <View style={styles.yarnDots}>
           {yarnColors.map((hex, i) => (
             <View
@@ -77,16 +120,16 @@ function ProjectRow({ project }: { project: Project }) {
             <View style={[styles.yarnDot, { backgroundColor: colors.border }]} />
           )}
         </View>
-        <View style={styles.projectRowText}>
-          <Text style={[styles.projectRowName, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]} numberOfLines={1}>
-            {project.name}
+      )}
+      <View style={styles.projectRowText}>
+        <Text style={[styles.projectRowName, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]} numberOfLines={1}>
+          {project.name}
+        </Text>
+        <View style={styles.statusPill}>
+          <View style={[styles.statusDot, { backgroundColor: STATUS_COLORS[project.status] }]} />
+          <Text style={[styles.statusText, { color: STATUS_COLORS[project.status], fontFamily: 'Inter_500Medium' }]}>
+            {STATUS_LABELS[project.status]}
           </Text>
-          <View style={styles.statusPill}>
-            <View style={[styles.statusDot, { backgroundColor: STATUS_COLORS[project.status] }]} />
-            <Text style={[styles.statusText, { color: STATUS_COLORS[project.status], fontFamily: 'Inter_500Medium' }]}>
-              {STATUS_LABELS[project.status]}
-            </Text>
-          </View>
         </View>
       </View>
       <Ionicons name="chevron-forward" size={16} color={colors.textTertiary} />
@@ -94,21 +137,123 @@ function ProjectRow({ project }: { project: Project }) {
   );
 }
 
+function NameOnboardingModal({ visible, onDone }: { visible: boolean; onDone: (name: string) => void }) {
+  const colors = Colors.light;
+  const [name, setName] = useState('');
+  const insets = useSafeAreaInsets();
+
+  return (
+    <Modal visible={visible} transparent animationType="slide">
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.onboardingOverlay}>
+        <View style={[styles.onboardingSheet, { backgroundColor: colors.surface, paddingBottom: Math.max(insets.bottom, 24) }]}>
+          <View style={styles.modalHandle} />
+          <Text style={[styles.onboardingTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>
+            Hva heter du?
+          </Text>
+          <Text style={[styles.onboardingSubtitle, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
+            Vi vil gjerne hilse deg med navn
+          </Text>
+          <TextInput
+            style={[styles.onboardingInput, { color: colors.text, backgroundColor: colors.background, fontFamily: 'Inter_400Regular' }]}
+            placeholder="Fornavn"
+            placeholderTextColor={colors.textTertiary}
+            value={name}
+            onChangeText={setName}
+            autoFocus
+            autoCapitalize="words"
+            returnKeyType="done"
+            onSubmitEditing={() => onDone(name.trim())}
+          />
+          <Pressable
+            style={({ pressed }) => [styles.onboardingBtn, { backgroundColor: colors.primaryBtn, opacity: pressed ? 0.85 : 1 }]}
+            onPress={() => onDone(name.trim())}
+          >
+            <Text style={[styles.onboardingBtnText, { fontFamily: 'Inter_600SemiBold' }]}>La oss starte</Text>
+          </Pressable>
+        </View>
+      </KeyboardAvoidingView>
+    </Modal>
+  );
+}
+
+function SettingsModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
+  const colors = Colors.light;
+  const { firstName, setFirstName } = useUser();
+  const [name, setName] = useState(firstName);
+  const insets = useSafeAreaInsets();
+
+  useEffect(() => { setName(firstName); }, [firstName, visible]);
+
+  const save = () => {
+    setFirstName(name.trim());
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    onClose();
+  };
+
+  return (
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.onboardingOverlay}>
+        <View style={[styles.onboardingSheet, { backgroundColor: colors.surface, paddingBottom: Math.max(insets.bottom, 24) }]}>
+          <View style={styles.modalHandle} />
+          <Text style={[styles.onboardingTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Innstillinger</Text>
+          <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Ditt fornavn</Text>
+          <TextInput
+            style={[styles.onboardingInput, { color: colors.text, backgroundColor: colors.background, fontFamily: 'Inter_400Regular' }]}
+            placeholder="Fornavn"
+            placeholderTextColor={colors.textTertiary}
+            value={name}
+            onChangeText={setName}
+            autoCapitalize="words"
+            returnKeyType="done"
+            onSubmitEditing={save}
+          />
+          <Pressable
+            style={({ pressed }) => [styles.onboardingBtn, { backgroundColor: colors.primaryBtn, opacity: pressed ? 0.85 : 1 }]}
+            onPress={save}
+          >
+            <Text style={[styles.onboardingBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Lagre</Text>
+          </Pressable>
+          <Pressable style={styles.cancelBtn} onPress={onClose}>
+            <Text style={[styles.cancelBtnText, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>Avbryt</Text>
+          </Pressable>
+        </View>
+      </KeyboardAvoidingView>
+    </Modal>
+  );
+}
+
 export default function HomeScreen() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
-  const colors = isDark ? Colors.dark : Colors.light;
+  const colors = Colors.light;
   const insets = useSafeAreaInsets();
   const { brands, yarnStock, needles, projects, qualities, getTotalStats } = useKnitting();
+  const { firstName, setFirstName, isLoading } = useUser();
+  const [showSettings, setShowSettings] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  useEffect(() => {
+    if (!isLoading && firstName === '') {
+      setShowOnboarding(true);
+    }
+  }, [isLoading, firstName]);
 
   const stats = getTotalStats();
   const activeProjects = projects.filter(p => p.status === 'aktiv');
   const plannedProjects = projects.filter(p => p.status === 'planlagt');
-
   const topInset = Platform.OS === 'web' ? 67 : insets.top;
+
+  const greeting = getGreeting(firstName);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <NameOnboardingModal
+        visible={showOnboarding}
+        onDone={(name) => {
+          if (name) setFirstName(name);
+          setShowOnboarding(false);
+        }}
+      />
+      <SettingsModal visible={showSettings} onClose={() => setShowSettings(false)} />
+
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 34 : 0 }}
@@ -116,25 +261,40 @@ export default function HomeScreen() {
         contentInsetAdjustmentBehavior="automatic"
       >
         <LinearGradient
-          colors={isDark ? ['#1A2340', '#0D1220'] : [Colors.palette.nordicBlue, Colors.palette.nordicIce]}
-          style={[styles.header, { paddingTop: topInset + 20 }]}
+          colors={[Colors.palette.nordicBlue, Colors.palette.nordicIce]}
+          style={[styles.header, { paddingTop: topInset + 16 }]}
         >
-          <Text style={[styles.greeting, { color: isDark ? 'rgba(255,255,255,0.6)' : Colors.palette.textSecondary, fontFamily: 'Inter_400Regular' }]}>God dag</Text>
-          <Text style={[styles.headerTitle, { color: isDark ? '#fff' : Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>Ditt strikkelager</Text>
-          <View style={[styles.headerStats, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(26,35,64,0.05)' }]}>
-            <View style={styles.headerStat}>
-              <Text style={[styles.headerStatNumber, { color: isDark ? '#fff' : Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>{brands.length}</Text>
-              <Text style={[styles.headerStatLabel, { color: isDark ? 'rgba(255,255,255,0.6)' : Colors.palette.textTertiary, fontFamily: 'Inter_400Regular' }]}>merker</Text>
+          <View style={styles.headerTopRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.greeting, { color: Colors.palette.textSecondary, fontFamily: 'Inter_400Regular' }]}>
+                {greeting}
+              </Text>
+              <Text style={[styles.headerTitle, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>
+                Ditt strikkelager
+              </Text>
             </View>
-            <View style={[styles.headerStatDivider, { backgroundColor: isDark ? 'rgba(255,255,255,0.15)' : 'rgba(26,35,64,0.1)' }]} />
+            <Pressable
+              style={[styles.settingsBtn, { backgroundColor: 'rgba(26,35,64,0.08)' }]}
+              onPress={() => setShowSettings(true)}
+              hitSlop={8}
+            >
+              <Ionicons name="settings-outline" size={20} color={Colors.palette.navy} />
+            </Pressable>
+          </View>
+          <View style={[styles.headerStats, { backgroundColor: 'rgba(26,35,64,0.05)' }]}>
             <View style={styles.headerStat}>
-              <Text style={[styles.headerStatNumber, { color: isDark ? '#fff' : Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>{yarnStock.length}</Text>
-              <Text style={[styles.headerStatLabel, { color: isDark ? 'rgba(255,255,255,0.6)' : Colors.palette.textTertiary, fontFamily: 'Inter_400Regular' }]}>farger</Text>
+              <Text style={[styles.headerStatNumber, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>{brands.length}</Text>
+              <Text style={[styles.headerStatLabel, { color: Colors.palette.textTertiary, fontFamily: 'Inter_400Regular' }]}>merker</Text>
             </View>
-            <View style={[styles.headerStatDivider, { backgroundColor: isDark ? 'rgba(255,255,255,0.15)' : 'rgba(26,35,64,0.1)' }]} />
+            <View style={[styles.headerStatDivider, { backgroundColor: 'rgba(26,35,64,0.1)' }]} />
             <View style={styles.headerStat}>
-              <Text style={[styles.headerStatNumber, { color: isDark ? '#fff' : Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>{projects.length}</Text>
-              <Text style={[styles.headerStatLabel, { color: isDark ? 'rgba(255,255,255,0.6)' : Colors.palette.textTertiary, fontFamily: 'Inter_400Regular' }]}>prosjekter</Text>
+              <Text style={[styles.headerStatNumber, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>{yarnStock.length}</Text>
+              <Text style={[styles.headerStatLabel, { color: Colors.palette.textTertiary, fontFamily: 'Inter_400Regular' }]}>farger</Text>
+            </View>
+            <View style={[styles.headerStatDivider, { backgroundColor: 'rgba(26,35,64,0.1)' }]} />
+            <View style={styles.headerStat}>
+              <Text style={[styles.headerStatNumber, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>{projects.length}</Text>
+              <Text style={[styles.headerStatLabel, { color: Colors.palette.textTertiary, fontFamily: 'Inter_400Regular' }]}>prosjekter</Text>
             </View>
           </View>
         </LinearGradient>
@@ -144,9 +304,9 @@ export default function HomeScreen() {
             Garnlager
           </Text>
           <View style={styles.statsRow}>
-            <StatCard label="nøster på lager" value={stats.totalSkeins} />
-            <StatCard label="gram på lager" value={stats.totalGrams} />
-            <StatCard label="meter på lager" value={stats.totalMeters} />
+            <AnimatedStatCard label="nøster" target={stats.totalSkeins} />
+            <AnimatedStatCard label="gram" target={stats.totalGrams} />
+            <AnimatedStatCard label="meter" target={stats.totalMeters} />
           </View>
 
           <Pressable
@@ -211,26 +371,35 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
   },
+  headerTopRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 20,
+  },
+  settingsBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 4,
+  },
   greeting: {
     fontSize: 15,
-    color: 'rgba(255,255,255,0.6)',
     marginBottom: 4,
   },
   headerTitle: {
-    fontSize: 32,
-    color: '#fff',
-    marginBottom: 24,
+    fontSize: 30,
   },
   headerStats: {
     flexDirection: 'row',
-    backgroundColor: 'rgba(255,255,255,0.1)',
     borderRadius: 16,
     padding: 16,
   },
   headerStat: { flex: 1, alignItems: 'center' },
-  headerStatNumber: { fontSize: 24, color: '#fff' },
-  headerStatLabel: { fontSize: 12, color: 'rgba(255,255,255,0.6)', marginTop: 2 },
-  headerStatDivider: { width: 1, backgroundColor: 'rgba(255,255,255,0.15)', marginHorizontal: 8 },
+  headerStatNumber: { fontSize: 24 },
+  headerStatLabel: { fontSize: 12, marginTop: 2 },
+  headerStatDivider: { width: 1, marginHorizontal: 8 },
   content: { padding: 20 },
   sectionTitle: { fontSize: 20, marginBottom: 12 },
   statsRow: { flexDirection: 'row', gap: 10 },
@@ -260,13 +429,19 @@ const styles = StyleSheet.create({
   projectRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
+    padding: 14,
+    gap: 12,
     borderRadius: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.06,
     shadowRadius: 8,
     elevation: 2,
+  },
+  projectRowThumb: {
+    width: 44,
+    height: 44,
+    borderRadius: 10,
   },
   projectRowLeft: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12 },
   yarnDots: { flexDirection: 'row', alignItems: 'center' },
@@ -290,4 +465,59 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   emptyProjectsText: { fontSize: 15 },
+  onboardingOverlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.35)',
+  },
+  onboardingSheet: {
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    padding: 24,
+    paddingTop: 12,
+    gap: 12,
+  },
+  modalHandle: {
+    width: 36,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: '#D1D5DB',
+    alignSelf: 'center',
+    marginBottom: 8,
+  },
+  onboardingTitle: {
+    fontSize: 24,
+    textAlign: 'center',
+  },
+  onboardingSubtitle: {
+    fontSize: 15,
+    textAlign: 'center',
+    marginBottom: 4,
+  },
+  onboardingInput: {
+    borderRadius: 14,
+    padding: 16,
+    fontSize: 16,
+  },
+  onboardingBtn: {
+    borderRadius: 14,
+    padding: 16,
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  onboardingBtnText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  fieldLabel: {
+    fontSize: 13,
+    marginBottom: 4,
+  },
+  cancelBtn: {
+    alignItems: 'center',
+    padding: 8,
+  },
+  cancelBtnText: {
+    fontSize: 15,
+  },
 });

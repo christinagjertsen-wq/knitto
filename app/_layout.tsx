@@ -14,6 +14,7 @@ import { KeyboardProvider } from "react-native-keyboard-controller";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { queryClient } from "@/lib/query-client";
 import { KnittingProvider } from "@/context/KnittingContext";
+import { UserProvider } from "@/context/UserContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -50,7 +51,9 @@ export default function RootLayout() {
         <GestureHandlerRootView style={{ flex: 1 }}>
           <KeyboardProvider>
             <KnittingProvider>
-              <RootLayoutNav />
+              <UserProvider>
+                <RootLayoutNav />
+              </UserProvider>
             </KnittingProvider>
           </KeyboardProvider>
         </GestureHandlerRootView>
