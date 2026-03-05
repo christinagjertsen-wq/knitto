@@ -430,7 +430,7 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   header: {
     paddingHorizontal: 24,
-    paddingBottom: 28,
+    paddingBottom: 20,
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
   },
@@ -466,7 +466,7 @@ const styles = StyleSheet.create({
   headerStatNumber: { fontSize: 26 },
   headerStatLabel: { fontSize: 12, marginTop: 2 },
   headerStatDivider: { width: 1, marginHorizontal: 8 },
-  content: { padding: 20, paddingTop: 12, gap: 0 },
+  content: { padding: 20, paddingTop: 4, gap: 0 },
   sectionHeader: {
     marginBottom: 12,
     marginTop: 0,
