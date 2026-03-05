@@ -120,50 +120,6 @@ function genId(): string {
   return Date.now().toString() + Math.random().toString(36).substr(2, 9);
 }
 
-const DEMO_DATA = {
-  brands: [
-    { id: 'b1', name: 'Sandnes Garn' },
-    { id: 'b2', name: 'Filcolana' },
-  ] as Brand[],
-  qualities: [
-    { id: 'q1', brandId: 'b1', name: 'Tynn Merinoull', fiberContent: '100% Merinoull', gramsPerSkein: 50, metersPerSkein: 175 },
-    { id: 'q2', brandId: 'b1', name: 'KOS', fiberContent: '55% Alpakka, 45% Merinoull', gramsPerSkein: 50, metersPerSkein: 130 },
-    { id: 'q3', brandId: 'b2', name: 'Arwetta Classic', fiberContent: '80% Merinoull, 20% Polyamid', gramsPerSkein: 50, metersPerSkein: 210 },
-  ] as Quality[],
-  yarnStock: [
-    { id: 'y1', qualityId: 'q1', colorName: 'Natthimmel', colorHex: '#2E3D6E', skeins: 4 },
-    { id: 'y2', qualityId: 'q1', colorName: 'Dusty Rose', colorHex: '#C97B84', skeins: 2 },
-    { id: 'y3', qualityId: 'q2', colorName: 'Elfenben', colorHex: '#F5EDE8', skeins: 6 },
-    { id: 'y4', qualityId: 'q3', colorName: 'Skoggrønn', colorHex: '#5C9E8A', skeins: 3 },
-  ] as YarnStock[],
-  needles: [
-    { id: 'n1', size: '2.5', type: 'rundpinne' as NeedleType, lengthCm: 80, material: 'metall' as NeedleMaterial, quantity: 1 },
-    { id: 'n2', size: '3.5', type: 'rundpinne' as NeedleType, lengthCm: 60, material: 'bambus' as NeedleMaterial, quantity: 2 },
-    { id: 'n3', size: '2.5', type: 'strømpepinner' as NeedleType, lengthCm: 20, material: 'metall' as NeedleMaterial, quantity: 1 },
-  ] as Needle[],
-  projects: [
-    {
-      id: 'p1',
-      name: 'Sjømansgenser',
-      status: 'aktiv' as ProjectStatus,
-      startDate: '2026-01-15',
-      notes: 'Klassisk norsk genser til vinteren',
-      progressPercent: 35,
-      yarnAllocations: [{ yarnStockId: 'y1', skeinsAllocated: 3 }],
-      needleIds: ['n1'],
-    },
-    {
-      id: 'p2',
-      name: 'Babylue',
-      status: 'planlagt' as ProjectStatus,
-      notes: '',
-      progressPercent: 0,
-      yarnAllocations: [{ yarnStockId: 'y2', skeinsAllocated: 1 }],
-      needleIds: ['n3'],
-    },
-  ] as Project[],
-  logEntries: [] as LogEntry[],
-};
 
 export function KnittingProvider({ children }: { children: ReactNode }) {
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -177,28 +133,41 @@ export function KnittingProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     (async () => {
       try {
-        const [b, q, y, n, p, l] = await Promise.all([
-          AsyncStorage.getItem(STORAGE_KEYS.brands),
-          AsyncStorage.getItem(STORAGE_KEYS.qualities),
-          AsyncStorage.getItem(STORAGE_KEYS.yarnStock),
-          AsyncStorage.getItem(STORAGE_KEYS.needles),
-          AsyncStorage.getItem(STORAGE_KEYS.projects),
-          AsyncStorage.getItem(STORAGE_KEYS.logEntries),
-        ]);
-        setBrands(b ? JSON.parse(b) : DEMO_DATA.brands);
-        setQualities(q ? JSON.parse(q) : DEMO_DATA.qualities);
-        setYarnStock(y ? JSON.parse(y) : DEMO_DATA.yarnStock);
-        setNeedles(n ? JSON.parse(n) : DEMO_DATA.needles);
-        const loadedProjects: Project[] = p ? JSON.parse(p) : DEMO_DATA.projects;
-        setProjects(loadedProjects.map(proj => ({ ...proj, progressPercent: proj.progressPercent ?? 0 })));
-        setLogEntries(l ? JSON.parse(l) : DEMO_DATA.logEntries);
+        const RESET_KEY = 'kera_reset_v1';
+        const alreadyReset = await AsyncStorage.getItem(RESET_KEY);
+        if (!alreadyReset) {
+          await AsyncStorage.multiRemove(Object.values(STORAGE_KEYS));
+          await AsyncStorage.setItem(RESET_KEY, '1');
+          setBrands([]);
+          setQualities([]);
+          setYarnStock([]);
+          setNeedles([]);
+          setProjects([]);
+          setLogEntries([]);
+        } else {
+          const [b, q, y, n, p, l] = await Promise.all([
+            AsyncStorage.getItem(STORAGE_KEYS.brands),
+            AsyncStorage.getItem(STORAGE_KEYS.qualities),
+            AsyncStorage.getItem(STORAGE_KEYS.yarnStock),
+            AsyncStorage.getItem(STORAGE_KEYS.needles),
+            AsyncStorage.getItem(STORAGE_KEYS.projects),
+            AsyncStorage.getItem(STORAGE_KEYS.logEntries),
+          ]);
+          setBrands(b ? JSON.parse(b) : []);
+          setQualities(q ? JSON.parse(q) : []);
+          setYarnStock(y ? JSON.parse(y) : []);
+          setNeedles(n ? JSON.parse(n) : []);
+          const loadedProjects: Project[] = p ? JSON.parse(p) : [];
+          setProjects(loadedProjects.map(proj => ({ ...proj, progressPercent: proj.progressPercent ?? 0 })));
+          setLogEntries(l ? JSON.parse(l) : []);
+        }
       } catch (e) {
-        setBrands(DEMO_DATA.brands);
-        setQualities(DEMO_DATA.qualities);
-        setYarnStock(DEMO_DATA.yarnStock);
-        setNeedles(DEMO_DATA.needles);
-        setProjects(DEMO_DATA.projects);
-        setLogEntries(DEMO_DATA.logEntries);
+        setBrands([]);
+        setQualities([]);
+        setYarnStock([]);
+        setNeedles([]);
+        setProjects([]);
+        setLogEntries([]);
       } finally {
         setIsLoading(false);
       }
