@@ -290,9 +290,14 @@ export default function KvalitetScreen() {
         showsVerticalScrollIndicator={false}
         contentInsetAdjustmentBehavior="automatic"
       >
-        <Text style={[styles.fiberLine, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
-          {quality.fiberContent || 'Fiber ikke angitt'}{quality.gramsPerSkein ? ` · ${quality.gramsPerSkein}g / ${quality.metersPerSkein}m per nøste` : ''}
+        <Text style={[styles.fiberLine, { color: colors.textSecondary, fontFamily: 'Inter_400Regular', textAlign: 'center' }]}>
+          {quality.fiberContent || 'Fiber ikke angitt'}
         </Text>
+        {quality.gramsPerSkein ? (
+          <Text style={[styles.fiberLineSub, { color: colors.textTertiary, fontFamily: 'Inter_400Regular', textAlign: 'center' }]}>
+            {quality.gramsPerSkein}g · {quality.metersPerSkein}m per nøste
+          </Text>
+        ) : null}
 
         <View style={styles.miniStatsRow}>
           <View style={[styles.miniStatCard, { backgroundColor: colors.surface }]}>
@@ -309,7 +314,7 @@ export default function KvalitetScreen() {
           </View>
         </View>
 
-        <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
+        <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_600SemiBold', textAlign: 'center' }]}>
           {yarnStock.length} {yarnStock.length === 1 ? 'farge' : 'farger'}
         </Text>
 
@@ -385,7 +390,8 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 2,
   },
-  fiberLine: { fontSize: 13, marginBottom: 12 },
+  fiberLine: { fontSize: 13, marginBottom: 4 },
+  fiberLineSub: { fontSize: 12, marginBottom: 12 },
   miniStatsRow: { flexDirection: 'row', gap: 10, marginBottom: 4 },
   miniStatCard: {
     flex: 1,
