@@ -113,8 +113,8 @@ function SwipeableProjectCard({
     const colorCount = allocatedYarns.length;
     const qualityCount = new Set(allocatedYarns.map(y => y!.qualityId)).size;
     if (colorCount === 0) return null;
-    const kvalitet = qualityCount === 1 ? '1 kvalitet' : `${qualityCount} kvaliteter`;
-    const farge = colorCount === 1 ? '1 farge' : `${colorCount} farger`;
+    const kvalitet = qualityCount === 1 ? t.projects.qualitySingular : t.projects.qualityPlural.replace('%d', String(qualityCount));
+    const farge = colorCount === 1 ? t.projects.colorSingular : t.projects.colorPlural.replace('%d', String(colorCount));
     return `${kvalitet} · ${farge}`;
   }, [project.yarnAllocations, yarnStock]);
 
@@ -172,8 +172,8 @@ function SwipeableProjectCard({
             snapBack();
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
             Alert.alert(project.name, 'Hva vil du gjøre?', [
-              { text: 'Avbryt', style: 'cancel' },
-              { text: 'Slett', style: 'destructive', onPress: onDelete },
+              { text: t.common.cancel, style: 'cancel' },
+              { text: t.common.delete, style: 'destructive', onPress: onDelete },
             ]);
           }}
         >
@@ -193,7 +193,7 @@ function SwipeableProjectCard({
               <View style={styles.cardMeta}>
                 <View style={[styles.statusBadge, { backgroundColor: STATUS_BG[project.status] }]}>
                   <Text style={[styles.statusBadgeText, { color: STATUS_COLORS[project.status], fontFamily: 'Inter_600SemiBold' }]}>
-                    {STATUS_LABELS[project.status]}
+                    {t.status[project.status]}
                   </Text>
                 </View>
                 <Text style={[styles.footerText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
@@ -220,7 +220,8 @@ function SwipeableProjectCard({
 }
 
 function AddProjectModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
-  const colors = Colors.light;
+  const colors = useColors();
+  const t = useT();
   const [name, setName] = useState('');
   const [status, setStatus] = useState<ProjectStatus>('aktiv');
   const { addProject } = useKnitting();
@@ -265,7 +266,7 @@ function AddProjectModal({ visible, onClose }: { visible: boolean; onClose: () =
                   color: status === s ? '#fff' : colors.textSecondary,
                   fontFamily: status === s ? 'Inter_600SemiBold' : 'Inter_400Regular',
                 }]}>
-                  {STATUS_LABELS[s]}
+                  {t.status[s]}
                 </Text>
               </Pressable>
             ))}
@@ -275,10 +276,10 @@ function AddProjectModal({ visible, onClose }: { visible: boolean; onClose: () =
             onPress={handleAdd}
             disabled={!name.trim()}
           >
-            <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Opprett</Text>
+            <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>{t.addProject.create}</Text>
           </Pressable>
           <Pressable style={styles.cancelBtn} onPress={onClose}>
-            <Text style={[styles.cancelBtnText, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>Avbryt</Text>
+            <Text style={[styles.cancelBtnText, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>{t.common.cancel}</Text>
           </Pressable>
         </View>
       </KeyboardAvoidingView>
@@ -287,7 +288,8 @@ function AddProjectModal({ visible, onClose }: { visible: boolean; onClose: () =
 }
 
 export default function ProsjekterScreen() {
-  const colors = Colors.light;
+  const colors = useColors();
+  const t = useT();
   const insets = useSafeAreaInsets();
   const [activeFilter, setActiveFilter] = useState<ProjectStatus | 'alle'>('alle');
   const [showAdd, setShowAdd] = useState(false);
@@ -346,7 +348,7 @@ export default function ProsjekterScreen() {
         contentContainerStyle={styles.filterContent}
       >
         {(['alle', 'planlagt', 'aktiv', 'ferdig'] as (ProjectStatus | 'alle')[]).map(f => {
-          const label = f === 'alle' ? 'Alle' : STATUS_LABELS[f as ProjectStatus];
+          const label = f === 'alle' ? t.common.all : t.status[f as ProjectStatus];
           const color = f === 'alle' ? colors.primaryBtn : STATUS_COLORS[f as ProjectStatus];
           const isActive = activeFilter === f;
           return (
@@ -378,11 +380,11 @@ export default function ProsjekterScreen() {
           <View style={styles.emptyState}>
             <Ionicons name="list-outline" size={40} color={colors.textTertiary} />
             <Text style={[styles.emptyText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-              {search ? 'Ingen treff' : activeFilter === 'alle' ? 'Ingen prosjekter ennå' : `Ingen ${STATUS_LABELS[activeFilter as ProjectStatus].toLowerCase()} prosjekter`}
+              {search ? t.common.noResults : activeFilter === 'alle' ? t.projects.noProjects : t.projects.noStatusProjects.replace('%s', t.status[activeFilter as ProjectStatus].toLowerCase())}
             </Text>
             {activeFilter === 'alle' && !search && (
               <Pressable style={[styles.emptyBtn, { backgroundColor: colors.primaryBtn }]} onPress={() => setShowAdd(true)}>
-                <Text style={[styles.emptyBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Opprett prosjekt</Text>
+                <Text style={[styles.emptyBtnText, { fontFamily: 'Inter_600SemiBold' }]}>{t.projects.createProject}</Text>
               </Pressable>
             )}
           </View>
@@ -392,9 +394,9 @@ export default function ProsjekterScreen() {
               key={p.id}
               project={p}
               onDelete={() => {
-                Alert.alert(p.name, 'Slett dette prosjektet?', [
-                  { text: 'Avbryt', style: 'cancel' },
-                  { text: 'Slett', style: 'destructive', onPress: () => { deleteProject(p.id); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); } },
+                Alert.alert(p.name, t.projects.deleteTitle, [
+                  { text: t.common.cancel, style: 'cancel' },
+                  { text: t.common.delete, style: 'destructive', onPress: () => { deleteProject(p.id); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); } },
                 ]);
               }}
               onStatusToggle={() => {
