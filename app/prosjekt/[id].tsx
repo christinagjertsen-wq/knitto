@@ -846,7 +846,12 @@ export default function ProsjektScreen() {
 
   const StatusButton = ({ s }: { s: ProjectStatus }) => (
     <Pressable
-      onPress={() => { updateProject(id, { status: s }); Haptics.selectionAsync(); }}
+      onPress={() => {
+        const updates: Parameters<typeof updateProject>[1] = { status: s };
+        if (s !== 'ferdig' && project.status === 'ferdig') updates.progressPercent = 0;
+        updateProject(id, updates);
+        Haptics.selectionAsync();
+      }}
       style={[
         styles.statusBtn,
         {
@@ -1221,6 +1226,7 @@ export default function ProsjektScreen() {
               updateProject(id, {
                 status: newStatus,
                 endDate: newStatus === 'ferdig' ? new Date().toLocaleDateString(language === 'no' ? 'nb-NO' : 'en-US') : undefined,
+                ...(newStatus !== 'ferdig' && { progressPercent: 0 }),
               });
               Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             }}
