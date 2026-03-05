@@ -400,11 +400,11 @@ export default function InnstillingerScreen() {
   const skeinsUsed = projects.reduce((s, p) => s + p.yarnAllocations.reduce((a, al) => a + al.skeinsAllocated, 0), 0);
 
   const statRows = [
-    { label: 'Aktive prosjekter', value: String(activeProjects), icon: 'play-circle-outline' as const },
-    { label: 'Ferdige prosjekter', value: String(finishedProjects), icon: 'checkmark-circle-outline' as const },
-    { label: 'Totalt nøster på lager', value: String(totalSkeins), icon: 'cube-outline' as const },
-    { label: 'Nøster brukt fra lager', value: String(skeinsUsed), icon: 'git-merge-outline' as const },
-    { label: 'Pinner registrert', value: String(needles.length), icon: 'construct-outline' as const },
+    { label: t.home.statActiveProjects, value: String(activeProjects), icon: 'play-circle-outline' as const },
+    { label: t.home.statFinishedProjects, value: String(finishedProjects), icon: 'checkmark-circle-outline' as const },
+    { label: t.home.statTotalSkeins, value: String(totalSkeins), icon: 'cube-outline' as const },
+    { label: t.home.statSkeinsUsed, value: String(skeinsUsed), icon: 'git-merge-outline' as const },
+    { label: t.home.statNeedlesRegistered, value: String(needles.length), icon: 'construct-outline' as const },
   ];
 
   return (

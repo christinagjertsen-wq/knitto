@@ -36,10 +36,10 @@ export default function ProfilScreen() {
   const totalSkeins = yarnStock.reduce((s, y) => s + y.skeins, 0);
 
   const statRows = [
-    { label: 'Aktive prosjekter', value: String(activeProjects), icon: 'play-circle-outline' as const },
-    { label: 'Ferdige prosjekter', value: String(finishedProjects), icon: 'checkmark-circle-outline' as const },
-    { label: 'Totalt nøster på lager', value: String(totalSkeins), icon: 'cube-outline' as const },
-    { label: 'Pinner registrert', value: String(needles.length), icon: 'construct-outline' as const },
+    { label: t.home.statActiveProjects, value: String(activeProjects), icon: 'play-circle-outline' as const },
+    { label: t.home.statFinishedProjects, value: String(finishedProjects), icon: 'checkmark-circle-outline' as const },
+    { label: t.home.statTotalSkeins, value: String(totalSkeins), icon: 'cube-outline' as const },
+    { label: t.home.statNeedlesRegistered, value: String(needles.length), icon: 'construct-outline' as const },
   ];
 
   return (
@@ -75,7 +75,7 @@ export default function ProfilScreen() {
           </Pressable>
         </View>
 
-        <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Statistikk</Text>
+        <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.settings.stats}</Text>
         <View style={[styles.statsCard, { backgroundColor: colors.surface }]}>
           {statRows.map((row, i) => (
             <View key={row.label}>
