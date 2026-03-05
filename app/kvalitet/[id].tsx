@@ -16,6 +16,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
+import { useColors } from '@/context/ThemeContext';
 import { useKnitting, YarnStock } from '@/context/KnittingContext';
 import { PremiumModal } from '@/components/PremiumModal';
 
@@ -99,7 +100,7 @@ const PRESET_COLORS = [
 ];
 
 function SkeinCounter({ value, onChange }: { value: number; onChange: (v: number) => void }) {
-  const colors = Colors.light;
+  const colors = useColors();
 
   return (
     <View style={styles.counter}>
@@ -121,7 +122,7 @@ function SkeinCounter({ value, onChange }: { value: number; onChange: (v: number
 }
 
 function YarnCard({ yarn, onDelete, onSkeinChange }: { yarn: YarnStock; onDelete: () => void; onSkeinChange: (v: number) => void }) {
-  const colors = Colors.light;
+  const colors = useColors();
 
   const handleSkeinChange = (v: number) => {
     if (v <= 0) {
@@ -150,7 +151,7 @@ function YarnCard({ yarn, onDelete, onSkeinChange }: { yarn: YarnStock; onDelete
 }
 
 function AddYarnModal({ qualityId, visible, onClose, onPaywall }: { qualityId: string; visible: boolean; onClose: () => void; onPaywall: () => void }) {
-  const colors = Colors.light;
+  const colors = useColors();
   const [colorName, setColorName] = useState('');
   const [selectedHex, setSelectedHex] = useState('#C97B84');
   const [skeins, setSkeins] = useState(1);
@@ -232,7 +233,7 @@ function AddYarnModal({ qualityId, visible, onClose, onPaywall }: { qualityId: s
 
 export default function KvalitetScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const colors = Colors.light;
+  const colors = useColors();
   const insets = useSafeAreaInsets();
   const { getQualityById, getYarnStockForQuality, getBrandById, deleteQuality, deleteYarnStock, updateYarnStock, updateQuality } = useKnitting();
   const [showAdd, setShowAdd] = useState(false);

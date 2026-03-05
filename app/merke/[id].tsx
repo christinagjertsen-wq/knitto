@@ -16,11 +16,12 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
+import { useColors } from '@/context/ThemeContext';
 import { useKnitting, Quality } from '@/context/KnittingContext';
 
 
 function QualityCard({ quality, onPress, onDelete }: { quality: Quality; onPress: () => void; onDelete: () => void }) {
-  const colors = Colors.light;
+  const colors = useColors();
   const { getYarnStockForQuality } = useKnitting();
   const stock = getYarnStockForQuality(quality.id);
   const totalSkeins = stock.reduce((s, y) => s + y.skeins, 0);
@@ -66,7 +67,7 @@ function QualityCard({ quality, onPress, onDelete }: { quality: Quality; onPress
 }
 
 function AddQualityModal({ brandId, visible, onClose }: { brandId: string; visible: boolean; onClose: () => void }) {
-  const colors = Colors.light;
+  const colors = useColors();
   const [name, setName] = useState('');
   const [fiber, setFiber] = useState('');
   const [grams, setGrams] = useState('50');
@@ -158,7 +159,7 @@ function AddQualityModal({ brandId, visible, onClose }: { brandId: string; visib
 
 export default function MerkeScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const colors = Colors.light;
+  const colors = useColors();
   const insets = useSafeAreaInsets();
   const { getBrandById, getQualitiesForBrand, deleteBrand, deleteQuality } = useKnitting();
   const [showAdd, setShowAdd] = useState(false);

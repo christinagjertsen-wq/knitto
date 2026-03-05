@@ -22,7 +22,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
 import { useKnitting, Brand, Needle, NeedleType, NeedleMaterial } from '@/context/KnittingContext';
-import { useColors } from '@/context/ThemeContext';
+import { useColors, useIsDark } from '@/context/ThemeContext';
 
 type Tab = 'garn' | 'pinner';
 
@@ -157,7 +157,7 @@ function NeedleCard({ needle, onDelete, onQuantityChange }: { needle: Needle; on
             </Text>
           </View>
           <Pressable
-            style={[styles.quantityBadge, { backgroundColor: Colors.palette.surfaceSecondary }]}
+            style={[styles.quantityBadge, { backgroundColor: colors.surface }]}
             onPress={() => { setQInput(String(needle.quantity)); setEditing(true); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
           >
             {editing ? (
@@ -354,6 +354,7 @@ function AddNeedleModal({ visible, onClose }: { visible: boolean; onClose: () =>
 
 export default function LagerScreen() {
   const colors = useColors();
+  const isDark = useIsDark();
   const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState<Tab>('garn');
   const [search, setSearch] = useState('');
@@ -382,10 +383,10 @@ export default function LagerScreen() {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <LinearGradient
-        colors={[Colors.palette.nordicBlue, Colors.palette.nordicIce]}
+        colors={isDark ? ['#1A2340', '#0D1220'] : [Colors.palette.nordicBlue, Colors.palette.nordicIce]}
         style={[styles.topBar, { paddingTop: topInset + 24 }]}
       >
-        <Text style={[styles.screenTitle, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>Lager</Text>
+        <Text style={[styles.screenTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Lager</Text>
       </LinearGradient>
 
       <View style={styles.segmentContainer}>

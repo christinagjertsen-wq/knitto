@@ -19,11 +19,12 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
+import { useColors } from '@/context/ThemeContext';
 import { useKnitting, ProjectStatus, YarnStock } from '@/context/KnittingContext';
 import { PremiumModal } from '@/components/PremiumModal';
 
 function ProgressRingLarge({ percent, size, strokeWidth, color }: { percent: number; size: number; strokeWidth: number; color: string }) {
-  const colors = Colors.light;
+  const colors = useColors();
   const r = (size - strokeWidth) / 2;
   const circ = 2 * Math.PI * r;
   const offset = circ - (Math.min(Math.max(percent, 0), 100) / 100) * circ;
@@ -133,7 +134,7 @@ const STATUS_COLORS: Record<ProjectStatus, string> = {
 };
 
 function Counter({ value, onChange, max }: { value: number; onChange: (v: number) => void; max?: number }) {
-  const colors = Colors.light;
+  const colors = useColors();
   return (
     <View style={styles.counter}>
       <Pressable
@@ -166,7 +167,7 @@ function AddYarnModal({
   onAddNew: (qualityId: string, colorName: string, colorHex: string, skeinsTotal: number, skeinsForProject: number) => void;
   excludeIds: string[];
 }) {
-  const colors = Colors.light;
+  const colors = useColors();
   const { yarnStock, qualities, brands, getQualityById, getQualitiesForBrand, updateQuality, addBrand, addQuality } = useKnitting();
 
   const [mode, setMode] = useState<'lager' | 'nytt'>('lager');
@@ -565,7 +566,7 @@ function AddNeedleModal({
   onAdd: (needle: { size: string; type: import('@/context/KnittingContext').NeedleType; lengthCm: number; material: import('@/context/KnittingContext').NeedleMaterial; quantity: number }) => void;
   defaultSize?: string;
 }) {
-  const colors = Colors.light;
+  const colors = useColors();
   const [size, setSize] = useState(defaultSize ?? '');
   const [type, setType] = useState<'rundpinne' | 'strømpepinner' | 'rett' | 'utskiftbar'>('rundpinne');
   const [lengthCm, setLengthCm] = useState('');
@@ -683,7 +684,7 @@ function EditDetailsModal({
   onSave: (data: { recipient: string; size: string; gauge: string; patternNeedleSize: string; startDate: string; endDate: string; notes: string }) => void;
   status: ProjectStatus;
 }) {
-  const colors = Colors.light;
+  const colors = useColors();
   const [recipient, setRecipient] = useState(initial.recipient ?? '');
   const [size, setSize] = useState(initial.size ?? '');
   const [gauge, setGauge] = useState(initial.gauge ?? '');
@@ -764,7 +765,7 @@ function EditDetailsModal({
 
 export default function ProsjektScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const colors = Colors.light;
+  const colors = useColors();
   const insets = useSafeAreaInsets();
   const topInset = Platform.OS === 'web' ? 67 : insets.top;
   const [showAddYarn, setShowAddYarn] = useState(false);
@@ -1183,7 +1184,7 @@ export default function ProsjektScreen() {
                 }}
               >
                 <View style={styles.logRowTop}>
-                  <Text style={[styles.logDate, { color: Colors.palette.navy, fontFamily: 'Inter_600SemiBold' }]}>{entry.date}</Text>
+                  <Text style={[styles.logDate, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>{entry.date}</Text>
                   {entry.radStrikket ? (
                     <View style={[styles.logBadge, { backgroundColor: STATUS_COLORS[project.status] + '22' }]}>
                       <Text style={[styles.logBadgeText, { color: STATUS_COLORS[project.status], fontFamily: 'Inter_600SemiBold' }]}>
@@ -1309,7 +1310,7 @@ function AddLogModal({ visible, onClose, onSave }: {
   onClose: () => void;
   onSave: (date: string, notes: string, mengde?: number, enhet?: 'cm' | 'omg') => void;
 }) {
-  const colors = Colors.light;
+  const colors = useColors();
   const today = new Date().toLocaleDateString('nb-NO', { day: '2-digit', month: '2-digit', year: 'numeric' });
   const [date, setDate] = useState(today);
   const [notes, setNotes] = useState('');

@@ -289,6 +289,7 @@ function AddProjectModal({ visible, onClose }: { visible: boolean; onClose: () =
 
 export default function ProsjekterScreen() {
   const colors = useColors();
+  const isDark = useIsDark();
   const t = useT();
   const insets = useSafeAreaInsets();
   const [activeFilter, setActiveFilter] = useState<ProjectStatus | 'alle'>('alle');
@@ -318,10 +319,10 @@ export default function ProsjekterScreen() {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <LinearGradient
-        colors={[Colors.palette.nordicBlue, Colors.palette.nordicIce]}
+        colors={isDark ? ['#1A2340', '#0D1220'] : [Colors.palette.nordicBlue, Colors.palette.nordicIce]}
         style={[styles.topBar, { paddingTop: topInset + 24 }]}
       >
-        <Text style={[styles.screenTitle, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>Prosjekter</Text>
+        <Text style={[styles.screenTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Prosjekter</Text>
       </LinearGradient>
 
       <View style={[styles.searchBar, { backgroundColor: colors.surface }]}>

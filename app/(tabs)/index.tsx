@@ -377,6 +377,7 @@ function AddProjectModal({ visible, onClose }: { visible: boolean; onClose: () =
 
 export default function HomeScreen() {
   const colors = useColors();
+  const isDark = useIsDark();
   const t = useT();
   const insets = useSafeAreaInsets();
   const { yarnStock, needles, projects, getTotalStats } = useKnitting();
@@ -419,58 +420,58 @@ export default function HomeScreen() {
         scrollEventThrottle={16}
       >
         <LinearGradient
-          colors={[Colors.palette.nordicBlue, Colors.palette.nordicIce]}
+          colors={isDark ? ['#1A2340', '#0D1220'] : [Colors.palette.nordicBlue, Colors.palette.nordicIce]}
           style={[styles.header, { paddingTop: topInset + 16 }]}
         >
           <View style={styles.headerBadgeRow}>
             <Pressable
-              style={[styles.basicBadge, { backgroundColor: 'rgba(26,35,64,0.08)' }]}
+              style={[styles.basicBadge, { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(26,35,64,0.08)' }]}
               onPress={() => setShowPremium(true)}
               hitSlop={8}
             >
-              <Ionicons name="leaf-outline" size={12} color={Colors.palette.navy} />
-              <Text style={[styles.basicBadgeText, { color: Colors.palette.navy, fontFamily: 'Inter_600SemiBold' }]}>Basic</Text>
+              <Ionicons name="leaf-outline" size={12} color={colors.text} />
+              <Text style={[styles.basicBadgeText, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>Basic</Text>
             </Pressable>
           </View>
 
           <View style={styles.headerTopRow}>
             <Text
-              style={[styles.greetingLarge, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}
+              style={[styles.greetingLarge, { color: colors.text, fontFamily: 'Inter_700Bold' }]}
               numberOfLines={1}
               adjustsFontSizeToFit
               minimumFontScale={0.65}
             >
               {greeting}
             </Text>
-            <Text style={[styles.greetingTagline, { color: Colors.palette.textTertiary, fontFamily: 'Inter_400Regular' }]}>
+            <Text style={[styles.greetingTagline, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
               På tide å strikke litt? Eller legge til garn?
             </Text>
           </View>
 
-          <View style={[styles.headerStats, { backgroundColor: 'rgba(26,35,64,0.05)' }]}>
+          <View style={[styles.headerStats, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(26,35,64,0.05)' }]}>
             <View style={styles.headerStat}>
-              <Text style={[styles.headerStatNumber, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>
+              <Text style={[styles.headerStatNumber, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>
                 {projects.length}
               </Text>
-              <Text style={[styles.headerStatLabel, { color: Colors.palette.textTertiary, fontFamily: 'Inter_400Regular' }]}>
+              <Text style={[styles.headerStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
                 prosjekter
               </Text>
             </View>
-            <View style={[styles.headerStatDivider, { backgroundColor: 'rgba(26,35,64,0.1)' }]} />
+            <View style={[styles.headerStatDivider, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(26,35,64,0.1)' }]} />
             <View style={styles.headerStat}>
-              <Text style={[styles.headerStatNumber, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>
+              <Text style={[styles.headerStatNumber, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>
                 {stats.totalSkeins}
               </Text>
-              <Text style={[styles.headerStatLabel, { color: Colors.palette.textTertiary, fontFamily: 'Inter_400Regular' }]}>
+              <Text style={[styles.headerStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
                 nøster
               </Text>
             </View>
-            <View style={[styles.headerStatDivider, { backgroundColor: 'rgba(26,35,64,0.1)' }]} />
+            <View style={[styles.headerStatDivider, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(26,35,64,0.1)' }]} />
             <View style={styles.headerStat}>
-              <Text style={[styles.headerStatNumber, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>
+              <Text style={[styles.headerStatNumber, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>
                 {needles.length}
               </Text>
-              <Text style={[styles.headerStatLabel, { color: Colors.palette.textTertiary, fontFamily: 'Inter_400Regular' }]}>
+              <Text style={[styles.headerStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
                 pinner
               </Text>
             </View>

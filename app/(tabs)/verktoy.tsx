@@ -16,7 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
 import { useKnitting } from '@/context/KnittingContext';
-import { useColors } from '@/context/ThemeContext';
+import { useColors, useIsDark } from '@/context/ThemeContext';
 
 const NEEDLE_SIZES = [
   { metric: '2.0', us: '0', uk: '14' },
@@ -256,6 +256,7 @@ function YarnStats() {
 
 export default function VerktoyScreen() {
   const colors = useColors();
+  const isDark = useIsDark();
   const insets = useSafeAreaInsets();
   const topInset = Platform.OS === 'web' ? 67 : insets.top;
   const [activeSection, setActiveSection] = useState<'tellere' | 'kalkulator' | 'statistikk' | 'naaler'>('tellere');
@@ -286,10 +287,10 @@ export default function VerktoyScreen() {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <LinearGradient
-        colors={[Colors.palette.nordicBlue, Colors.palette.nordicIce]}
+        colors={isDark ? ['#1A2340', '#0D1220'] : [Colors.palette.nordicBlue, Colors.palette.nordicIce]}
         style={[styles.header, { paddingTop: topInset + 16 }]}
       >
-        <Text style={[styles.title, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>Verktøy</Text>
+        <Text style={[styles.title, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Verktøy</Text>
       </LinearGradient>
 
       <ScrollView

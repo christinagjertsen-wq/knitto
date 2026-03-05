@@ -20,7 +20,7 @@ import Colors from '@/constants/colors';
 import { useKnitting } from '@/context/KnittingContext';
 import { useUser } from '@/context/UserContext';
 import { PremiumModal, getPremiumFeatures } from '@/components/PremiumModal';
-import { useColors } from '@/context/ThemeContext';
+import { useColors, useIsDark } from '@/context/ThemeContext';
 import { useTheme } from '@/context/ThemeContext';
 import { useLanguage, useT } from '@/context/LanguageContext';
 import type { ThemePreference } from '@/context/ThemeContext';
@@ -355,6 +355,7 @@ export default function InnstillingerScreen() {
   const insets = useSafeAreaInsets();
   const topInset = Platform.OS === 'web' ? 67 : insets.top;
   const colors = useColors();
+  const isDark = useIsDark();
   const t = useT();
   const { language, setLanguage } = useLanguage();
   const { themePreference, setThemePreference } = useTheme();
@@ -415,10 +416,10 @@ export default function InnstillingerScreen() {
         scrollEventThrottle={16}
       >
         <LinearGradient
-          colors={[Colors.palette.nordicBlue, Colors.palette.nordicIce]}
+          colors={isDark ? ['#1A2340', '#0D1220'] : [Colors.palette.nordicBlue, Colors.palette.nordicIce]}
           style={[styles.header, { paddingTop: topInset + 24, marginHorizontal: -20, marginTop: -20 }]}
         >
-          <Text style={[styles.title, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>Innstillinger</Text>
+          <Text style={[styles.title, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Innstillinger</Text>
         </LinearGradient>
         <View style={[styles.profileCard, { backgroundColor: colors.primaryBtn }]}>
           <View style={styles.avatarCircle}>
