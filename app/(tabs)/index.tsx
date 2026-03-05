@@ -355,7 +355,7 @@ function AddProjectModal({ visible, onClose }: { visible: boolean; onClose: () =
                   fontFamily: status === s ? 'Inter_600SemiBold' : 'Inter_400Regular',
                   color: status === s ? '#fff' : colors.textSecondary,
                 }}>
-                  {ADD_STATUS_LABELS[s]}
+                  {t.status[s]}
                 </Text>
               </Pressable>
             ))}
