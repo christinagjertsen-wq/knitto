@@ -16,10 +16,12 @@ import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
 import { useKnitting } from '@/context/KnittingContext';
 import { useUser, getGreeting } from '@/context/UserContext';
-
-const colors = Colors.light;
+import { useColors } from '@/context/ThemeContext';
+import { useT } from '@/context/LanguageContext';
 
 export default function ProfilScreen() {
+  const colors = useColors();
+  const t = useT();
   const insets = useSafeAreaInsets();
   const topInset = Platform.OS === 'web' ? 67 : insets.top;
   const { firstName, setFirstName } = useUser();
@@ -27,7 +29,7 @@ export default function ProfilScreen() {
   const [showEditName, setShowEditName] = useState(false);
   const [nameInput, setNameInput] = useState('');
 
-  const greeting = getGreeting(firstName);
+  const greeting = getGreeting(firstName, t);
 
   const activeProjects = projects.filter(p => p.status === 'aktiv').length;
   const finishedProjects = projects.filter(p => p.status === 'ferdig').length;

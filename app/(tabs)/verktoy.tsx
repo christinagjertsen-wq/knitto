@@ -16,8 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
 import { useKnitting } from '@/context/KnittingContext';
-
-const colors = Colors.light;
+import { useColors } from '@/context/ThemeContext';
 
 const NEEDLE_SIZES = [
   { metric: '2.0', us: '0', uk: '14' },
@@ -43,6 +42,7 @@ const NEEDLE_SIZES = [
 ];
 
 function Counter({ label, color }: { label: string; color: string }) {
+  const colors = useColors();
   const [count, setCount] = useState(0);
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
@@ -84,6 +84,7 @@ function Counter({ label, color }: { label: string; color: string }) {
 }
 
 function YarnCalculator() {
+  const colors = useColors();
   const [metersPerSkein, setMetersPerSkein] = useState('');
   const [skeins, setSkeins] = useState('');
   const [stitchGauge, setStitchGauge] = useState('');
@@ -173,6 +174,7 @@ function YarnCalculator() {
 }
 
 function YarnStats() {
+  const colors = useColors();
   const { projects, yarnStock, qualities, brands, getQualityById } = useKnitting();
 
   const usedYarn = useMemo(() => {
@@ -253,6 +255,7 @@ function YarnStats() {
 }
 
 export default function VerktoyScreen() {
+  const colors = useColors();
   const insets = useSafeAreaInsets();
   const topInset = Platform.OS === 'web' ? 67 : insets.top;
   const [activeSection, setActiveSection] = useState<'tellere' | 'kalkulator' | 'statistikk' | 'naaler'>('tellere');

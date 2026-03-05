@@ -19,9 +19,12 @@ import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
 import { useKnitting } from '@/context/KnittingContext';
 import { useUser } from '@/context/UserContext';
-import { PremiumModal, PREMIUM_FEATURES } from '@/components/PremiumModal';
-
-const colors = Colors.light;
+import { PremiumModal, getPremiumFeatures } from '@/components/PremiumModal';
+import { useColors } from '@/context/ThemeContext';
+import { useTheme } from '@/context/ThemeContext';
+import { useLanguage, useT } from '@/context/LanguageContext';
+import type { ThemePreference } from '@/context/ThemeContext';
+import type { Language } from '@/i18n/translations';
 
 const NEEDLE_SIZES = [
   { metric: '2.0', us: '0', uk: '14' },
@@ -47,6 +50,7 @@ const NEEDLE_SIZES = [
 ];
 
 function Counter({ label, color }: { label: string; color: string }) {
+  const colors = useColors();
   const [count, setCount] = useState(0);
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
@@ -88,6 +92,7 @@ function Counter({ label, color }: { label: string; color: string }) {
 }
 
 function YarnCalculator() {
+  const colors = useColors();
   const [metersPerSkein, setMetersPerSkein] = useState('');
   const [skeins, setSkeins] = useState('');
   const [stitchGauge, setStitchGauge] = useState('');
@@ -177,7 +182,7 @@ function YarnCalculator() {
 }
 
 function OkeFelleKalkulator() {
-  const colors = Colors.light;
+  const colors = useColors();
   const [nåværende, setNåværende] = useState('');
   const [ønsket, setØnsket] = useState('');
 
@@ -256,6 +261,7 @@ function OkeFelleKalkulator() {
 }
 
 function YarnStats() {
+  const colors = useColors();
   const { projects, yarnStock, qualities, brands, getQualityById } = useKnitting();
 
   const usedYarn = useMemo(() => {
@@ -348,6 +354,10 @@ type ToolSection = typeof TOOL_SECTIONS[number]['key'];
 export default function InnstillingerScreen() {
   const insets = useSafeAreaInsets();
   const topInset = Platform.OS === 'web' ? 67 : insets.top;
+  const colors = useColors();
+  const t = useT();
+  const { language, setLanguage } = useLanguage();
+  const { themePreference, setThemePreference } = useTheme();
   const { firstName, setFirstName } = useUser();
   const { projects, yarnStock, needles } = useKnitting();
   const [showEditName, setShowEditName] = useState(false);
@@ -367,8 +377,8 @@ export default function InnstillingerScreen() {
   }, [activeSection]);
 
   useFocusEffect(useCallback(() => {
-    const t = setTimeout(() => scrollToActive(false), 80);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => scrollToActive(false), 80);
+    return () => clearTimeout(timer);
   }, [scrollToActive]));
 
   const QUOTES = [
@@ -433,7 +443,7 @@ export default function InnstillingerScreen() {
           </Pressable>
         </View>
 
-        <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Verktøy</Text>
+        <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.settings.tools}</Text>
 
         <ScrollView
           ref={tabScrollRef}
@@ -490,7 +500,7 @@ export default function InnstillingerScreen() {
           </View>
         )}
 
-        <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Statistikk</Text>
+        <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.settings.stats}</Text>
         <View style={[styles.card, { backgroundColor: colors.surface }]}>
           {statRows.map((row, i) => (
             <View key={row.label}>
@@ -504,20 +514,20 @@ export default function InnstillingerScreen() {
           ))}
         </View>
 
-        <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Premium</Text>
+        <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.premium.sectionTitle}</Text>
         <View style={[styles.premiumCard, { backgroundColor: '#1A2340' }]}>
           <View style={styles.premiumTop}>
             <View style={styles.premiumIconCircle}>
               <Ionicons name="diamond-outline" size={20} color="#fff" />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={[styles.premiumTitle, { fontFamily: 'Inter_700Bold' }]}>Prøv Knitty Premium gratis</Text>
-              <Text style={[styles.premiumSub, { fontFamily: 'Inter_400Regular' }]}>14 dager uten kostnad, ingen binding</Text>
+              <Text style={[styles.premiumTitle, { fontFamily: 'Inter_700Bold' }]}>{t.premium.cardTitle}</Text>
+              <Text style={[styles.premiumSub, { fontFamily: 'Inter_400Regular' }]}>{t.premium.cardSub}</Text>
             </View>
           </View>
           <View style={[styles.premiumDivider]} />
           <View style={styles.premiumFeatures}>
-            {PREMIUM_FEATURES.map(f => (
+            {getPremiumFeatures(t).map(f => (
               <View key={f.label} style={styles.premiumFeatureRow}>
                 <View style={styles.premiumFeatureIcon}>
                   <Ionicons name={f.icon} size={15} color="rgba(255,255,255,0.9)" />
@@ -531,15 +541,67 @@ export default function InnstillingerScreen() {
             onPress={() => setShowPremium(true)}
           >
             <Text style={[styles.premiumBtnText, { color: '#1A2340', fontFamily: 'Inter_700Bold' }]}>
-              Start gratis prøveperiode
+              {t.premium.ctaButton}
             </Text>
-            <Text style={[styles.premiumBtnSub, { fontFamily: 'Inter_400Regular' }]}>Deretter 69 kr / mnd</Text>
+            <Text style={[styles.premiumBtnSub, { fontFamily: 'Inter_400Regular' }]}>{t.premium.price}</Text>
           </Pressable>
         </View>
 
-        <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Om appen</Text>
+        <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.settings.language}</Text>
         <View style={[styles.card, { backgroundColor: colors.surface }]}>
-          {[{ label: 'App', value: 'Knitty' }, { label: 'Versjon', value: '1.0.0' }].map((row, i, arr) => (
+          <View style={[styles.row, { paddingVertical: 12, gap: 0 }]}>
+            {([['no', t.settings.languageNorwegian], ['en', t.settings.languageEnglish]] as [Language, string][]).map(([code, label], i, arr) => (
+              <Pressable
+                key={code}
+                onPress={() => { setLanguage(code); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
+                style={[
+                  styles.segPill,
+                  language === code && { backgroundColor: colors.primaryBtn },
+                  i === 0 && styles.segPillFirst,
+                  i === arr.length - 1 && styles.segPillLast,
+                  { borderColor: colors.border },
+                ]}
+              >
+                <Text style={[styles.segPillText, {
+                  color: language === code ? '#fff' : colors.textSecondary,
+                  fontFamily: language === code ? 'Inter_600SemiBold' : 'Inter_400Regular',
+                }]}>
+                  {label}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+        </View>
+
+        <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.settings.theme}</Text>
+        <View style={[styles.card, { backgroundColor: colors.surface }]}>
+          <View style={[styles.row, { paddingVertical: 12, gap: 0 }]}>
+            {([['light', t.settings.themeLight], ['dark', t.settings.themeDark], ['system', t.settings.themeSystem]] as [ThemePreference, string][]).map(([pref, label], i, arr) => (
+              <Pressable
+                key={pref}
+                onPress={() => { setThemePreference(pref); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
+                style={[
+                  styles.segPill,
+                  themePreference === pref && { backgroundColor: colors.primaryBtn },
+                  i === 0 && styles.segPillFirst,
+                  i === arr.length - 1 && styles.segPillLast,
+                  { borderColor: colors.border },
+                ]}
+              >
+                <Text style={[styles.segPillText, {
+                  color: themePreference === pref ? '#fff' : colors.textSecondary,
+                  fontFamily: themePreference === pref ? 'Inter_600SemiBold' : 'Inter_400Regular',
+                }]}>
+                  {label}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+        </View>
+
+        <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.settings.about}</Text>
+        <View style={[styles.card, { backgroundColor: colors.surface }]}>
+          {[{ label: t.settings.aboutApp, value: 'Knitty' }, { label: t.settings.aboutVersion, value: '1.0.0' }].map((row, i, arr) => (
             <View key={row.label}>
               <View style={styles.row}>
                 <Text style={[styles.rowLabel, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>{row.label}</Text>
@@ -555,7 +617,7 @@ export default function InnstillingerScreen() {
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalOverlay}>
           <View style={[styles.modalSheet, { backgroundColor: colors.surface }]}>
             <View style={styles.modalHandle} />
-            <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Ditt navn</Text>
+            <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.settings.yourName}</Text>
             <TextInput
               style={[styles.nameInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border, fontFamily: 'Inter_400Regular' }]}
               value={nameInput}
@@ -569,10 +631,10 @@ export default function InnstillingerScreen() {
               disabled={!nameInput.trim()}
               onPress={() => { setFirstName(nameInput.trim()); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); setShowEditName(false); }}
             >
-              <Text style={[styles.saveBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Lagre</Text>
+              <Text style={[styles.saveBtnText, { fontFamily: 'Inter_600SemiBold' }]}>{t.common.save}</Text>
             </Pressable>
             <Pressable onPress={() => setShowEditName(false)} style={styles.cancelBtn}>
-              <Text style={{ color: colors.textSecondary, fontFamily: 'Inter_400Regular' }}>Avbryt</Text>
+              <Text style={{ color: colors.textSecondary, fontFamily: 'Inter_400Regular' }}>{t.common.cancel}</Text>
             </Pressable>
           </View>
         </KeyboardAvoidingView>
@@ -670,4 +732,13 @@ const styles = StyleSheet.create({
   saveBtn: { borderRadius: 14, padding: 16, alignItems: 'center', marginTop: 4 },
   saveBtnText: { color: '#fff', fontSize: 16 },
   cancelBtn: { alignItems: 'center', paddingVertical: 8 },
+  segPill: {
+    flex: 1,
+    paddingVertical: 10,
+    alignItems: 'center',
+    borderWidth: 1,
+  },
+  segPillFirst: { borderRadius: 0, borderTopLeftRadius: 12, borderBottomLeftRadius: 12 },
+  segPillLast: { borderRadius: 0, borderTopRightRadius: 12, borderBottomRightRadius: 12 },
+  segPillText: { fontSize: 14 },
 });

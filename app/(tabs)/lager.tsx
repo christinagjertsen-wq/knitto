@@ -22,6 +22,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
 import { useKnitting, Brand, Needle, NeedleType, NeedleMaterial } from '@/context/KnittingContext';
+import { useColors } from '@/context/ThemeContext';
 
 type Tab = 'garn' | 'pinner';
 
@@ -40,7 +41,7 @@ const NEEDLE_MATERIAL_LABELS: Record<NeedleMaterial, string> = {
 };
 
 function BrandCard({ brand }: { brand: Brand }) {
-  const colors = Colors.light;
+  const colors = useColors();
   const { getQualitiesForBrand, getYarnStockForQuality } = useKnitting();
   const qualities = getQualitiesForBrand(brand.id);
   const allYarn = qualities.flatMap(q => getYarnStockForQuality(q.id));
@@ -86,7 +87,7 @@ function BrandCard({ brand }: { brand: Brand }) {
 const SWIPE_THRESHOLD = 80;
 
 function NeedleCard({ needle, onDelete, onQuantityChange }: { needle: Needle; onDelete: () => void; onQuantityChange: (q: number) => void }) {
-  const colors = Colors.light;
+  const colors = useColors();
   const translateX = useRef(new Animated.Value(0)).current;
   const swiping = useRef(false);
   const [editing, setEditing] = useState(false);
@@ -184,7 +185,7 @@ function NeedleCard({ needle, onDelete, onQuantityChange }: { needle: Needle; on
 }
 
 function AddBrandModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
-  const colors = Colors.light;
+  const colors = useColors();
   const [name, setName] = useState('');
   const { addBrand } = useKnitting();
 
@@ -233,7 +234,7 @@ function AddBrandModal({ visible, onClose }: { visible: boolean; onClose: () => 
 }
 
 function AddNeedleModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
-  const colors = Colors.light;
+  const colors = useColors();
   const [size, setSize] = useState('');
   const [type, setType] = useState<NeedleType>('rundpinne');
   const [length, setLength] = useState('');
@@ -352,7 +353,7 @@ function AddNeedleModal({ visible, onClose }: { visible: boolean; onClose: () =>
 }
 
 export default function LagerScreen() {
-  const colors = Colors.light;
+  const colors = useColors();
   const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState<Tab>('garn');
   const [search, setSearch] = useState('');
