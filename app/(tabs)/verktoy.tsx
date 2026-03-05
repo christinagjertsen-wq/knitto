@@ -277,7 +277,7 @@ export default function VerktoyScreen() {
     { key: 'tellere', label: 'Tellere', icon: 'add-circle-outline' as const },
     { key: 'kalkulator', label: 'Kalkulator', icon: 'calculator-outline' as const },
     { key: 'statistikk', label: 'Garn brukt', icon: 'stats-chart-outline' as const },
-    { key: 'naaler', label: 'Nåler', icon: 'list-outline' as const },
+    { key: 'naaler', label: 'Pinner', icon: 'list-outline' as const },
   ] as const;
 
   return (
