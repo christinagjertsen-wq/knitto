@@ -922,6 +922,18 @@ export default function ProsjektScreen() {
               >
                 <Ionicons name="camera" size={16} color="#fff" />
               </Pressable>
+              <Pressable
+                style={[styles.coverImageDeleteBtn, { backgroundColor: 'rgba(0,0,0,0.45)' }]}
+                onPress={() => {
+                  Alert.alert('Slett bilde', 'Vil du fjerne dette bildet?', [
+                    { text: 'Avbryt', style: 'cancel' },
+                    { text: 'Slett', style: 'destructive', onPress: () => updateProject(id, { coverImage: undefined }) },
+                  ]);
+                }}
+                hitSlop={8}
+              >
+                <Ionicons name="trash-outline" size={15} color="#fff" />
+              </Pressable>
             </>
           ) : (
             <View style={[styles.coverImagePlaceholder, { backgroundColor: colors.background }]}>
@@ -931,9 +943,6 @@ export default function ProsjektScreen() {
               <Text style={[styles.coverImageHint, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
                 Legg til bilde
               </Text>
-              <View style={[styles.coverImageFab, { backgroundColor: colors.primaryBtn }]}>
-                <Ionicons name="add" size={20} color="#fff" />
-              </View>
             </View>
           )}
         </Pressable>
@@ -1436,6 +1445,16 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.18,
     shadowRadius: 4,
     elevation: 4,
+  },
+  coverImageDeleteBtn: {
+    position: 'absolute',
+    bottom: 12,
+    left: 12,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   card: {
     borderRadius: 18,
