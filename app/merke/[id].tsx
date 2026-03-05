@@ -17,11 +17,13 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
 import { useColors } from '@/context/ThemeContext';
+import { useT } from '@/context/LanguageContext';
 import { useKnitting, Quality } from '@/context/KnittingContext';
 
 
 function QualityCard({ quality, onPress, onDelete }: { quality: Quality; onPress: () => void; onDelete: () => void }) {
   const colors = useColors();
+  const t = useT();
   const { getYarnStockForQuality } = useKnitting();
   const stock = getYarnStockForQuality(quality.id);
   const totalSkeins = stock.reduce((s, y) => s + y.skeins, 0);
@@ -32,9 +34,9 @@ function QualityCard({ quality, onPress, onDelete }: { quality: Quality; onPress
       onPress={onPress}
       onLongPress={() => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-        Alert.alert(quality.name, 'Hva vil du gjøre?', [
-          { text: 'Avbryt', style: 'cancel' },
-          { text: 'Slett', style: 'destructive', onPress: onDelete },
+        Alert.alert(quality.name, t.alerts.whatToDo, [
+          { text: t.common.cancel, style: 'cancel' },
+          { text: t.common.delete, style: 'destructive', onPress: onDelete },
         ]);
       }}
     >
@@ -47,7 +49,7 @@ function QualityCard({ quality, onPress, onDelete }: { quality: Quality; onPress
             {quality.fiberContent}
           </Text>
           <Text style={[styles.qualityMeta, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
-            {quality.gramsPerSkein}g / {quality.metersPerSkein}m per nøste
+            {quality.gramsPerSkein}g / {quality.metersPerSkein}m per {t.quality.skein}
           </Text>
         </View>
       </View>
@@ -58,7 +60,7 @@ function QualityCard({ quality, onPress, onDelete }: { quality: Quality; onPress
           ))}
         </View>
         <Text style={[styles.skeinCount, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-          {totalSkeins} nøster
+          {totalSkeins} {t.quality.skeins}
         </Text>
         <Ionicons name="chevron-forward" size={16} color={colors.textTertiary} />
       </View>
@@ -68,6 +70,7 @@ function QualityCard({ quality, onPress, onDelete }: { quality: Quality; onPress
 
 function AddQualityModal({ brandId, visible, onClose }: { brandId: string; visible: boolean; onClose: () => void }) {
   const colors = useColors();
+  const t = useT();
   const [name, setName] = useState('');
   const [fiber, setFiber] = useState('');
   const [grams, setGrams] = useState('50');

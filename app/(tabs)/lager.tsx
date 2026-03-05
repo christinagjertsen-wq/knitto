@@ -23,25 +23,13 @@ import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
 import { useKnitting, Brand, Needle, NeedleType, NeedleMaterial } from '@/context/KnittingContext';
 import { useColors, useIsDark } from '@/context/ThemeContext';
+import { useT } from '@/context/LanguageContext';
 
 type Tab = 'garn' | 'pinner';
 
-const NEEDLE_TYPE_LABELS: Record<NeedleType, string> = {
-  rundpinne: 'Rundpinne',
-  strømpepinner: 'Strømpepinner',
-  utskiftbar: 'Utskiftbar',
-  rett: 'Rett',
-};
-
-const NEEDLE_MATERIAL_LABELS: Record<NeedleMaterial, string> = {
-  bambus: 'Bambus',
-  metall: 'Metall',
-  plast: 'Plast',
-  tre: 'Tre',
-};
-
 function BrandCard({ brand }: { brand: Brand }) {
   const colors = useColors();
+  const t = useT();
   const { getQualitiesForBrand, getYarnStockForQuality } = useKnitting();
   const qualities = getQualitiesForBrand(brand.id);
   const allYarn = qualities.flatMap(q => getYarnStockForQuality(q.id));
@@ -67,8 +55,8 @@ function BrandCard({ brand }: { brand: Brand }) {
             {brand.name}
           </Text>
           <Text style={[styles.brandMeta, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-            {qualities.length} {qualities.length === 1 ? 'kvalitet' : 'kvaliteter'}
-            {totalSkeins > 0 ? ` · ${totalSkeins} nøster` : ''}
+            {qualities.length} {qualities.length === 1 ? t.brand.qualitySingular : t.brand.qualityPlural}
+            {totalSkeins > 0 ? ` · ${totalSkeins} ${t.quality.skeins}` : ''}
           </Text>
           {sampleColors.length > 0 && (
             <View style={styles.colorStrip}>
@@ -88,6 +76,7 @@ const SWIPE_THRESHOLD = 80;
 
 function NeedleCard({ needle, onDelete, onQuantityChange }: { needle: Needle; onDelete: () => void; onQuantityChange: (q: number) => void }) {
   const colors = useColors();
+  const t = useT();
   const translateX = useRef(new Animated.Value(0)).current;
   const swiping = useRef(false);
   const [editing, setEditing] = useState(false);
@@ -123,9 +112,9 @@ function NeedleCard({ needle, onDelete, onQuantityChange }: { needle: Needle; on
     const v = parseInt(qInput, 10);
     if (!isNaN(v) && v >= 0) {
       if (v === 0) {
-        Alert.alert('Slett pinne', 'Sett antall til 0 sletter pinnen. Fortsette?', [
-          { text: 'Avbryt', style: 'cancel', onPress: () => { setQInput(String(needle.quantity)); setEditing(false); } },
-          { text: 'Slett', style: 'destructive', onPress: () => { setEditing(false); onDelete(); } },
+        Alert.alert(t.alerts.deleteNeedle, 'Sett antall til 0 sletter pinnen. Fortsette?', [
+          { text: t.common.cancel, style: 'cancel', onPress: () => { setQInput(String(needle.quantity)); setEditing(false); } },
+          { text: t.common.delete, style: 'destructive', onPress: () => { setEditing(false); onDelete(); } },
         ]);
       } else {
         onQuantityChange(v);
@@ -150,10 +139,10 @@ function NeedleCard({ needle, onDelete, onQuantityChange }: { needle: Needle; on
           </View>
           <View style={styles.needleInfo}>
             <Text style={[styles.needleType, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
-              {NEEDLE_TYPE_LABELS[needle.type]}
+              {t.needleTypes[needle.type]}
             </Text>
             <Text style={[styles.needleMeta, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-              {needle.lengthCm} cm · {NEEDLE_MATERIAL_LABELS[needle.material]}
+              {needle.lengthCm} cm · {t.needleMaterials[needle.material]}
             </Text>
           </View>
           <Pressable
@@ -186,6 +175,7 @@ function NeedleCard({ needle, onDelete, onQuantityChange }: { needle: Needle; on
 
 function AddBrandModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const colors = useColors();
+  const t = useT();
   const [name, setName] = useState('');
   const { addBrand } = useKnitting();
 
@@ -206,11 +196,11 @@ function AddBrandModal({ visible, onClose }: { visible: boolean; onClose: () => 
         <View style={[styles.modalSheet, { backgroundColor: colors.surface }]}>
           <View style={styles.modalHandle} />
           <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>
-            Nytt garnmerke
+            {t.storage.newBrand}
           </Text>
           <TextInput
             style={[styles.input, { color: colors.text, backgroundColor: colors.background, fontFamily: 'Inter_400Regular' }]}
-            placeholder="Navn på merke (f.eks. Sandnes Garn)"
+            placeholder={t.storage.brandNamePlaceholder}
             placeholderTextColor={colors.textTertiary}
             value={name}
             onChangeText={setName}
@@ -222,10 +212,10 @@ function AddBrandModal({ visible, onClose }: { visible: boolean; onClose: () => 
             style={({ pressed }) => [styles.modalBtn, { backgroundColor: colors.primaryBtn, opacity: pressed ? 0.85 : 1 }]}
             onPress={handleAdd}
           >
-            <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Legg til</Text>
+            <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>{t.common.add}</Text>
           </Pressable>
           <Pressable style={styles.cancelBtn} onPress={onClose}>
-            <Text style={[styles.cancelBtnText, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>Avbryt</Text>
+            <Text style={[styles.cancelBtnText, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>{t.common.cancel}</Text>
           </Pressable>
         </View>
       </KeyboardAvoidingView>
@@ -235,6 +225,7 @@ function AddBrandModal({ visible, onClose }: { visible: boolean; onClose: () => 
 
 function AddNeedleModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const colors = useColors();
+  const t = useT();
   const [size, setSize] = useState('');
   const [type, setType] = useState<NeedleType>('rundpinne');
   const [length, setLength] = useState('');
@@ -289,44 +280,44 @@ function AddNeedleModal({ visible, onClose }: { visible: boolean; onClose: () =>
           <View style={[styles.modalSheet, { backgroundColor: colors.surface }]}>
             <View style={styles.modalHandle} />
             <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>
-              Ny pinne
+              {t.storage.newNeedle}
             </Text>
 
-            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Størrelse (mm)</Text>
+            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.storage.sizeMm}</Text>
             <TextInput
               style={[styles.input, { color: colors.text, backgroundColor: colors.background, fontFamily: 'Inter_400Regular' }]}
-              placeholder="f.eks. 3.5"
+              placeholder={t.storage.sizePlaceholder}
               placeholderTextColor={colors.textTertiary}
               value={size}
               onChangeText={setSize}
               keyboardType="decimal-pad"
             />
 
-            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Type</Text>
+            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.storage.type}</Text>
             <View style={styles.pillRow}>
-              {(['rundpinne', 'strømpepinner', 'rett', 'utskiftbar'] as NeedleType[]).map(t => (
-                <OptionPill key={t} label={NEEDLE_TYPE_LABELS[t]} selected={type === t} onPress={() => setType(t)} />
+              {(['rundpinne', 'strømpepinner', 'rett', 'utskiftbar'] as NeedleType[]).map(ntype => (
+                <OptionPill key={ntype} label={t.needleTypes[ntype]} selected={type === ntype} onPress={() => setType(ntype)} />
               ))}
             </View>
 
-            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Lengde (cm)</Text>
+            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.storage.lengthCm}</Text>
             <TextInput
               style={[styles.input, { color: colors.text, backgroundColor: colors.background, fontFamily: 'Inter_400Regular' }]}
-              placeholder="f.eks. 80"
+              placeholder={t.storage.lengthPlaceholder}
               placeholderTextColor={colors.textTertiary}
               value={length}
               onChangeText={setLength}
               keyboardType="numeric"
             />
 
-            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Materiale</Text>
+            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.storage.material}</Text>
             <View style={styles.pillRow}>
-              {(['bambus', 'metall', 'plast', 'tre'] as NeedleMaterial[]).map(m => (
-                <OptionPill key={m} label={NEEDLE_MATERIAL_LABELS[m]} selected={material === m} onPress={() => setMaterial(m)} />
+              {(['bambus', 'metall', 'plast', 'tre'] as NeedleMaterial[]).map(nmat => (
+                <OptionPill key={nmat} label={t.needleMaterials[nmat]} selected={material === nmat} onPress={() => setMaterial(nmat)} />
               ))}
             </View>
 
-            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Antall</Text>
+            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.storage.quantity}</Text>
             <TextInput
               style={[styles.input, { color: colors.text, backgroundColor: colors.background, fontFamily: 'Inter_400Regular' }]}
               placeholder="1"
@@ -340,10 +331,10 @@ function AddNeedleModal({ visible, onClose }: { visible: boolean; onClose: () =>
               style={({ pressed }) => [styles.modalBtn, { backgroundColor: colors.primaryBtn, opacity: pressed ? 0.85 : 1 }]}
               onPress={handleAdd}
             >
-              <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Legg til</Text>
+              <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>{t.common.add}</Text>
             </Pressable>
             <Pressable style={styles.cancelBtn} onPress={onClose}>
-              <Text style={[styles.cancelBtnText, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>Avbryt</Text>
+              <Text style={[styles.cancelBtnText, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>{t.common.cancel}</Text>
             </Pressable>
           </View>
         </ScrollView>
@@ -355,6 +346,7 @@ function AddNeedleModal({ visible, onClose }: { visible: boolean; onClose: () =>
 export default function LagerScreen() {
   const colors = useColors();
   const isDark = useIsDark();
+  const t = useT();
   const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState<Tab>('garn');
   const [search, setSearch] = useState('');
@@ -375,7 +367,7 @@ export default function LagerScreen() {
     const q = search.toLowerCase();
     return [...needles]
       .sort((a, b) => parseFloat(a.size) - parseFloat(b.size))
-      .filter(n => !q || n.size.includes(q) || NEEDLE_TYPE_LABELS[n.type].toLowerCase().includes(q) || NEEDLE_MATERIAL_LABELS[n.material].toLowerCase().includes(q));
+      .filter(n => !q || n.size.includes(q) || t.needleTypes[n.type].toLowerCase().includes(q) || t.needleMaterials[n.material].toLowerCase().includes(q));
   }, [needles, search]);
 
   const bottomInset = Platform.OS === 'web' ? 34 : insets.bottom;
@@ -408,7 +400,7 @@ export default function LagerScreen() {
                   color: activeTab === tab ? colors.text : colors.textTertiary,
                   fontFamily: activeTab === tab ? 'Inter_600SemiBold' : 'Inter_400Regular',
                 }]}>
-                  {tab === 'garn' ? 'Garn' : 'Pinner'}
+                  {tab === 'garn' ? t.storage.yarn : t.storage.needles}
                 </Text>
               </Pressable>
             ))}
@@ -439,7 +431,7 @@ export default function LagerScreen() {
                   color: activeTab === tab ? colors.text : colors.textTertiary,
                   fontFamily: activeTab === tab ? 'Inter_600SemiBold' : 'Inter_400Regular',
                 }]}>
-                  {tab === 'garn' ? 'Garn' : 'Pinner'}
+                  {tab === 'garn' ? t.storage.yarn : t.storage.needles}
                 </Text>
               </Pressable>
             ))}
@@ -451,7 +443,7 @@ export default function LagerScreen() {
         <Ionicons name="search" size={16} color={colors.textTertiary} />
         <TextInput
           style={[styles.searchInput, { color: colors.text, fontFamily: 'Inter_400Regular' }]}
-          placeholder={activeTab === 'garn' ? 'Søk merke...' : 'Søk pinner...'}
+          placeholder={activeTab === 'garn' ? `${t.common.search} ${t.storage.yarn.toLowerCase()}...` : `${t.common.search} ${t.storage.needles.toLowerCase()}...`}
           placeholderTextColor={colors.textTertiary}
           value={search}
           onChangeText={setSearch}
@@ -479,15 +471,15 @@ export default function LagerScreen() {
             <View style={styles.miniStatsRow}>
               <View style={[styles.miniStat, { backgroundColor: colors.surface }]}>
                 <Text style={[styles.miniStatNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{stats.totalSkeins.toLocaleString('nb-NO')}</Text>
-                <Text style={[styles.miniStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>nøster</Text>
+                <Text style={[styles.miniStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{t.home.statSkeins}</Text>
               </View>
               <View style={[styles.miniStat, { backgroundColor: colors.surface }]}>
                 <Text style={[styles.miniStatNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{stats.totalGrams.toLocaleString('nb-NO')}</Text>
-                <Text style={[styles.miniStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>gram</Text>
+                <Text style={[styles.miniStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{t.home.statGrams}</Text>
               </View>
               <View style={[styles.miniStat, { backgroundColor: colors.surface }]}>
                 <Text style={[styles.miniStatNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{stats.totalMeters.toLocaleString('nb-NO')}</Text>
-                <Text style={[styles.miniStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>meter</Text>
+                <Text style={[styles.miniStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{t.home.statMeters}</Text>
               </View>
             </View>
 
@@ -495,14 +487,14 @@ export default function LagerScreen() {
               <View style={styles.emptyState}>
                 <Ionicons name="archive-outline" size={40} color={colors.textTertiary} />
                 <Text style={[styles.emptyText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                  {search ? 'Ingen merker funnet' : 'Ingen garnmerker ennå'}
+                  {search ? t.common.noResults : t.storage.noBrands}
                 </Text>
                 {!search && (
                   <Pressable
                     style={[styles.emptyBtn, { backgroundColor: colors.primaryBtn }]}
                     onPress={() => setShowAddBrand(true)}
                   >
-                    <Text style={[styles.emptyBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Legg til merke</Text>
+                    <Text style={[styles.emptyBtnText, { fontFamily: 'Inter_600SemiBold' }]}>{t.storage.addFirst}</Text>
                   </Pressable>
                 )}
               </View>
@@ -518,14 +510,14 @@ export default function LagerScreen() {
               <View style={styles.emptyState}>
                 <Ionicons name="construct-outline" size={40} color={colors.textTertiary} />
                 <Text style={[styles.emptyText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                  {search ? 'Ingen pinner funnet' : 'Ingen pinner registrert'}
+                  {search ? t.storage.noNeedlesFound : t.storage.noNeedlesRegistered}
                 </Text>
                 {!search && (
                   <Pressable
                     style={[styles.emptyBtn, { backgroundColor: colors.primaryBtn }]}
                     onPress={() => setShowAddNeedle(true)}
                   >
-                    <Text style={[styles.emptyBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Legg til pinne</Text>
+                    <Text style={[styles.emptyBtnText, { fontFamily: 'Inter_600SemiBold' }]}>{t.storage.newNeedle}</Text>
                   </Pressable>
                 )}
               </View>

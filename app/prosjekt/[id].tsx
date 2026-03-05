@@ -20,6 +20,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
 import { useColors } from '@/context/ThemeContext';
+import { useT } from '@/context/LanguageContext';
 import { useKnitting, ProjectStatus, YarnStock } from '@/context/KnittingContext';
 import { PremiumModal } from '@/components/PremiumModal';
 

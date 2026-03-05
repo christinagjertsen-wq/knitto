@@ -17,6 +17,7 @@ import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
 import { useKnitting } from '@/context/KnittingContext';
 import { useColors, useIsDark } from '@/context/ThemeContext';
+import { useT } from '@/context/LanguageContext';
 
 const NEEDLE_SIZES = [
   { metric: '2.0', us: '0', uk: '14' },
