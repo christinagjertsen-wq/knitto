@@ -134,7 +134,7 @@ function NeedleCard({ needle, onDelete, onQuantityChange }: { needle: Needle; on
       <Animated.View style={{ transform: [{ translateX }] }} {...panResponder.panHandlers}>
         <View style={[styles.needleCard, { backgroundColor: colors.surface }]}>
           <View style={[styles.needleSize, { backgroundColor: colors.badgeBg }]}>
-            <Text style={[styles.needleSizeText, { color: colors.badgeText, fontFamily: 'Inter_700Bold' }]}>{needle.size}</Text>
+            <Text style={[styles.needleSizeText, { color: colors.badgeText, fontFamily: 'Inter_700Bold' }]}>{needle.size.replace(',', '.')}</Text>
             <Text style={[styles.needleSizeUnit, { color: colors.badgeText, fontFamily: 'Inter_400Regular' }]}>mm</Text>
           </View>
           <View style={styles.needleInfo}>
@@ -236,7 +236,7 @@ function AddNeedleModal({ visible, onClose }: { visible: boolean; onClose: () =>
   const handleAdd = useCallback(() => {
     if (!size.trim() || !length.trim()) return;
     addNeedle({
-      size: size.trim(),
+      size: size.trim().replace(',', '.'),
       type,
       lengthCm: parseFloat(length) || 60,
       material,

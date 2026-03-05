@@ -580,7 +580,7 @@ function AddNeedleModal({
   const handleClose = () => { reset(); onClose(); };
   const handleAdd = () => {
     if (!size.trim() || !lengthCm.trim()) return;
-    onAdd({ size: size.trim(), type, lengthCm: parseInt(lengthCm) || 0, material, quantity });
+    onAdd({ size: size.trim().replace(',', '.'), type, lengthCm: parseInt(lengthCm) || 0, material, quantity });
     reset(); onClose();
   };
 
@@ -698,7 +698,7 @@ function EditDetailsModal({
   const [notes, setNotes] = useState(initial.notes ?? '');
 
   const handleSave = () => {
-    onSave({ recipient, size, gauge, patternNeedleSize, startDate, endDate, notes });
+    onSave({ recipient, size, gauge, patternNeedleSize: patternNeedleSize.replace(',', '.'), startDate, endDate, notes });
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     onClose();
   };
@@ -1016,7 +1016,7 @@ export default function ProsjektScreen() {
             <DetailCell label={t.project.to} value={project.recipient} placeholder={t.project.namePlaceholder} />
             <DetailCell label={t.project.size} value={project.size} placeholder={t.project.size} />
             <DetailCell label={t.project.gauge} value={project.gauge} placeholder={t.project.gauge} />
-            <DetailCell label={t.project.needleSize} value={project.patternNeedleSize} placeholder={t.project.needleSize} />
+            <DetailCell label={t.project.needleSize} value={project.patternNeedleSize?.replace(',', '.')} placeholder={t.project.needleSize} />
             <DetailCell label={t.project.started} value={project.startDate} placeholder={t.project.notSet} />
             <DetailCell
               label={t.project.completed}
@@ -1137,7 +1137,7 @@ export default function ProsjektScreen() {
                   }}
                 >
                   <View style={[styles.needleSize, { backgroundColor: isLinked ? colors.primaryBtn + '22' : colors.badgeBg }]}>
-                    <Text style={[styles.needleSizeText, { color: isLinked ? colors.primaryBtn : colors.badgeText, fontFamily: 'Inter_700Bold' }]}>{needle.size}</Text>
+                    <Text style={[styles.needleSizeText, { color: isLinked ? colors.primaryBtn : colors.badgeText, fontFamily: 'Inter_700Bold' }]}>{needle.size.replace(',', '.')}</Text>
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={[styles.needleLabel, { color: colors.text, fontFamily: isLinked ? 'Inter_500Medium' : 'Inter_400Regular' }]}>

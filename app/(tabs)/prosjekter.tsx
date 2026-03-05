@@ -199,7 +199,7 @@ function SwipeableProjectCard({
                 <Text style={[styles.footerText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
                   {[
                     yarnSummary,
-                    projectNeedles.length > 0 ? projectNeedles.map(n => `${n!.size}mm`).join(', ') : null,
+                    projectNeedles.length > 0 ? projectNeedles.map(n => `${n!.size.replace(',', '.')} mm`).join(', ') : null,
                   ].filter(Boolean).join(' · ')}
                 </Text>
               </View>
