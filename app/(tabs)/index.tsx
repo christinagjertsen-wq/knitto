@@ -197,11 +197,20 @@ const ONBOARDING_SLIDES = [
 
 function NameOnboardingModal({ visible, onDone }: { visible: boolean; onDone: (name: string) => void }) {
   const insets = useSafeAreaInsets();
+  const t = useT();
   const [step, setStep] = useState(0);
   const [name, setName] = useState('');
   const slideAnim = useRef(new Animated.Value(0)).current;
-  const total = ONBOARDING_SLIDES.length + 1;
-  const isLast = step === ONBOARDING_SLIDES.length;
+
+  const slides = [
+    { icon: 'sparkles' as const, iconBg: '#E8EFF8', title: t.onboarding.slide1Title, body: t.onboarding.slide1Body },
+    { icon: 'layers-outline' as const, iconBg: '#E8EFF8', title: t.onboarding.slide2Title, body: t.onboarding.slide2Body },
+    { icon: 'cube-outline' as const, iconBg: '#E8EFF8', title: t.onboarding.slide3Title, body: t.onboarding.slide3Body },
+    { icon: 'journal-outline' as const, iconBg: '#E8EFF8', title: t.onboarding.slide4Title, body: t.onboarding.slide4Body },
+  ];
+
+  const total = slides.length + 1;
+  const isLast = step === slides.length;
 
   const goNext = () => {
     Animated.timing(slideAnim, { toValue: -SCREEN_W, duration: 220, useNativeDriver: true }).start(() => {
@@ -221,7 +230,7 @@ function NameOnboardingModal({ visible, onDone }: { visible: boolean; onDone: (n
   const topInset = Platform.OS === 'web' ? 67 : insets.top;
   const bottomInset = Math.max(Platform.OS === 'web' ? 34 : insets.bottom, 28);
 
-  const currentSlide = ONBOARDING_SLIDES[step];
+  const currentSlide = slides[step];
 
   return (
     <Modal visible={visible} animationType="fade" statusBarTranslucent>
@@ -300,7 +309,7 @@ function NameOnboardingModal({ visible, onDone }: { visible: boolean; onDone: (n
             disabled={isLast && !name.trim()}
           >
             <Text style={[styles.onboardingBtnText, { fontFamily: 'Inter_600SemiBold' }]}>
-              {isLast ? 'La oss starte' : 'Neste'}
+              {isLast ? t.onboarding.letsGo : t.onboarding.next}
             </Text>
             {!isLast && <Ionicons name="arrow-forward" size={18} color="#fff" />}
           </Pressable>
@@ -332,10 +341,10 @@ function AddProjectModal({ visible, onClose }: { visible: boolean; onClose: () =
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalOverlay}>
         <View style={[styles.modalSheet, { backgroundColor: colors.surface, paddingBottom: Math.max(insets.bottom, 24) }]}>
           <View style={styles.modalHandle} />
-          <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Nytt prosjekt</Text>
+          <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.projects.newTitle}</Text>
           <TextInput
             style={[styles.input, { color: colors.text, backgroundColor: colors.background, fontFamily: 'Inter_400Regular' }]}
-            placeholder="Prosjektnavn"
+            placeholder={t.project.namePlaceholder}
             placeholderTextColor={colors.textTertiary}
             value={name}
             onChangeText={setName}
@@ -452,7 +461,7 @@ export default function HomeScreen() {
               {greeting}
             </Text>
             <Text style={[styles.greetingTagline, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-              På tide å strikke litt? Eller legge til garn?
+              {t.home.tagline}
             </Text>
           </View>
 
@@ -462,7 +471,7 @@ export default function HomeScreen() {
                 {projects.length}
               </Text>
               <Text style={[styles.headerStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                prosjekter
+                {t.home.statProjects}
               </Text>
             </View>
             <View style={[styles.headerStatDivider, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(26,35,64,0.1)' }]} />
@@ -471,7 +480,7 @@ export default function HomeScreen() {
                 {stats.totalSkeins}
               </Text>
               <Text style={[styles.headerStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                nøster
+                {t.home.statSkeins}
               </Text>
             </View>
             <View style={[styles.headerStatDivider, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(26,35,64,0.1)' }]} />
@@ -480,7 +489,7 @@ export default function HomeScreen() {
                 {needles.length}
               </Text>
               <Text style={[styles.headerStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                pinner
+                {t.home.statNeedles}
               </Text>
             </View>
           </View>
@@ -489,7 +498,7 @@ export default function HomeScreen() {
         <View style={styles.content}>
           <View style={styles.sectionHeader}>
             <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>
-              Prosjekter
+              {t.home.sectionProjects}
             </Text>
           </View>
 
@@ -503,7 +512,7 @@ export default function HomeScreen() {
                 onPress={() => router.navigate('/(tabs)/prosjekter')}
               >
                 <Text style={[styles.seeAllText, { color: colors.primaryBtn, fontFamily: 'Inter_600SemiBold' }]}>
-                  Se alle prosjekter
+                  {t.home.seeAllProjects}
                 </Text>
                 <Ionicons name="chevron-forward" size={16} color={colors.primaryBtn} />
               </Pressable>
@@ -515,7 +524,7 @@ export default function HomeScreen() {
             >
               <Ionicons name="add-circle-outline" size={28} color={colors.primaryBtn} />
               <Text style={[styles.emptyProjectsText, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>
-                Start ditt første prosjekt
+                {t.home.startFirstProject}
               </Text>
             </Pressable>
           )}
@@ -524,14 +533,14 @@ export default function HomeScreen() {
 
           <View style={styles.sectionHeader}>
             <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>
-              Garnlager
+              {t.home.sectionYarnStorage}
             </Text>
           </View>
 
           <View style={styles.statsRow}>
-            <AnimatedStatCard label="nøster" target={stats.totalSkeins} />
-            <AnimatedStatCard label="gram" target={stats.totalGrams} />
-            <AnimatedStatCard label="meter" target={stats.totalMeters} />
+            <AnimatedStatCard label={t.home.statSkeins} target={stats.totalSkeins} />
+            <AnimatedStatCard label={t.home.statGrams} target={stats.totalGrams} />
+            <AnimatedStatCard label={t.home.statMeters} target={stats.totalMeters} />
           </View>
 
           <Pressable
@@ -539,7 +548,7 @@ export default function HomeScreen() {
             onPress={() => router.push('/(tabs)/lager')}
           >
             <Text style={[styles.seeAllText, { color: colors.primaryBtn, fontFamily: 'Inter_600SemiBold' }]}>
-              Se garnlager
+              {t.home.seeYarnStorage}
             </Text>
             <Ionicons name="chevron-forward" size={16} color={colors.primaryBtn} />
           </Pressable>

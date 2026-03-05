@@ -169,6 +169,7 @@ function AddYarnModal({
   excludeIds: string[];
 }) {
   const colors = useColors();
+  const t = useT();
   const { yarnStock, qualities, brands, getQualityById, getQualitiesForBrand, updateQuality, addBrand, addQuality } = useKnitting();
 
   const [mode, setMode] = useState<'lager' | 'nytt'>('lager');
@@ -568,6 +569,7 @@ function AddNeedleModal({
   defaultSize?: string;
 }) {
   const colors = useColors();
+  const t = useT();
   const [size, setSize] = useState(defaultSize ?? '');
   const [type, setType] = useState<'rundpinne' | 'strømpepinner' | 'rett' | 'utskiftbar'>('rundpinne');
   const [lengthCm, setLengthCm] = useState('');
@@ -686,6 +688,7 @@ function EditDetailsModal({
   status: ProjectStatus;
 }) {
   const colors = useColors();
+  const t = useT();
   const [recipient, setRecipient] = useState(initial.recipient ?? '');
   const [size, setSize] = useState(initial.size ?? '');
   const [gauge, setGauge] = useState(initial.gauge ?? '');

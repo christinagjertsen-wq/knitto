@@ -153,6 +153,7 @@ function YarnCard({ yarn, onDelete, onSkeinChange }: { yarn: YarnStock; onDelete
 
 function AddYarnModal({ qualityId, visible, onClose, onPaywall }: { qualityId: string; visible: boolean; onClose: () => void; onPaywall: () => void }) {
   const colors = useColors();
+  const t = useT();
   const [colorName, setColorName] = useState('');
   const [selectedHex, setSelectedHex] = useState('#C97B84');
   const [skeins, setSkeins] = useState(1);
@@ -180,13 +181,13 @@ function AddYarnModal({ qualityId, visible, onClose, onPaywall }: { qualityId: s
         >
           <View style={[styles.modalSheet, { backgroundColor: colors.surface }]}>
             <View style={styles.modalHandle} />
-            <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Ny farge</Text>
+            <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.quality.newColor}</Text>
 
             <View style={styles.colorPreviewRow}>
               <View style={[styles.bigColorSwatch, { backgroundColor: selectedHex }]} />
               <TextInput
                 style={[styles.input, { flex: 1, color: colors.text, backgroundColor: colors.background }]}
-                placeholder="Fargenavn"
+                placeholder={t.quality.colorNamePlaceholder}
                 placeholderTextColor={colors.textTertiary}
                 value={colorName}
                 onChangeText={setColorName}
@@ -194,7 +195,7 @@ function AddYarnModal({ qualityId, visible, onClose, onPaywall }: { qualityId: s
               />
             </View>
 
-            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Velg farge</Text>
+            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.quality.chooseColor}</Text>
             <View style={styles.colorGrid}>
               {Array.from({ length: 7 }, (_, rowIndex) => (
                 <View key={rowIndex} style={styles.colorRow}>
@@ -213,17 +214,17 @@ function AddYarnModal({ qualityId, visible, onClose, onPaywall }: { qualityId: s
               ))}
             </View>
 
-            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Antall nøster</Text>
+            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.quality.skeinsLabel}</Text>
             <SkeinCounter value={skeins} onChange={setSkeins} />
 
             <Pressable
               style={({ pressed }) => [styles.modalBtn, { backgroundColor: colors.primaryBtn, opacity: pressed ? 0.85 : 1 }]}
               onPress={handleAdd}
             >
-              <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Legg til</Text>
+              <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>{t.common.add}</Text>
             </Pressable>
             <Pressable style={styles.cancelBtn} onPress={onClose}>
-              <Text style={[styles.cancelBtnText, { color: colors.textSecondary }]}>Avbryt</Text>
+              <Text style={[styles.cancelBtnText, { color: colors.textSecondary }]}>{t.common.cancel}</Text>
             </Pressable>
           </View>
         </ScrollView>
@@ -235,6 +236,7 @@ function AddYarnModal({ qualityId, visible, onClose, onPaywall }: { qualityId: s
 export default function KvalitetScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const colors = useColors();
+  const t = useT();
   const insets = useSafeAreaInsets();
   const { getQualityById, getYarnStockForQuality, getBrandById, deleteQuality, deleteYarnStock, updateYarnStock, updateQuality } = useKnitting();
   const [showAdd, setShowAdd] = useState(false);
@@ -276,9 +278,9 @@ export default function KvalitetScreen() {
         <Pressable
           style={styles.deleteBtn}
           onPress={() => {
-            Alert.alert('Slett kvalitet', 'Sletter denne kvaliteten og alle farger.', [
-              { text: 'Avbryt', style: 'cancel' },
-              { text: 'Slett', style: 'destructive', onPress: () => { deleteQuality(id); router.back(); } },
+            Alert.alert(t.quality.deleteQuality, t.quality.confirmDeleteQuality.replace('%s', ''), [
+              { text: t.common.cancel, style: 'cancel' },
+              { text: t.common.delete, style: 'destructive', onPress: () => { deleteQuality(id); router.back(); } },
             ]);
           }}
         >
@@ -303,40 +305,40 @@ export default function KvalitetScreen() {
           >
             <Ionicons name="add-circle-outline" size={15} color={colors.primaryBtn} />
             <Text style={[styles.fiberAddBtnText, { color: colors.primaryBtn, fontFamily: 'Inter_500Medium' }]}>
-              Legg til fiber
+              {t.quality.addFiber}
             </Text>
           </Pressable>
         )}
         {quality.gramsPerSkein ? (
           <Text style={[styles.fiberLineSub, { color: colors.textTertiary, fontFamily: 'Inter_400Regular', textAlign: 'center' }]}>
-            {quality.gramsPerSkein}g · {quality.metersPerSkein}m per nøste
+            {quality.gramsPerSkein}g · {quality.metersPerSkein}m {t.quality.skein}
           </Text>
         ) : null}
 
         <View style={styles.miniStatsRow}>
           <View style={[styles.miniStatCard, { backgroundColor: colors.surface }]}>
             <Text style={[styles.miniStatNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{totalSkeins.toLocaleString('nb-NO')}</Text>
-            <Text style={[styles.miniStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>nøster</Text>
+            <Text style={[styles.miniStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{t.quality.skeins}</Text>
           </View>
           <View style={[styles.miniStatCard, { backgroundColor: colors.surface }]}>
             <Text style={[styles.miniStatNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{totalGrams.toLocaleString('nb-NO')}</Text>
-            <Text style={[styles.miniStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>gram</Text>
+            <Text style={[styles.miniStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{t.home.statGrams}</Text>
           </View>
           <View style={[styles.miniStatCard, { backgroundColor: colors.surface }]}>
             <Text style={[styles.miniStatNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{totalMeters.toLocaleString('nb-NO')}</Text>
-            <Text style={[styles.miniStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>meter</Text>
+            <Text style={[styles.miniStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{t.home.statMeters}</Text>
           </View>
         </View>
 
         <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_600SemiBold', textAlign: 'center' }]}>
-          {yarnStock.length} {yarnStock.length === 1 ? 'farge' : 'farger'}
+          {yarnStock.length} {yarnStock.length === 1 ? t.project.colorSingular : t.project.colorPlural}
         </Text>
 
         {yarnStock.length === 0 ? (
           <View style={styles.emptyState}>
             <Ionicons name="color-palette-outline" size={40} color={colors.textTertiary} />
             <Text style={[styles.emptyText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-              Ingen farger ennå
+              {t.quality.noColors}
             </Text>
           </View>
         ) : (
