@@ -11,6 +11,7 @@ import {
   KeyboardAvoidingView,
   Image,
   Animated,
+  Dimensions,
 } from 'react-native';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -221,39 +222,138 @@ function PremiumModal({ visible, onClose }: { visible: boolean; onClose: () => v
   );
 }
 
+const SCREEN_W = Dimensions.get('window').width;
+
+const ONBOARDING_SLIDES = [
+  {
+    icon: 'sparkles' as const,
+    iconBg: '#E8EFF8',
+    title: 'Velkommen til Knitty',
+    body: 'Din personlige strikkedagbok — hold styr på prosjekter, garn og pinner på ett sted.',
+  },
+  {
+    icon: 'layers-outline' as const,
+    iconBg: '#E8EFF8',
+    title: 'Prosjekter',
+    body: 'Opprett prosjekter, sett status og følg fremgangen fra plan til ferdig plagg.',
+  },
+  {
+    icon: 'cube-outline' as const,
+    iconBg: '#E8EFF8',
+    title: 'Garnlager',
+    body: 'Registrer garnet ditt etter merke, kvalitet og farge — vet alltid hva du har hjemme.',
+  },
+  {
+    icon: 'journal-outline' as const,
+    iconBg: '#E8EFF8',
+    title: 'Logg & fremdrift',
+    body: 'Skriv strikkedagbok per prosjekt og se prosentvis fremgang på alle kortene dine.',
+  },
+];
+
 function NameOnboardingModal({ visible, onDone }: { visible: boolean; onDone: (name: string) => void }) {
-  const colors = Colors.light;
-  const [name, setName] = useState('');
   const insets = useSafeAreaInsets();
+  const [step, setStep] = useState(0);
+  const [name, setName] = useState('');
+  const slideAnim = useRef(new Animated.Value(0)).current;
+  const total = ONBOARDING_SLIDES.length + 1;
+  const isLast = step === ONBOARDING_SLIDES.length;
+
+  const goNext = () => {
+    Animated.timing(slideAnim, { toValue: -SCREEN_W, duration: 220, useNativeDriver: true }).start(() => {
+      setStep(s => s + 1);
+      slideAnim.setValue(SCREEN_W);
+      Animated.timing(slideAnim, { toValue: 0, duration: 220, useNativeDriver: true }).start();
+    });
+    Haptics.selectionAsync();
+  };
+
+  const handleDone = () => {
+    if (!name.trim()) return;
+    setStep(0);
+    onDone(name.trim());
+  };
+
+  const topInset = Platform.OS === 'web' ? 67 : insets.top;
+  const bottomInset = Math.max(Platform.OS === 'web' ? 34 : insets.bottom, 28);
+
+  const currentSlide = ONBOARDING_SLIDES[step];
 
   return (
-    <Modal visible={visible} transparent animationType="slide">
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalOverlay}>
-        <View style={[styles.modalSheet, { backgroundColor: colors.surface, paddingBottom: Math.max(insets.bottom, 24) }]}>
-          <View style={styles.modalHandle} />
-          <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Hva heter du?</Text>
-          <Text style={[styles.modalSubtitle, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
-            Vi vil gjerne hilse deg med navn
-          </Text>
-          <TextInput
-            style={[styles.input, { color: colors.text, backgroundColor: colors.background, fontFamily: 'Inter_400Regular' }]}
-            placeholder="Fornavn"
-            placeholderTextColor={colors.textTertiary}
-            value={name}
-            onChangeText={setName}
-            autoFocus
-            autoCapitalize="words"
-            returnKeyType="done"
-            onSubmitEditing={() => onDone(name.trim())}
-          />
+    <Modal visible={visible} animationType="fade" statusBarTranslucent>
+      <LinearGradient
+        colors={[Colors.palette.nordicBlue, Colors.palette.nordicIce]}
+        style={[styles.onboardingScreen, { paddingTop: topInset + 20, paddingBottom: bottomInset }]}
+      >
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+          <Animated.View style={[styles.onboardingSlide, { transform: [{ translateX: slideAnim }] }]}>
+            {!isLast ? (
+              <>
+                <View style={[styles.onboardingIconWrap, { backgroundColor: currentSlide.iconBg }]}>
+                  <Ionicons name={currentSlide.icon} size={44} color={Colors.palette.navy} />
+                </View>
+                <Text style={[styles.onboardingTitle, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>
+                  {currentSlide.title}
+                </Text>
+                <Text style={[styles.onboardingBody, { color: Colors.palette.navy + 'CC', fontFamily: 'Inter_400Regular' }]}>
+                  {currentSlide.body}
+                </Text>
+              </>
+            ) : (
+              <>
+                <View style={[styles.onboardingIconWrap, { backgroundColor: '#E8EFF8' }]}>
+                  <Ionicons name="person-outline" size={44} color={Colors.palette.navy} />
+                </View>
+                <Text style={[styles.onboardingTitle, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>
+                  Hva heter du?
+                </Text>
+                <Text style={[styles.onboardingBody, { color: Colors.palette.navy + 'CC', fontFamily: 'Inter_400Regular' }]}>
+                  Vi hilser deg med navn hver gang du åpner Knitty
+                </Text>
+                <TextInput
+                  style={[styles.onboardingInput, { color: Colors.palette.navy, backgroundColor: 'rgba(255,255,255,0.6)', fontFamily: 'Inter_400Regular' }]}
+                  placeholder="Fornavn"
+                  placeholderTextColor={Colors.palette.navy + '70'}
+                  value={name}
+                  onChangeText={setName}
+                  autoFocus
+                  autoCapitalize="words"
+                  returnKeyType="done"
+                  onSubmitEditing={handleDone}
+                />
+              </>
+            )}
+          </Animated.View>
+
+          <View style={styles.onboardingDots}>
+            {Array.from({ length: total }).map((_, i) => (
+              <View
+                key={i}
+                style={[
+                  styles.onboardingDot,
+                  { backgroundColor: i === step ? Colors.palette.navy : Colors.palette.navy + '40' },
+                  i === step && { width: 20 },
+                ]}
+              />
+            ))}
+          </View>
+
           <Pressable
-            style={({ pressed }) => [styles.primaryBtn, { backgroundColor: colors.primaryBtn, opacity: pressed ? 0.85 : 1 }]}
-            onPress={() => onDone(name.trim())}
+            style={({ pressed }) => [
+              styles.onboardingBtn,
+              { backgroundColor: Colors.palette.navy, opacity: pressed ? 0.85 : 1 },
+              isLast && !name.trim() && { backgroundColor: Colors.palette.navy + '60' },
+            ]}
+            onPress={isLast ? handleDone : goNext}
+            disabled={isLast && !name.trim()}
           >
-            <Text style={[styles.primaryBtnText, { fontFamily: 'Inter_600SemiBold' }]}>La oss starte</Text>
+            <Text style={[styles.onboardingBtnText, { fontFamily: 'Inter_600SemiBold' }]}>
+              {isLast ? 'La oss starte' : 'Neste'}
+            </Text>
+            {!isLast && <Ionicons name="arrow-forward" size={18} color="#fff" />}
           </Pressable>
-        </View>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </LinearGradient>
     </Modal>
   );
 }
@@ -658,4 +758,44 @@ const styles = StyleSheet.create({
   primaryBtnText: { color: '#fff', fontSize: 16 },
   cancelBtn: { alignItems: 'center', padding: 8 },
   cancelBtnText: { fontSize: 15 },
+  onboardingScreen: { flex: 1, paddingHorizontal: 32 },
+  onboardingSlide: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 20 },
+  onboardingIconWrap: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+  },
+  onboardingTitle: { fontSize: 28, textAlign: 'center', lineHeight: 34 },
+  onboardingBody: { fontSize: 16, textAlign: 'center', lineHeight: 24 },
+  onboardingInput: {
+    width: '100%',
+    borderRadius: 16,
+    padding: 16,
+    fontSize: 18,
+    marginTop: 8,
+    textAlign: 'center',
+  },
+  onboardingDots: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 6,
+    marginBottom: 20,
+  },
+  onboardingDot: {
+    height: 6,
+    width: 6,
+    borderRadius: 3,
+  },
+  onboardingBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    borderRadius: 16,
+    paddingVertical: 16,
+  },
+  onboardingBtnText: { color: '#fff', fontSize: 17 },
 });
