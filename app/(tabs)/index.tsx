@@ -421,7 +421,7 @@ export default function HomeScreen() {
 
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 34 : 32 }}
+        contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 34 : 100 }}
         showsVerticalScrollIndicator={false}
         scrollEventThrottle={16}
       >
@@ -604,7 +604,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     marginTop: 0,
   },
-  sectionTitle: { fontSize: 22, textAlign: 'center' },
+  sectionTitle: { fontSize: 22, textAlign: 'left' },
   projectsList: { gap: 10 },
   projectRow: {
     flexDirection: 'row',
