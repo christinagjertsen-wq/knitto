@@ -541,7 +541,7 @@ function AddYarnModal({
                   onPress={handleAddNew}
                   disabled={!newQualityId || !newColorName.trim()}
                 >
-                  <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Legg til og alloker</Text>
+                  <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Legg til</Text>
                 </Pressable>
               </>
             )}
