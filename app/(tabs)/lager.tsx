@@ -660,7 +660,7 @@ const styles = StyleSheet.create({
   brandName: { fontSize: 16, marginBottom: 3 },
   brandMeta: { fontSize: 13, marginBottom: 4 },
   colorStrip: { flexDirection: 'row' },
-  colorDot: { width: 14, height: 14, borderRadius: 7, borderWidth: 2, borderColor: '#fff' },
+  colorDot: { width: 14, height: 14, borderRadius: 7, borderWidth: 1, borderColor: 'rgba(255,255,255,0.6)' },
   needleCard: {
     flexDirection: 'row',
     alignItems: 'center',
