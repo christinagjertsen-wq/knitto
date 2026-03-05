@@ -396,18 +396,18 @@ export default function InnstillingerScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <LinearGradient
-        colors={[Colors.palette.nordicBlue, Colors.palette.nordicIce]}
-        style={[styles.header, { paddingTop: topInset + 24 }]}
-      >
-        <Text style={[styles.title, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>Innstillinger</Text>
-      </LinearGradient>
-
       <ScrollView
         contentContainerStyle={[styles.content, { paddingBottom: Platform.OS === 'web' ? 100 : insets.bottom + 100 }]}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
+        scrollEventThrottle={16}
       >
+        <LinearGradient
+          colors={[Colors.palette.nordicBlue, Colors.palette.nordicIce]}
+          style={[styles.header, { paddingTop: topInset + 24, marginHorizontal: -20, marginTop: -20 }]}
+        >
+          <Text style={[styles.title, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>Innstillinger</Text>
+        </LinearGradient>
         <View style={[styles.profileCard, { backgroundColor: colors.primaryBtn }]}>
           <View style={styles.avatarCircle}>
             <Text style={[styles.avatarLetter, { fontFamily: 'Inter_700Bold' }]}>
