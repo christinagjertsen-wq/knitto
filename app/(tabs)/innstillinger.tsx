@@ -342,6 +342,13 @@ export default function InnstillingerScreen() {
               {quote}
             </Text>
           </View>
+          <Pressable
+            onPress={() => { setNameInput(firstName || ''); setShowEditName(true); }}
+            style={styles.gearBtn}
+            hitSlop={12}
+          >
+            <Ionicons name="settings-outline" size={22} color="rgba(255,255,255,0.85)" />
+          </Pressable>
         </View>
 
         <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Verktøy</Text>
@@ -497,6 +504,7 @@ const styles = StyleSheet.create({
   nameText: { fontSize: 20, color: '#fff' },
   quoteText: { fontSize: 12, color: 'rgba(255,255,255,0.65)', marginTop: 4, fontStyle: 'italic', lineHeight: 17 },
   editNameBtn: { padding: 8 },
+  gearBtn: { padding: 6, alignSelf: 'center' },
   tabScroll: { flexGrow: 0, marginHorizontal: -20, marginBottom: 4 },
   tabBar: { paddingHorizontal: 20, paddingVertical: 4, gap: 8, flexDirection: 'row' },
   tabChip: {
