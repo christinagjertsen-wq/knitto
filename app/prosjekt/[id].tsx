@@ -170,7 +170,7 @@ function AddYarnModal({
 }) {
   const colors = useColors();
   const t = useT();
-  const { yarnStock, qualities, brands, getQualityById, getQualitiesForBrand, updateQuality, addBrand, addQuality } = useKnitting();
+  const { yarnStock, qualities, brands, getQualityById, getQualitiesForBrand, updateQuality, addBrand, addQuality, getAvailableSkeins } = useKnitting();
 
   const [mode, setMode] = useState<'lager' | 'nytt'>('lager');
 
@@ -192,8 +192,8 @@ function AddYarnModal({
   const [newQualityName, setNewQualityName] = useState('');
 
   const availableYarn = useMemo(() =>
-    yarnStock.filter(y => !excludeIds.includes(y.id) && y.skeins > 0),
-    [yarnStock, excludeIds]
+    yarnStock.filter(y => !excludeIds.includes(y.id) && getAvailableSkeins(y.id) > 0),
+    [yarnStock, excludeIds, getAvailableSkeins]
   );
 
   const qualitiesForBrand = useMemo(() =>
@@ -337,7 +337,7 @@ function AddYarnModal({
                       <Counter
                         value={skeins}
                         onChange={setSkeins}
-                        max={yarnStock.find(y => y.id === selected)?.skeins}
+                        max={selected ? getAvailableSkeins(selected) : undefined}
                       />
                     </View>
                   )}

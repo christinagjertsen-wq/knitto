@@ -93,6 +93,7 @@ interface KnittingContextValue {
   deleteProject: (id: string) => void;
   allocateYarnToProject: (projectId: string, yarnStockId: string, skeins: number) => void;
   removeYarnFromProject: (projectId: string, yarnStockId: string) => void;
+  getAvailableSkeins: (yarnStockId: string) => number;
   addLogEntry: (entry: Omit<LogEntry, 'id'>) => LogEntry;
   deleteLogEntry: (id: string) => void;
   getLogsForProject: (projectId: string) => LogEntry[];
@@ -347,33 +348,28 @@ export function KnittingProvider({ children }: { children: ReactNode }) {
       save(STORAGE_KEYS.projects, next);
       return next;
     });
-    setYarnStock(prev => {
-      const next = prev.map(y => y.id === yarnStockId ? { ...y, skeins: Math.max(0, y.skeins - skeins) } : y);
-      save(STORAGE_KEYS.yarnStock, next);
-      return next;
-    });
   }, [save]);
 
   const removeYarnFromProject = useCallback((projectId: string, yarnStockId: string) => {
-    let skeinsToReturn = 0;
     setProjects(prev => {
       const next = prev.map(p => {
         if (p.id !== projectId) return p;
-        const alloc = p.yarnAllocations.find(a => a.yarnStockId === yarnStockId);
-        if (alloc) skeinsToReturn = alloc.skeinsAllocated;
         return { ...p, yarnAllocations: p.yarnAllocations.filter(a => a.yarnStockId !== yarnStockId) };
       });
       save(STORAGE_KEYS.projects, next);
       return next;
     });
-    if (skeinsToReturn > 0) {
-      setYarnStock(prev => {
-        const next = prev.map(y => y.id === yarnStockId ? { ...y, skeins: y.skeins + skeinsToReturn } : y);
-        save(STORAGE_KEYS.yarnStock, next);
-        return next;
-      });
-    }
   }, [save]);
+
+  const getAvailableSkeins = useCallback((yarnStockId: string): number => {
+    const yarn = yarnStock.find(y => y.id === yarnStockId);
+    if (!yarn) return 0;
+    const allocated = projects.reduce((sum, p) => {
+      const alloc = p.yarnAllocations.find(a => a.yarnStockId === yarnStockId);
+      return sum + (alloc?.skeinsAllocated ?? 0);
+    }, 0);
+    return Math.max(0, yarn.skeins - allocated);
+  }, [yarnStock, projects]);
 
   const addLogEntry = useCallback((entry: Omit<LogEntry, 'id'>): LogEntry => {
     const l: LogEntry = { id: genId(), ...entry };
@@ -426,14 +422,14 @@ export function KnittingProvider({ children }: { children: ReactNode }) {
     addYarnStock, updateYarnStock, deleteYarnStock,
     addNeedle, updateNeedle, deleteNeedle,
     addProject, updateProject, deleteProject,
-    allocateYarnToProject, removeYarnFromProject,
+    allocateYarnToProject, removeYarnFromProject, getAvailableSkeins,
     addLogEntry, deleteLogEntry, getLogsForProject,
     getQualitiesForBrand, getYarnStockForQuality,
     getTotalStats, getBrandById, getQualityById, getYarnStockById, getProjectById,
   }), [brands, qualities, yarnStock, needles, projects, logEntries, isLoading,
     addBrand, updateBrand, deleteBrand, addQuality, updateQuality, deleteQuality,
     addYarnStock, updateYarnStock, deleteYarnStock, addNeedle, updateNeedle, deleteNeedle,
-    addProject, updateProject, deleteProject, allocateYarnToProject, removeYarnFromProject,
+    addProject, updateProject, deleteProject, allocateYarnToProject, removeYarnFromProject, getAvailableSkeins,
     addLogEntry, deleteLogEntry, getLogsForProject,
     getQualitiesForBrand, getYarnStockForQuality, getTotalStats, getBrandById, getQualityById, getYarnStockById, getProjectById]);
 
