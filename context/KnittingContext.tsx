@@ -65,6 +65,7 @@ export interface LogEntry {
   date: string;
   notes: string;
   radStrikket?: number;
+  enhet?: 'cm' | 'omg';
 }
 
 interface KnittingContextValue {

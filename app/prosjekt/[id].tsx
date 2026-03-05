@@ -1170,7 +1170,7 @@ export default function ProsjektScreen() {
                   {entry.radStrikket ? (
                     <View style={[styles.logBadge, { backgroundColor: STATUS_COLORS[project.status] + '22' }]}>
                       <Text style={[styles.logBadgeText, { color: STATUS_COLORS[project.status], fontFamily: 'Inter_600SemiBold' }]}>
-                        {entry.radStrikket} rader
+                        {entry.radStrikket} {entry.enhet ?? 'omg'}
                       </Text>
                     </View>
                   ) : null}
@@ -1269,8 +1269,8 @@ export default function ProsjektScreen() {
       <AddLogModal
         visible={showAddLog}
         onClose={() => setShowAddLog(false)}
-        onSave={(date, notes, radStrikket) => {
-          addLogEntry({ projectId: id, date, notes, radStrikket });
+        onSave={(date, notes, mengde, enhet) => {
+          addLogEntry({ projectId: id, date, notes, radStrikket: mengde, enhet });
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         }}
       />
@@ -1281,20 +1281,22 @@ export default function ProsjektScreen() {
 function AddLogModal({ visible, onClose, onSave }: {
   visible: boolean;
   onClose: () => void;
-  onSave: (date: string, notes: string, radStrikket?: number) => void;
+  onSave: (date: string, notes: string, mengde?: number, enhet?: 'cm' | 'omg') => void;
 }) {
   const colors = Colors.light;
   const today = new Date().toLocaleDateString('nb-NO', { day: '2-digit', month: '2-digit', year: 'numeric' });
   const [date, setDate] = useState(today);
   const [notes, setNotes] = useState('');
-  const [rader, setRader] = useState('');
+  const [mengde, setMengde] = useState('');
+  const [enhet, setEnhet] = useState<'cm' | 'omg'>('omg');
 
   const handleSave = () => {
     if (!date.trim()) return;
-    onSave(date.trim(), notes.trim(), rader ? parseInt(rader, 10) || undefined : undefined);
+    onSave(date.trim(), notes.trim(), mengde ? parseInt(mengde, 10) || undefined : undefined, enhet);
     setDate(today);
     setNotes('');
-    setRader('');
+    setMengde('');
+    setEnhet('omg');
     onClose();
   };
 
@@ -1327,15 +1329,31 @@ function AddLogModal({ visible, onClose, onSave }: {
             multiline
             maxLength={300}
           />
-          <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Rader strikket (valgfritt)</Text>
-          <TextInput
-            style={[styles.detailInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border, fontFamily: 'Inter_400Regular' }]}
-            value={rader}
-            onChangeText={setRader}
-            placeholder="f.eks. 12"
-            placeholderTextColor={colors.textTertiary}
-            keyboardType="number-pad"
-          />
+          <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Mengde strikket (valgfritt)</Text>
+          <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
+            <TextInput
+              style={[styles.detailInput, { flex: 1, color: colors.text, backgroundColor: colors.background, borderColor: colors.border, fontFamily: 'Inter_400Regular' }]}
+              value={mengde}
+              onChangeText={setMengde}
+              placeholder="f.eks. 10"
+              placeholderTextColor={colors.textTertiary}
+              keyboardType="number-pad"
+            />
+            <View style={[styles.logEnhetToggle, { backgroundColor: colors.background }]}>
+              {(['cm', 'omg'] as const).map(e => (
+                <Pressable
+                  key={e}
+                  onPress={() => { setEnhet(e); Haptics.selectionAsync(); }}
+                  style={[styles.logEnhetBtn, enhet === e && { backgroundColor: colors.primaryBtn }]}
+                >
+                  <Text style={[styles.logEnhetText, {
+                    color: enhet === e ? '#fff' : colors.textSecondary,
+                    fontFamily: enhet === e ? 'Inter_600SemiBold' : 'Inter_400Regular',
+                  }]}>{e}</Text>
+                </Pressable>
+              ))}
+            </View>
+          </View>
           <Pressable
             style={({ pressed }) => [styles.modalBtn, { backgroundColor: colors.primaryBtn, opacity: pressed ? 0.85 : 1, marginTop: 8 }]}
             onPress={handleSave}
@@ -1580,4 +1598,7 @@ const styles = StyleSheet.create({
   },
   logBadgeText: { fontSize: 11 },
   logNotes: { fontSize: 13, lineHeight: 19 },
+  logEnhetToggle: { flexDirection: 'row', borderRadius: 10, padding: 3, gap: 3 },
+  logEnhetBtn: { paddingHorizontal: 12, paddingVertical: 7, borderRadius: 8 },
+  logEnhetText: { fontSize: 14 },
 });
