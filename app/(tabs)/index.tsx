@@ -401,7 +401,7 @@ export default function HomeScreen() {
     return [...active, ...planned];
   }, [projects]);
 
-  const greeting = getGreeting(firstName);
+  const greeting = getGreeting(firstName, t);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
