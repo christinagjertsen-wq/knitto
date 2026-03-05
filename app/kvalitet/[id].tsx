@@ -299,22 +299,22 @@ export default function KvalitetScreen() {
           </Text>
           <View style={styles.statsRow}>
             <View style={styles.stat}>
-              <Text style={[styles.statNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{totalSkeins}</Text>
+              <Text style={[styles.statNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{totalSkeins.toLocaleString('nb-NO')}</Text>
               <Text style={[styles.statLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>nøster</Text>
             </View>
             <View style={styles.statDivider} />
             <View style={styles.stat}>
-              <Text style={[styles.statNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{totalGrams}g</Text>
+              <Text style={[styles.statNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{totalGrams.toLocaleString('nb-NO')}g</Text>
               <Text style={[styles.statLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>gram</Text>
             </View>
             <View style={styles.statDivider} />
             <View style={styles.stat}>
-              <Text style={[styles.statNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{totalMeters}m</Text>
+              <Text style={[styles.statNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{totalMeters.toLocaleString('nb-NO')}m</Text>
               <Text style={[styles.statLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>meter</Text>
             </View>
             <View style={styles.statDivider} />
             <View style={styles.stat}>
-              <Text style={[styles.statNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{quality.gramsPerSkein}g</Text>
+              <Text style={[styles.statNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{quality.gramsPerSkein.toLocaleString('nb-NO')}g</Text>
               <Text style={[styles.statLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>per nøste</Text>
             </View>
           </View>
@@ -402,11 +402,11 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 2,
   },
-  infoRow: { fontSize: 14, marginBottom: 12 },
+  infoRow: { fontSize: 14, marginBottom: 12, textAlign: 'center' },
   statsRow: { flexDirection: 'row', alignItems: 'center' },
   stat: { flex: 1, alignItems: 'center' },
-  statNum: { fontSize: 18 },
-  statLabel: { fontSize: 11, marginTop: 2 },
+  statNum: { fontSize: 22 },
+  statLabel: { fontSize: 10, marginTop: 4, textAlign: 'center' },
   statDivider: { width: 1, height: 32, backgroundColor: '#E5EAF2' },
   sectionTitle: { fontSize: 16, marginTop: 4, marginBottom: 4 },
   yarnCard: {
