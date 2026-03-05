@@ -15,6 +15,8 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { queryClient } from "@/lib/query-client";
 import { KnittingProvider } from "@/context/KnittingContext";
 import { UserProvider } from "@/context/UserContext";
+import { LanguageProvider } from "@/context/LanguageContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -50,11 +52,15 @@ export default function RootLayout() {
       <QueryClientProvider client={queryClient}>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <KeyboardProvider>
-            <KnittingProvider>
-              <UserProvider>
-                <RootLayoutNav />
-              </UserProvider>
-            </KnittingProvider>
+            <LanguageProvider>
+              <ThemeProvider>
+                <KnittingProvider>
+                  <UserProvider>
+                    <RootLayoutNav />
+                  </UserProvider>
+                </KnittingProvider>
+              </ThemeProvider>
+            </LanguageProvider>
           </KeyboardProvider>
         </GestureHandlerRootView>
       </QueryClientProvider>

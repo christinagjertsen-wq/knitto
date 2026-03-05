@@ -4,33 +4,36 @@ import { isLiquidGlassAvailable } from "expo-glass-effect";
 import { Platform, StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
-import Colors from "@/constants/colors";
+import { useColors } from "@/context/ThemeContext";
+import { useT } from "@/context/LanguageContext";
 
 function NativeTabLayout() {
+  const t = useT();
   return (
     <NativeTabs>
       <NativeTabs.Trigger name="index">
         <Icon sf={{ default: "house", selected: "house.fill" }} />
-        <Label>Hjem</Label>
+        <Label>{t.nav.home}</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="prosjekter">
         <Icon sf={{ default: "list.bullet", selected: "list.bullet" }} />
-        <Label>Prosjekter</Label>
+        <Label>{t.nav.projects}</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="lager">
         <Icon sf={{ default: "archivebox", selected: "archivebox.fill" }} />
-        <Label>Lager</Label>
+        <Label>{t.nav.storage}</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="innstillinger">
         <Icon sf={{ default: "ellipsis.circle", selected: "ellipsis.circle.fill" }} />
-        <Label>Innstillinger</Label>
+        <Label>{t.nav.settings}</Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );
 }
 
 function ClassicTabLayout() {
-  const colors = Colors.light;
+  const colors = useColors();
+  const t = useT();
   const isIOS = Platform.OS === "ios";
   const isWeb = Platform.OS === "web";
 
@@ -66,7 +69,7 @@ function ClassicTabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Hjem",
+          title: t.nav.home,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home-outline" size={size} color={color} />
           ),
@@ -75,7 +78,7 @@ function ClassicTabLayout() {
       <Tabs.Screen
         name="prosjekter"
         options={{
-          title: "Prosjekter",
+          title: t.nav.projects,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="list-outline" size={size} color={color} />
           ),
@@ -84,7 +87,7 @@ function ClassicTabLayout() {
       <Tabs.Screen
         name="lager"
         options={{
-          title: "Lager",
+          title: t.nav.storage,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="archive-outline" size={size} color={color} />
           ),
@@ -93,7 +96,7 @@ function ClassicTabLayout() {
       <Tabs.Screen
         name="innstillinger"
         options={{
-          title: "Innstillinger",
+          title: t.nav.settings,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="ellipsis-horizontal-circle-outline" size={size} color={color} />
           ),

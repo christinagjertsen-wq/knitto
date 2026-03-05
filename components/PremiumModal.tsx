@@ -3,6 +3,16 @@ import { View, Text, Modal, Pressable, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useT } from '@/context/LanguageContext';
+import { T } from '@/i18n/translations';
+
+export function getPremiumFeatures(t: T) {
+  return [
+    { icon: 'layers-outline' as const, label: t.premium.unlimitedProjects },
+    { icon: 'cube-outline' as const, label: t.premium.unlimitedYarn },
+    { icon: 'cloud-upload-outline' as const, label: t.premium.backup },
+  ];
+}
 
 export const PREMIUM_FEATURES = [
   { icon: 'layers-outline' as const, label: 'Ubegrenset prosjekter' },
@@ -12,6 +22,8 @@ export const PREMIUM_FEATURES = [
 
 export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const insets = useSafeAreaInsets();
+  const t = useT();
+  const features = getPremiumFeatures(t);
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
@@ -36,17 +48,17 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
 
             <View style={styles.titleBlock}>
               <Text style={[styles.title, { fontFamily: 'Inter_700Bold' }]}>
-                Prøv Knitty Premium gratis
+                {t.premium.title}
               </Text>
               <Text style={[styles.sub, { fontFamily: 'Inter_400Regular' }]}>
-                14 dager uten kostnad, ingen binding
+                {t.premium.sub}
               </Text>
             </View>
 
             <View style={styles.divider} />
 
             <View style={styles.features}>
-              {PREMIUM_FEATURES.map((f, i) => (
+              {features.map((f, i) => (
                 <View key={i} style={styles.featureRow}>
                   <View style={styles.featureIconWrap}>
                     <Ionicons name={f.icon} size={18} color="rgba(255,255,255,0.9)" />
@@ -63,15 +75,15 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
               onPress={onClose}
             >
               <Text style={[styles.btnText, { fontFamily: 'Inter_700Bold' }]}>
-                Start gratis prøveperiode
+                {t.premium.startTrial}
               </Text>
               <Text style={[styles.btnSub, { fontFamily: 'Inter_400Regular' }]}>
-                Deretter 69 kr / mnd
+                {t.premium.price}
               </Text>
             </Pressable>
 
             <Pressable onPress={onClose} hitSlop={16} style={styles.dismissWrap}>
-              <Text style={[styles.dismiss, { fontFamily: 'Inter_400Regular' }]}>Ikke nå</Text>
+              <Text style={[styles.dismiss, { fontFamily: 'Inter_400Regular' }]}>{t.premium.notNow}</Text>
             </Pressable>
           </LinearGradient>
         </Pressable>

@@ -13,7 +13,6 @@ import {
   Animated,
   Dimensions,
 } from 'react-native';
-import { useColorScheme } from '@/hooks/useColorScheme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -23,18 +22,9 @@ import Colors from '@/constants/colors';
 import { useKnitting, Project, ProjectStatus } from '@/context/KnittingContext';
 import { PremiumModal } from '@/components/PremiumModal';
 import { useUser, getGreeting } from '@/context/UserContext';
+import { useColors, useIsDark } from '@/context/ThemeContext';
+import { useT } from '@/context/LanguageContext';
 
-const ADD_STATUS_LABELS: Record<ProjectStatus, string> = {
-  planlagt: 'Planlagt',
-  aktiv: 'Aktiv',
-  ferdig: 'Ferdig',
-};
-
-const STATUS_LABELS: Record<ProjectStatus, string> = {
-  planlagt: 'Planlagt',
-  aktiv: 'Aktiv',
-  ferdig: 'Ferdig',
-};
 
 const STATUS_COLORS: Record<ProjectStatus, string> = {
   planlagt: '#9AADC8',
@@ -69,7 +59,7 @@ function useCountUp(target: number, duration = 800) {
 }
 
 function AnimatedStatCard({ label, target }: { label: string; target: number }) {
-  const colors = Colors.light;
+  const colors = useColors();
   const { value, start } = useCountUp(target, 700);
 
   useFocusEffect(
@@ -129,7 +119,8 @@ function PulsingDot({ color }: { color: string }) {
 }
 
 function ProjectRow({ project }: { project: Project }) {
-  const colors = Colors.light;
+  const colors = useColors();
+  const t = useT();
   const { yarnStock } = useKnitting();
 
   const yarnColors = useMemo(() =>
@@ -165,7 +156,7 @@ function ProjectRow({ project }: { project: Project }) {
             : <View style={[styles.statusDot, { backgroundColor: STATUS_COLORS[project.status] }]} />
           }
           <Text style={[styles.statusText, { color: STATUS_COLORS[project.status], fontFamily: 'Inter_500Medium' }]}>
-            {STATUS_LABELS[project.status]}
+            {t.status[project.status]}
           </Text>
         </View>
       </View>
@@ -312,7 +303,8 @@ function NameOnboardingModal({ visible, onDone }: { visible: boolean; onDone: (n
 }
 
 function AddProjectModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
-  const colors = Colors.light;
+  const colors = useColors();
+  const t = useT();
   const { addProject } = useKnitting();
   const [name, setName] = useState('');
   const [status, setStatus] = useState<ProjectStatus>('planlagt');
@@ -384,7 +376,8 @@ function AddProjectModal({ visible, onClose }: { visible: boolean; onClose: () =
 }
 
 export default function HomeScreen() {
-  const colors = Colors.light;
+  const colors = useColors();
+  const t = useT();
   const insets = useSafeAreaInsets();
   const { yarnStock, needles, projects, getTotalStats } = useKnitting();
   const { firstName, setFirstName, isLoading } = useUser();

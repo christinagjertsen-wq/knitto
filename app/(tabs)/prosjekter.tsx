@@ -17,7 +17,6 @@ import {
   Dimensions,
 } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
-import { useColorScheme } from '@/hooks/useColorScheme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -25,9 +24,11 @@ import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
 import { useKnitting, Project, ProjectStatus } from '@/context/KnittingContext';
 import { PremiumModal } from '@/components/PremiumModal';
+import { useColors, useIsDark } from '@/context/ThemeContext';
+import { useT } from '@/context/LanguageContext';
 
 function ProgressRing({ percent, size, strokeWidth, color }: { percent: number; size: number; strokeWidth: number; color: string }) {
-  const colors = Colors.light;
+  const colors = useColors();
   const r = (size - strokeWidth) / 2;
   const circ = 2 * Math.PI * r;
   const offset = circ - (Math.min(Math.max(percent, 0), 100) / 100) * circ;
@@ -61,11 +62,6 @@ function ProgressRing({ percent, size, strokeWidth, color }: { percent: number; 
   );
 }
 
-const STATUS_LABELS: Record<ProjectStatus, string> = {
-  planlagt: 'Planlagt',
-  aktiv: 'Aktiv',
-  ferdig: 'Ferdig',
-};
 
 const STATUS_COLORS: Record<ProjectStatus, string> = {
   planlagt: '#9AADC8',
@@ -94,7 +90,8 @@ function SwipeableProjectCard({
   onDelete: () => void;
   onStatusToggle: () => void;
 }) {
-  const colors = Colors.light;
+  const colors = useColors();
+  const t = useT();
   const { yarnStock, needles } = useKnitting();
   const translateX = useRef(new Animated.Value(0)).current;
   const swiping = useRef(false);
