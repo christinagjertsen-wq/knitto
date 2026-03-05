@@ -172,6 +172,55 @@ function ProjectRow({ project }: { project: Project }) {
   );
 }
 
+function PremiumModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
+  const colors = Colors.light;
+  const insets = useSafeAreaInsets();
+
+  const features = [
+    { icon: 'infinite-outline' as const, text: 'Ubegrenset antall prosjekter' },
+    { icon: 'cube-outline' as const, text: 'Ubegrenset garnlager' },
+    { icon: 'construct-outline' as const, text: 'Ubegrenset pinnelager' },
+    { icon: 'journal-outline' as const, text: 'Prosjektlogg og fremdrift' },
+    { icon: 'stats-chart-outline' as const, text: 'Avansert statistikk' },
+    { icon: 'cloud-outline' as const, text: 'Sikkerhetskopiering' },
+  ];
+
+  return (
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+      <Pressable style={styles.premiumOverlay} onPress={onClose}>
+        <Pressable style={[styles.premiumSheet, { backgroundColor: colors.surface, paddingBottom: Math.max(insets.bottom, 28) }]} onPress={() => {}}>
+          <View style={styles.modalHandle} />
+          <View style={[styles.premiumIconWrap, { backgroundColor: Colors.palette.nordicBlue + '18' }]}>
+            <Ionicons name="star" size={28} color={Colors.palette.navy} />
+          </View>
+          <Text style={[styles.premiumTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Knitty Premium</Text>
+          <Text style={[styles.premiumSubtitle, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
+            Få tilgang til alle funksjoner og strikk uten grenser
+          </Text>
+          <View style={styles.premiumFeatures}>
+            {features.map((f, i) => (
+              <View key={i} style={styles.premiumFeatureRow}>
+                <Ionicons name={f.icon} size={18} color={Colors.palette.navy} />
+                <Text style={[styles.premiumFeatureText, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>{f.text}</Text>
+              </View>
+            ))}
+          </View>
+          <Pressable
+            style={({ pressed }) => [styles.premiumBtn, { backgroundColor: Colors.palette.navy, opacity: pressed ? 0.85 : 1 }]}
+            onPress={onClose}
+          >
+            <Text style={[styles.premiumBtnPrice, { fontFamily: 'Inter_700Bold' }]}>69 kr / mnd</Text>
+            <Text style={[styles.premiumBtnSub, { fontFamily: 'Inter_400Regular' }]}>Start med 7 dager gratis</Text>
+          </Pressable>
+          <Pressable onPress={onClose} hitSlop={12}>
+            <Text style={[styles.premiumDismiss, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>Ikke nå</Text>
+          </Pressable>
+        </Pressable>
+      </Pressable>
+    </Modal>
+  );
+}
+
 function NameOnboardingModal({ visible, onDone }: { visible: boolean; onDone: (name: string) => void }) {
   const colors = Colors.light;
   const [name, setName] = useState('');
@@ -288,6 +337,7 @@ export default function HomeScreen() {
   const { firstName, setFirstName, isLoading } = useUser();
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showAddProject, setShowAddProject] = useState(false);
+  const [showPremium, setShowPremium] = useState(false);
 
   useEffect(() => {
     if (!isLoading && firstName === '') setShowOnboarding(true);
@@ -314,6 +364,7 @@ export default function HomeScreen() {
         onDone={(name) => { if (name) setFirstName(name); setShowOnboarding(false); }}
       />
       <AddProjectModal visible={showAddProject} onClose={() => setShowAddProject(false)} />
+      <PremiumModal visible={showPremium} onClose={() => setShowPremium(false)} />
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 34 : 16 }}
@@ -324,10 +375,14 @@ export default function HomeScreen() {
           style={[styles.header, { paddingTop: topInset + 16 }]}
         >
           <View style={styles.headerBadgeRow}>
-            <View style={[styles.basicBadge, { backgroundColor: 'rgba(26,35,64,0.08)' }]}>
+            <Pressable
+              style={[styles.basicBadge, { backgroundColor: 'rgba(26,35,64,0.08)' }]}
+              onPress={() => setShowPremium(true)}
+              hitSlop={8}
+            >
               <Ionicons name="leaf-outline" size={12} color={Colors.palette.navy} />
               <Text style={[styles.basicBadgeText, { color: Colors.palette.navy, fontFamily: 'Inter_600SemiBold' }]}>Basic</Text>
-            </View>
+            </Pressable>
           </View>
 
           <View style={styles.headerTopRow}>
@@ -335,7 +390,7 @@ export default function HomeScreen() {
               {greeting}
             </Text>
             <Text style={[styles.greetingTagline, { color: Colors.palette.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-              På tide å strikke litt?
+              På tide å strikke litt? Eller legge til garn?
             </Text>
           </View>
 
@@ -508,7 +563,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 2,
   },
-  projectRowThumb: { width: 44, height: 44, borderRadius: 10 },
+  projectRowThumb: { width: 44, height: 44, borderRadius: 22 },
   yarnDots: { flexDirection: 'row', alignItems: 'center' },
   yarnDot: { width: 28, height: 28, borderRadius: 14, borderWidth: 2, borderColor: '#fff' },
   projectRowText: { flex: 1 },
@@ -585,6 +640,18 @@ const styles = StyleSheet.create({
   },
   modalTitle: { fontSize: 24, textAlign: 'center' },
   modalSubtitle: { fontSize: 15, marginBottom: 4, textAlign: 'center' },
+  premiumOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.4)' },
+  premiumSheet: { borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 24, gap: 12 },
+  premiumIconWrap: { width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', alignSelf: 'center' },
+  premiumTitle: { fontSize: 24, textAlign: 'center' },
+  premiumSubtitle: { fontSize: 14, textAlign: 'center', lineHeight: 20 },
+  premiumFeatures: { gap: 10, marginVertical: 4 },
+  premiumFeatureRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  premiumFeatureText: { fontSize: 15 },
+  premiumBtn: { borderRadius: 16, padding: 16, alignItems: 'center', gap: 2, marginTop: 4 },
+  premiumBtnPrice: { color: '#fff', fontSize: 18 },
+  premiumBtnSub: { color: 'rgba(255,255,255,0.7)', fontSize: 12 },
+  premiumDismiss: { textAlign: 'center', fontSize: 14, paddingVertical: 4 },
   fieldLabel: { fontSize: 13, marginBottom: 4 },
   input: { borderRadius: 14, padding: 16, fontSize: 16 },
   primaryBtn: { borderRadius: 14, padding: 16, alignItems: 'center', marginTop: 4 },
