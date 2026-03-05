@@ -180,7 +180,7 @@ function AddYarnModal({
   const [newQualityId, setNewQualityId] = useState<string | null>(null);
   const [newColorName, setNewColorName] = useState('');
   const [selectedColorHex, setSelectedColorHex] = useState('#C0D4F4');
-  const [customHex, setCustomHex] = useState('');
+
   const [newSkeinsTotal, setNewSkeinsTotal] = useState(1);
   const [newSkeinsProject, setNewSkeinsProject] = useState(1);
   const [newGramsPerSkein, setNewGramsPerSkein] = useState('');
@@ -223,7 +223,7 @@ function AddYarnModal({
   const reset = () => {
     setSelected(null); setSkeins(1);
     setNewBrandId(null); setNewQualityId(null);
-    setNewColorName(''); setSelectedColorHex('#C0D4F4'); setCustomHex('');
+    setNewColorName(''); setSelectedColorHex('#C0D4F4');
     setNewSkeinsTotal(1); setNewSkeinsProject(1);
     setNewGramsPerSkein(''); setNewMetersPerSkein('');
     setShowNewBrandInput(false); setNewBrandName('');
@@ -247,7 +247,6 @@ function AddYarnModal({
     reset(); onClose();
   };
 
-  const finalHex = customHex.startsWith('#') && customHex.length >= 4 ? customHex : selectedColorHex;
 
   const handleAddNew = () => {
     if (!newQualityId || !newColorName.trim()) return;
@@ -256,7 +255,7 @@ function AddYarnModal({
     if (g > 0 || m > 0) {
       updateQuality(newQualityId, { gramsPerSkein: g, metersPerSkein: m });
     }
-    onAddNew(newQualityId, newColorName.trim(), finalHex, newSkeinsTotal, newSkeinsProject);
+    onAddNew(newQualityId, newColorName.trim(), selectedColorHex, newSkeinsTotal, newSkeinsProject);
     reset(); onClose();
   };
 
@@ -481,18 +480,7 @@ function AddYarnModal({
                 />
 
                 <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Velg farge</Text>
-                <View style={styles.colorPreviewRow}>
-                  <View style={[styles.colorPreviewSwatch, { backgroundColor: finalHex }]} />
-                  <TextInput
-                    style={[styles.detailInput, { flex: 1, color: colors.text, backgroundColor: colors.background, borderColor: colors.border, fontFamily: 'Inter_400Regular' }]}
-                    value={customHex}
-                    onChangeText={setCustomHex}
-                    placeholder="#hex (valgfritt)"
-                    placeholderTextColor={colors.textTertiary}
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                  />
-                </View>
+                <View style={[styles.colorPreviewSwatch, { backgroundColor: selectedColorHex, alignSelf: 'center' }]} />
                 <View style={styles.colorGrid}>
                   {Array.from({ length: 7 }, (_, rowIndex) => (
                     <View key={rowIndex} style={styles.colorRow}>
@@ -501,14 +489,12 @@ function AddYarnModal({
                           key={c.hex}
                           onPress={() => {
                             setSelectedColorHex(c.hex);
-                            setCustomHex('');
-                            setNewColorName(prev => prev || c.name);
                             Haptics.selectionAsync();
                           }}
                           style={[
                             styles.presetColor,
                             { backgroundColor: c.hex },
-                            selectedColorHex === c.hex && !customHex && styles.presetColorSelected,
+                            selectedColorHex === c.hex && styles.presetColorSelected,
                           ]}
                         />
                       ))}

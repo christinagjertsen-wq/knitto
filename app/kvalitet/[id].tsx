@@ -162,19 +162,16 @@ function AddYarnModal({ qualityId, visible, onClose }: { qualityId: string; visi
   const colors = isDark ? Colors.dark : Colors.light;
   const [colorName, setColorName] = useState('');
   const [selectedHex, setSelectedHex] = useState('#C97B84');
-  const [customHex, setCustomHex] = useState('');
   const [skeins, setSkeins] = useState(1);
   const { addYarnStock } = useKnitting();
 
-  const finalHex = customHex.startsWith('#') && customHex.length >= 4 ? customHex : selectedHex;
-
   const handleAdd = useCallback(() => {
     if (!colorName.trim()) return;
-    addYarnStock({ qualityId, colorName: colorName.trim(), colorHex: finalHex, skeins });
+    addYarnStock({ qualityId, colorName: colorName.trim(), colorHex: selectedHex, skeins });
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    setColorName(''); setSkeins(1); setCustomHex('');
+    setColorName(''); setSkeins(1); setSelectedHex('#C97B84');
     onClose();
-  }, [colorName, finalHex, skeins, qualityId, addYarnStock, onClose]);
+  }, [colorName, selectedHex, skeins, qualityId, addYarnStock, onClose]);
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
@@ -188,25 +185,15 @@ function AddYarnModal({ qualityId, visible, onClose }: { qualityId: string; visi
             <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Ny farge</Text>
 
             <View style={styles.colorPreviewRow}>
-              <View style={[styles.bigColorSwatch, { backgroundColor: finalHex }]} />
-              <View style={{ flex: 1, gap: 8 }}>
-                <TextInput
-                  style={[styles.input, { color: colors.text, backgroundColor: colors.background }]}
-                  placeholder="Fargenavn"
-                  placeholderTextColor={colors.textTertiary}
-                  value={colorName}
-                  onChangeText={setColorName}
-                  autoFocus
-                />
-                <TextInput
-                  style={[styles.input, { color: colors.text, backgroundColor: colors.background }]}
-                  placeholder="#hex (valgfritt)"
-                  placeholderTextColor={colors.textTertiary}
-                  value={customHex}
-                  onChangeText={setCustomHex}
-                  autoCapitalize="none"
-                />
-              </View>
+              <View style={[styles.bigColorSwatch, { backgroundColor: selectedHex }]} />
+              <TextInput
+                style={[styles.input, { flex: 1, color: colors.text, backgroundColor: colors.background }]}
+                placeholder="Fargenavn"
+                placeholderTextColor={colors.textTertiary}
+                value={colorName}
+                onChangeText={setColorName}
+                autoFocus
+              />
             </View>
 
             <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Velg farge</Text>
@@ -216,11 +203,11 @@ function AddYarnModal({ qualityId, visible, onClose }: { qualityId: string; visi
                   {PRESET_COLORS.slice(rowIndex * 10, rowIndex * 10 + 10).map(c => (
                     <Pressable
                       key={c.hex}
-                      onPress={() => { setSelectedHex(c.hex); setColorName(prev => prev || c.name); }}
+                      onPress={() => { setSelectedHex(c.hex); Haptics.selectionAsync(); }}
                       style={[
                         styles.presetColor,
                         { backgroundColor: c.hex },
-                        selectedHex === c.hex && !customHex && styles.presetColorSelected,
+                        selectedHex === c.hex && styles.presetColorSelected,
                       ]}
                     />
                   ))}
