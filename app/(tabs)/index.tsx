@@ -260,7 +260,7 @@ function NameOnboardingModal({ visible, onDone }: { visible: boolean; onDone: (n
                   Hva heter du?
                 </Text>
                 <Text style={[styles.onboardingBody, { color: Colors.palette.navy + 'CC', fontFamily: 'Inter_400Regular' }]}>
-                  Vi hilser deg med navn hver gang du åpner Knitty
+                  Legg inn fornavn så er du i gang
                 </Text>
                 <TextInput
                   style={[styles.onboardingInput, { color: Colors.palette.navy, backgroundColor: 'rgba(255,255,255,0.6)', fontFamily: 'Inter_400Regular' }]}
