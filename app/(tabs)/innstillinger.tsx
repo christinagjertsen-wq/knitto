@@ -530,7 +530,7 @@ export default function InnstillingerScreen() {
 
         <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Om appen</Text>
         <View style={[styles.card, { backgroundColor: colors.surface }]}>
-          {[{ label: 'App', value: 'Ull & Pinner' }, { label: 'Versjon', value: '1.0.0' }].map((row, i, arr) => (
+          {[{ label: 'App', value: 'Knitty' }, { label: 'Versjon', value: '1.0.0' }].map((row, i, arr) => (
             <View key={row.label}>
               <View style={styles.row}>
                 <Text style={[styles.rowLabel, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>{row.label}</Text>

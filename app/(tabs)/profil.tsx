@@ -125,7 +125,7 @@ export default function ProfilScreen() {
         <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Om appen</Text>
         <View style={[styles.statsCard, { backgroundColor: colors.surface }]}>
           {[
-            { label: 'App', value: 'Ull & Pinner' },
+            { label: 'App', value: 'Knitty' },
             { label: 'Versjon', value: '1.0.0' },
           ].map((row, i, arr) => (
             <View key={row.label}>
