@@ -325,13 +325,6 @@ export default function HomeScreen() {
           style={[styles.header, { paddingTop: topInset + 16 }]}
         >
           <View style={styles.headerTopRow}>
-            <Pressable
-              style={styles.gearBtn}
-              onPress={() => router.navigate('/(tabs)/innstillinger')}
-              hitSlop={10}
-            >
-              <Ionicons name="settings-outline" size={22} color={Colors.palette.navy} />
-            </Pressable>
             <Text style={[styles.greetingLarge, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold', textAlign: 'center' }]}>
               {greeting}
             </Text>
@@ -390,15 +383,6 @@ export default function HomeScreen() {
                   Se alle prosjekter
                 </Text>
                 <Ionicons name="chevron-forward" size={16} color={colors.primaryBtn} />
-              </Pressable>
-              <Pressable
-                style={({ pressed }) => [styles.addProjectBtn, { opacity: pressed ? 0.75 : 1 }]}
-                onPress={() => setShowAddProject(true)}
-              >
-                <Ionicons name="add" size={18} color={colors.primaryBtn} />
-                <Text style={[styles.addProjectText, { color: colors.primaryBtn, fontFamily: 'Inter_600SemiBold' }]}>
-                  Legg til nytt prosjekt
-                </Text>
               </Pressable>
             </>
           ) : (
