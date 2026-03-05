@@ -330,12 +330,6 @@ export default function KvalitetScreen() {
             <Text style={[styles.emptyText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
               Ingen farger ennå
             </Text>
-            <Pressable
-              style={[styles.emptyBtn, { backgroundColor: colors.primaryBtn }]}
-              onPress={() => setShowAdd(true)}
-            >
-              <Text style={[styles.emptyBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Legg til farge</Text>
-            </Pressable>
           </View>
         ) : (
           yarnStock.map(yarn => (
