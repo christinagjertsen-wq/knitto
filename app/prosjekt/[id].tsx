@@ -680,11 +680,13 @@ function EditDetailsModal({
   onClose,
   initial,
   onSave,
+  status,
 }: {
   visible: boolean;
   onClose: () => void;
   initial: { recipient?: string; size?: string; gauge?: string; patternNeedleSize?: string; startDate?: string; endDate?: string; notes: string };
   onSave: (data: { recipient: string; size: string; gauge: string; patternNeedleSize: string; startDate: string; endDate: string; notes: string }) => void;
+  status: ProjectStatus;
 }) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
@@ -740,7 +742,7 @@ function EditDetailsModal({
             <Field label="Størrelse" value={size} onChangeText={setSize} placeholder="f.eks. M, 38, Barn 4 år" />
             <Field label="Strikkefasthet" value={gauge} onChangeText={setGauge} placeholder="f.eks. 22 m / 10 cm" hint="Masker per 10 cm" />
             <Field label="Pinnestørrelse" value={patternNeedleSize} onChangeText={setPatternNeedleSize} placeholder="f.eks. 3,5 mm" hint="Fra oppskriften" />
-            <Field label="Startet" value={startDate} onChangeText={setStartDate} placeholder="DD.MM.ÅÅÅÅ" />
+            <Field label={status === 'planlagt' ? 'Forventet startdato (valgfritt)' : 'Startet'} value={startDate} onChangeText={setStartDate} placeholder="DD.MM.ÅÅÅÅ" />
             <Field label="Fullført" value={endDate} onChangeText={setEndDate} placeholder="DD.MM.ÅÅÅÅ" />
             <View style={{ gap: 4 }}>
               <Text style={[styles.detailFieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Notater</Text>
@@ -1259,6 +1261,7 @@ export default function ProsjektScreen() {
       <EditDetailsModal
         visible={showEditDetails}
         onClose={() => setShowEditDetails(false)}
+        status={project.status}
         initial={{
           recipient: project.recipient,
           size: project.size,
