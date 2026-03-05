@@ -419,66 +419,66 @@ export default function HomeScreen() {
       <AddProjectModal visible={showAddProject} onClose={() => setShowAddProject(false)} />
       <PremiumModal visible={showPremium} onClose={() => setShowPremium(false)} />
 
-      <LinearGradient
-        colors={[Colors.palette.nordicBlue, Colors.palette.nordicIce]}
-        style={[styles.header, { paddingTop: topInset + 16 }]}
-      >
-        <View style={styles.headerBadgeRow}>
-          <Pressable
-            style={[styles.basicBadge, { backgroundColor: 'rgba(26,35,64,0.08)' }]}
-            onPress={() => setShowPremium(true)}
-            hitSlop={8}
-          >
-            <Ionicons name="leaf-outline" size={12} color={Colors.palette.navy} />
-            <Text style={[styles.basicBadgeText, { color: Colors.palette.navy, fontFamily: 'Inter_600SemiBold' }]}>Basic</Text>
-          </Pressable>
-        </View>
-
-        <View style={styles.headerTopRow}>
-          <Text style={[styles.greetingLarge, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>
-            {greeting}
-          </Text>
-          <Text style={[styles.greetingTagline, { color: Colors.palette.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-            På tide å strikke litt? Eller legge til garn?
-          </Text>
-        </View>
-
-        <View style={[styles.headerStats, { backgroundColor: 'rgba(26,35,64,0.05)' }]}>
-          <View style={styles.headerStat}>
-            <Text style={[styles.headerStatNumber, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>
-              {projects.length}
-            </Text>
-            <Text style={[styles.headerStatLabel, { color: Colors.palette.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-              prosjekter
-            </Text>
-          </View>
-          <View style={[styles.headerStatDivider, { backgroundColor: 'rgba(26,35,64,0.1)' }]} />
-          <View style={styles.headerStat}>
-            <Text style={[styles.headerStatNumber, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>
-              {stats.totalSkeins}
-            </Text>
-            <Text style={[styles.headerStatLabel, { color: Colors.palette.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-              nøster
-            </Text>
-          </View>
-          <View style={[styles.headerStatDivider, { backgroundColor: 'rgba(26,35,64,0.1)' }]} />
-          <View style={styles.headerStat}>
-            <Text style={[styles.headerStatNumber, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>
-              {needles.length}
-            </Text>
-            <Text style={[styles.headerStatLabel, { color: Colors.palette.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-              pinner
-            </Text>
-          </View>
-        </View>
-      </LinearGradient>
-
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 34 : 16 }}
+        contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 34 : 32 }}
         showsVerticalScrollIndicator={false}
-        bounces={false}
+        scrollEventThrottle={16}
       >
+        <LinearGradient
+          colors={[Colors.palette.nordicBlue, Colors.palette.nordicIce]}
+          style={[styles.header, { paddingTop: topInset + 16 }]}
+        >
+          <View style={styles.headerBadgeRow}>
+            <Pressable
+              style={[styles.basicBadge, { backgroundColor: 'rgba(26,35,64,0.08)' }]}
+              onPress={() => setShowPremium(true)}
+              hitSlop={8}
+            >
+              <Ionicons name="leaf-outline" size={12} color={Colors.palette.navy} />
+              <Text style={[styles.basicBadgeText, { color: Colors.palette.navy, fontFamily: 'Inter_600SemiBold' }]}>Basic</Text>
+            </Pressable>
+          </View>
+
+          <View style={styles.headerTopRow}>
+            <Text style={[styles.greetingLarge, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>
+              {greeting}
+            </Text>
+            <Text style={[styles.greetingTagline, { color: Colors.palette.textTertiary, fontFamily: 'Inter_400Regular' }]}>
+              På tide å strikke litt? Eller legge til garn?
+            </Text>
+          </View>
+
+          <View style={[styles.headerStats, { backgroundColor: 'rgba(26,35,64,0.05)' }]}>
+            <View style={styles.headerStat}>
+              <Text style={[styles.headerStatNumber, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>
+                {projects.length}
+              </Text>
+              <Text style={[styles.headerStatLabel, { color: Colors.palette.textTertiary, fontFamily: 'Inter_400Regular' }]}>
+                prosjekter
+              </Text>
+            </View>
+            <View style={[styles.headerStatDivider, { backgroundColor: 'rgba(26,35,64,0.1)' }]} />
+            <View style={styles.headerStat}>
+              <Text style={[styles.headerStatNumber, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>
+                {stats.totalSkeins}
+              </Text>
+              <Text style={[styles.headerStatLabel, { color: Colors.palette.textTertiary, fontFamily: 'Inter_400Regular' }]}>
+                nøster
+              </Text>
+            </View>
+            <View style={[styles.headerStatDivider, { backgroundColor: 'rgba(26,35,64,0.1)' }]} />
+            <View style={styles.headerStat}>
+              <Text style={[styles.headerStatNumber, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>
+                {needles.length}
+              </Text>
+              <Text style={[styles.headerStatLabel, { color: Colors.palette.textTertiary, fontFamily: 'Inter_400Regular' }]}>
+                pinner
+              </Text>
+            </View>
+          </View>
+        </LinearGradient>
+
         <View style={styles.content}>
           <View style={styles.sectionHeader}>
             <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>
