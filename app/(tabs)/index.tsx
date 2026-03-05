@@ -518,15 +518,12 @@ export default function HomeScreen() {
               </Pressable>
             </>
           ) : (
-            <Pressable
-              style={({ pressed }) => [styles.emptyProjects, { backgroundColor: colors.surface, opacity: pressed ? 0.85 : 1 }]}
-              onPress={() => setShowAddProject(true)}
-            >
-              <Ionicons name="add-circle-outline" size={28} color={colors.primaryBtn} />
-              <Text style={[styles.emptyProjectsText, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>
-                {t.home.startFirstProject}
+            <View style={[styles.emptyProjects, { backgroundColor: colors.surface }]}>
+              <Ionicons name="layers-outline" size={28} color={colors.textTertiary} />
+              <Text style={[styles.emptyProjectsText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
+                {t.home.noProjects}
               </Text>
-            </Pressable>
+            </View>
           )}
 
           <View style={{ marginTop: 24 }} />
