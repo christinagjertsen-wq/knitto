@@ -175,6 +175,85 @@ function YarnCalculator() {
   );
 }
 
+function OkeFelleKalkulator() {
+  const colors = Colors.light;
+  const [nåværende, setNåværende] = useState('');
+  const [ønsket, setØnsket] = useState('');
+
+  const result = useMemo(() => {
+    const curr = parseInt(nåværende, 10);
+    const want = parseInt(ønsket, 10);
+    if (!curr || !want || curr <= 0 || want <= 0 || curr === want) return null;
+
+    const isØke = want > curr;
+    const changes = Math.abs(want - curr);
+    const spacing = Math.floor(curr / changes);
+    const remainder = curr % changes;
+
+    const shortSections = changes - remainder;
+    const longSections = remainder;
+
+    let lines: string[] = [];
+    if (longSections === 0) {
+      lines.push(`${isØke ? 'Øk' : 'Fell'} 1 maske etter hver ${spacing}. maske`);
+      lines.push(`Gjenta ${changes} ganger`);
+    } else {
+      lines.push(`${isØke ? 'Øk' : 'Fell'} 1 maske etter hver ${spacing}. maske — ${shortSections} ganger`);
+      lines.push(`${isØke ? 'Øk' : 'Fell'} 1 maske etter hver ${spacing + 1}. maske — ${longSections} ganger`);
+    }
+
+    return { isØke, changes, lines, from: curr, to: want };
+  }, [nåværende, ønsket]);
+
+  return (
+    <View style={[styles.calcCard, { backgroundColor: colors.surface }]}>
+      <Text style={[styles.calcTitle, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>Øke / Felle</Text>
+      <Text style={[styles.calcSubtitle, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
+        Fordel justeringer jevnt over maskeraden
+      </Text>
+      <View style={styles.inputRow}>
+        <View style={{ flex: 1 }}>
+          <Text style={[styles.inputLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Nåværende masker</Text>
+          <TextInput
+            style={[styles.calcInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border }]}
+            value={nåværende}
+            onChangeText={setNåværende}
+            placeholder="80"
+            placeholderTextColor={colors.textTertiary}
+            keyboardType="number-pad"
+          />
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={[styles.inputLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Ønsket masker</Text>
+          <TextInput
+            style={[styles.calcInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border }]}
+            value={ønsket}
+            onChangeText={setØnsket}
+            placeholder="96"
+            placeholderTextColor={colors.textTertiary}
+            keyboardType="number-pad"
+          />
+        </View>
+      </View>
+      {result && (
+        <View style={[styles.resultBox, { backgroundColor: colors.primaryBtn + '18' }]}>
+          <Text style={[styles.resultLine, { color: colors.primaryBtn, fontFamily: 'Inter_700Bold' }]}>
+            {result.isØke ? 'Øk' : 'Fell'} {result.changes} masker totalt
+          </Text>
+          {result.lines.map((line, i) => (
+            <Text key={i} style={[styles.resultSub, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
+              {line}
+            </Text>
+          ))}
+          <Text style={[styles.resultSub, { color: colors.textTertiary, fontFamily: 'Inter_400Regular', marginTop: 4 }]}>
+            {result.from} → {result.to} masker
+          </Text>
+        </View>
+      )}
+    </View>
+  );
+}
+
 function YarnStats() {
   const { projects, yarnStock, qualities, brands, getQualityById } = useKnitting();
 
@@ -258,6 +337,7 @@ function YarnStats() {
 const TOOL_SECTIONS = [
   { key: 'tellere', label: 'Tellere', icon: 'add-circle-outline' as const },
   { key: 'kalkulator', label: 'Kalkulator', icon: 'calculator-outline' as const },
+  { key: 'oekefelle', label: 'Øke/Felle', icon: 'git-branch-outline' as const },
   { key: 'statistikk', label: 'Garn brukt', icon: 'stats-chart-outline' as const },
   { key: 'naaler', label: 'Pinner', icon: 'list-outline' as const },
 ] as const;
@@ -386,6 +466,8 @@ export default function InnstillingerScreen() {
         )}
 
         {activeSection === 'kalkulator' && <YarnCalculator />}
+
+        {activeSection === 'oekefelle' && <OkeFelleKalkulator />}
 
         {activeSection === 'statistikk' && <YarnStats />}
 
