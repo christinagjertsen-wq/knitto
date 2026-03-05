@@ -239,11 +239,11 @@ function AddProjectModal({ visible, onClose }: { visible: boolean; onClose: () =
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalOverlay}>
         <View style={[styles.modalSheet, { backgroundColor: colors.surface }]}>
           <View style={styles.modalHandle} />
-          <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Nytt prosjekt</Text>
-          <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Prosjektnavn</Text>
+          <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.projects.newTitle}</Text>
+          <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.addProject.namePlaceholder}</Text>
           <TextInput
             style={[styles.input, { color: colors.text, backgroundColor: colors.background, fontFamily: 'Inter_400Regular' }]}
-            placeholder="Prosjektnavn"
+            placeholder={t.addProject.namePlaceholder}
             placeholderTextColor={colors.textTertiary}
             value={name}
             onChangeText={setName}
