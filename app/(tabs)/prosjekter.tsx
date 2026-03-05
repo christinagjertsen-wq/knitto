@@ -109,6 +109,18 @@ function SwipeableProjectCard({
     project.needleIds.map(id => needles.find(n => n.id === id)).filter(Boolean),
     [project.needleIds, needles]);
 
+  const yarnSummary = useMemo(() => {
+    const allocatedYarns = project.yarnAllocations
+      .map(a => yarnStock.find(y => y.id === a.yarnStockId))
+      .filter(Boolean);
+    const colorCount = allocatedYarns.length;
+    const qualityCount = new Set(allocatedYarns.map(y => y!.qualityId)).size;
+    if (colorCount === 0) return null;
+    const kvalitet = qualityCount === 1 ? '1 kvalitet' : `${qualityCount} kvaliteter`;
+    const farge = colorCount === 1 ? '1 farge' : `${colorCount} farger`;
+    return `${kvalitet} · ${farge}`;
+  }, [project.yarnAllocations, yarnStock]);
+
 
   const nextStatus: ProjectStatus | null =
     project.status === 'planlagt' ? 'aktiv' :
@@ -188,8 +200,10 @@ function SwipeableProjectCard({
                   </Text>
                 </View>
                 <Text style={[styles.footerText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                  {project.yarnAllocations.length} {project.yarnAllocations.length === 1 ? 'garnfarge' : 'garnfarger'}
-                  {projectNeedles.length > 0 ? ` · ${projectNeedles.map(n => `${n!.size}mm`).join(', ')}` : ''}
+                  {[
+                    yarnSummary,
+                    projectNeedles.length > 0 ? projectNeedles.map(n => `${n!.size}mm`).join(', ') : null,
+                  ].filter(Boolean).join(' · ')}
                 </Text>
               </View>
             </View>
