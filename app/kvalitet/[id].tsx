@@ -290,30 +290,22 @@ export default function KvalitetScreen() {
         showsVerticalScrollIndicator={false}
         contentInsetAdjustmentBehavior="automatic"
       >
-        <View style={[styles.qualityInfo, { backgroundColor: colors.surface }]}>
-          <Text style={[styles.infoRow, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
-            {quality.fiberContent || 'Fiber ikke angitt'}
-          </Text>
-          <View style={styles.statsRow}>
-            <View style={styles.stat}>
-              <Text style={[styles.statNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{totalSkeins.toLocaleString('nb-NO')}</Text>
-              <Text style={[styles.statLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>nøster</Text>
-            </View>
-            <View style={styles.statDivider} />
-            <View style={styles.stat}>
-              <Text style={[styles.statNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{totalGrams.toLocaleString('nb-NO')}g</Text>
-              <Text style={[styles.statLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>gram</Text>
-            </View>
-            <View style={styles.statDivider} />
-            <View style={styles.stat}>
-              <Text style={[styles.statNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{totalMeters.toLocaleString('nb-NO')}m</Text>
-              <Text style={[styles.statLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>meter</Text>
-            </View>
-            <View style={styles.statDivider} />
-            <View style={styles.stat}>
-              <Text style={[styles.statNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{quality.gramsPerSkein.toLocaleString('nb-NO')}g</Text>
-              <Text style={[styles.statLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>per nøste</Text>
-            </View>
+        <Text style={[styles.fiberLine, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
+          {quality.fiberContent || 'Fiber ikke angitt'}{quality.gramsPerSkein ? ` · ${quality.gramsPerSkein}g / ${quality.metersPerSkein}m per nøste` : ''}
+        </Text>
+
+        <View style={styles.miniStatsRow}>
+          <View style={[styles.miniStatCard, { backgroundColor: colors.surface }]}>
+            <Text style={[styles.miniStatNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{totalSkeins.toLocaleString('nb-NO')}</Text>
+            <Text style={[styles.miniStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>nøster</Text>
+          </View>
+          <View style={[styles.miniStatCard, { backgroundColor: colors.surface }]}>
+            <Text style={[styles.miniStatNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{totalGrams.toLocaleString('nb-NO')}</Text>
+            <Text style={[styles.miniStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>gram</Text>
+          </View>
+          <View style={[styles.miniStatCard, { backgroundColor: colors.surface }]}>
+            <Text style={[styles.miniStatNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{totalMeters.toLocaleString('nb-NO')}</Text>
+            <Text style={[styles.miniStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>meter</Text>
           </View>
         </View>
 
@@ -393,12 +385,18 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 2,
   },
-  infoRow: { fontSize: 14, marginBottom: 12, textAlign: 'center' },
-  statsRow: { flexDirection: 'row', alignItems: 'center' },
-  stat: { flex: 1, alignItems: 'center' },
-  statNum: { fontSize: 22 },
-  statLabel: { fontSize: 10, marginTop: 4, textAlign: 'center' },
-  statDivider: { width: 1, height: 32, backgroundColor: '#E5EAF2' },
+  fiberLine: { fontSize: 13, marginBottom: 12 },
+  miniStatsRow: { flexDirection: 'row', gap: 10, marginBottom: 4 },
+  miniStatCard: {
+    flex: 1,
+    borderRadius: 14,
+    paddingVertical: 14,
+    paddingHorizontal: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  miniStatNum: { fontSize: 18 },
+  miniStatLabel: { fontSize: 11, marginTop: 3 },
   sectionTitle: { fontSize: 16, marginTop: 4, marginBottom: 4 },
   yarnCard: {
     flexDirection: 'row',
