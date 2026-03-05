@@ -202,22 +202,10 @@ function SwipeableProjectCard({
             </Text>
           ) : null}
           <View style={styles.projectFooter}>
-            <View style={styles.footerLeft}>
-              <View style={styles.footerItem}>
-                <Ionicons name="color-palette-outline" size={13} color={colors.textTertiary} />
-                <Text style={[styles.footerText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                  {project.yarnAllocations.length} {project.yarnAllocations.length === 1 ? 'garnfarge' : 'garnfarger'}
-                </Text>
-              </View>
-              {projectNeedles.length > 0 && (
-                <View style={styles.footerItem}>
-                  <Ionicons name="construct-outline" size={13} color={colors.textTertiary} />
-                  <Text style={[styles.footerText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                    {projectNeedles.map(n => `${n!.size}mm`).join(', ')}
-                  </Text>
-                </View>
-              )}
-            </View>
+            <Text style={[styles.footerText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular', flex: 1 }]}>
+              {project.yarnAllocations.length} {project.yarnAllocations.length === 1 ? 'garnfarge' : 'garnfarger'}
+              {projectNeedles.length > 0 ? ` · ${projectNeedles.map(n => `${n!.size}mm`).join(', ')}` : ''}
+            </Text>
             <ProgressRing
               percent={project.progressPercent ?? 0}
               size={38}
