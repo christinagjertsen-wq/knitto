@@ -370,13 +370,13 @@ export default function InnstillingerScreen() {
   }, [scrollToActive]));
 
   const QUOTES = [
-    'Å strikke, det er å være',
-    'Garn er kjærlighet i tråd',
-    'Masken for masken — det er livet',
-    'I hvert nøste bor en drøm',
-    'Strikk sakte, lev godt',
+    'Å strikke det er å være',
+    'Garn er kjærlighet i ull',
+    'Maske for maske! Det er livet!',
+    'I hvert nøste bor en liten drøm',
+    'Strikk sakte. Lev godt.',
     'Hendene er rolige når hjertet er urolig',
-    'Ull varmer dobbelt — i lammingen og i genseren',
+    'Ull er kjærlighet på pinner',
   ];
 
   const quote = useMemo(() => QUOTES[new Date().getDay() % QUOTES.length], []);
@@ -584,7 +584,7 @@ const styles = StyleSheet.create({
   avatarCircle: { width: 52, height: 52, borderRadius: 26, backgroundColor: 'rgba(255,255,255,0.25)', alignItems: 'center', justifyContent: 'center' },
   avatarLetter: { fontSize: 24, color: '#fff' },
   nameText: { fontSize: 20, color: '#fff' },
-  quoteText: { fontSize: 12, color: 'rgba(255,255,255,0.65)', marginTop: 4, fontStyle: 'italic', lineHeight: 17 },
+  quoteText: { fontSize: 12, color: 'rgba(255,255,255,0.65)', marginTop: 4, lineHeight: 17 },
   editNameBtn: { padding: 8 },
   gearBtn: { padding: 6, alignSelf: 'center' },
   tabScroll: { flexGrow: 0, marginHorizontal: -20, marginBottom: 4 },
