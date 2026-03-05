@@ -46,6 +46,79 @@ function ProgressRingLarge({ percent, size, strokeWidth, color }: { percent: num
   );
 }
 
+const PRESET_COLORS = [
+  { name: 'Lys grå', hex: '#E8E8E8' },
+  { name: 'Lys rosa', hex: '#FCC8D0' },
+  { name: 'Lys fersken', hex: '#FCD8B0' },
+  { name: 'Lys gul', hex: '#FAF0A0' },
+  { name: 'Lys lime', hex: '#D8ECC0' },
+  { name: 'Lys grønn', hex: '#C0E8C0' },
+  { name: 'Lys aqua', hex: '#B8ECEC' },
+  { name: 'Lys blå', hex: '#C0D4F4' },
+  { name: 'Lys lavendel', hex: '#D8C0F4' },
+  { name: 'Lys rose', hex: '#F4C4E0' },
+  { name: 'Sølv', hex: '#C8C8C8' },
+  { name: 'Rosa', hex: '#F898B0' },
+  { name: 'Fersken', hex: '#FAB880' },
+  { name: 'Gul', hex: '#F8E068' },
+  { name: 'Lime', hex: '#B4E090' },
+  { name: 'Grønn', hex: '#90E090' },
+  { name: 'Aqua', hex: '#80E0E0' },
+  { name: 'Blå', hex: '#90B8F4' },
+  { name: 'Lavendel', hex: '#B890E8' },
+  { name: 'Syklamenpink', hex: '#F090CC' },
+  { name: 'Grå', hex: '#A8A8A8' },
+  { name: 'Laks', hex: '#F06888' },
+  { name: 'Aprikos', hex: '#F09060' },
+  { name: 'Gylden', hex: '#F0D040' },
+  { name: 'Lysegrønn', hex: '#88CC60' },
+  { name: 'Gressgrønn', hex: '#58C858' },
+  { name: 'Turkis', hex: '#58C8C8' },
+  { name: 'Kornblomst', hex: '#6898E8' },
+  { name: 'Lilla', hex: '#9868D8' },
+  { name: 'Fuksia', hex: '#E868A8' },
+  { name: 'Mellomgrå', hex: '#888888' },
+  { name: 'Rød', hex: '#D83060' },
+  { name: 'Oransje', hex: '#D86820' },
+  { name: 'Gull', hex: '#D8A810' },
+  { name: 'Olivengrønn', hex: '#60B030' },
+  { name: 'Skoggrønn', hex: '#20B020' },
+  { name: 'Teal', hex: '#20A8A8' },
+  { name: 'Kobolt', hex: '#3870C8' },
+  { name: 'Dyp lilla', hex: '#7038B8' },
+  { name: 'Karmin', hex: '#C82878' },
+  { name: 'Mørk grå', hex: '#606060' },
+  { name: 'Mørk rød', hex: '#A81040' },
+  { name: 'Rust', hex: '#A84810' },
+  { name: 'Oker', hex: '#A87808' },
+  { name: 'Mørkegrønn', hex: '#387818' },
+  { name: 'Dyp grønn', hex: '#087808' },
+  { name: 'Mørk teal', hex: '#087878' },
+  { name: 'Marineblå', hex: '#1850A0' },
+  { name: 'Aubergine', hex: '#481888' },
+  { name: 'Burgunder', hex: '#A01058' },
+  { name: 'Koks', hex: '#383838' },
+  { name: 'Mørk burgunder', hex: '#780830' },
+  { name: 'Mørk rust', hex: '#783010' },
+  { name: 'Mørk oker', hex: '#785808' },
+  { name: 'Mørk skog', hex: '#205010' },
+  { name: 'Dyp skog', hex: '#055005' },
+  { name: 'Dyp teal', hex: '#055050' },
+  { name: 'Mørk marine', hex: '#102868' },
+  { name: 'Dyp violet', hex: '#300868' },
+  { name: 'Mørk vin', hex: '#700828' },
+  { name: 'Antrasitt', hex: '#1E1E1E' },
+  { name: 'Dyp rød', hex: '#380010' },
+  { name: 'Mahogni', hex: '#381808' },
+  { name: 'Dyp brun', hex: '#302000' },
+  { name: 'Nattskog', hex: '#101808' },
+  { name: 'Nattgrønn', hex: '#022802' },
+  { name: 'Natt teal', hex: '#022828' },
+  { name: 'Nattblå', hex: '#071030' },
+  { name: 'Natt violet', hex: '#180038' },
+  { name: 'Svart', hex: '#0A0A0A' },
+];
+
 const STATUS_LABELS: Record<ProjectStatus, string> = {
   planlagt: 'Planlagt',
   aktiv: 'Aktiv',
@@ -96,7 +169,7 @@ function AddYarnModal({
 }) {
   const colorScheme = useColorScheme();
   const colors = colorScheme === 'dark' ? Colors.dark : Colors.light;
-  const { yarnStock, qualities, brands, getQualityById, getQualitiesForBrand, updateQuality, addBrand } = useKnitting();
+  const { yarnStock, qualities, brands, getQualityById, getQualitiesForBrand, updateQuality, addBrand, addQuality } = useKnitting();
 
   const [mode, setMode] = useState<'lager' | 'nytt'>('lager');
 
@@ -106,13 +179,16 @@ function AddYarnModal({
   const [newBrandId, setNewBrandId] = useState<string | null>(null);
   const [newQualityId, setNewQualityId] = useState<string | null>(null);
   const [newColorName, setNewColorName] = useState('');
-  const [newColorHex, setNewColorHex] = useState('#CCCCCC');
+  const [selectedColorHex, setSelectedColorHex] = useState('#C0D4F4');
+  const [customHex, setCustomHex] = useState('');
   const [newSkeinsTotal, setNewSkeinsTotal] = useState(1);
   const [newSkeinsProject, setNewSkeinsProject] = useState(1);
   const [newGramsPerSkein, setNewGramsPerSkein] = useState('');
   const [newMetersPerSkein, setNewMetersPerSkein] = useState('');
   const [showNewBrandInput, setShowNewBrandInput] = useState(false);
   const [newBrandName, setNewBrandName] = useState('');
+  const [showNewQualityInput, setShowNewQualityInput] = useState(false);
+  const [newQualityName, setNewQualityName] = useState('');
 
   const availableYarn = useMemo(() =>
     yarnStock.filter(y => !excludeIds.includes(y.id) && y.skeins > 0),
@@ -135,13 +211,23 @@ function AddYarnModal({
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
   };
 
+  const handleAddQuality = () => {
+    if (!newQualityName.trim() || !newBrandId) return;
+    const q = addQuality({ brandId: newBrandId, name: newQualityName.trim(), fiberContent: '', gramsPerSkein: 0, metersPerSkein: 0 });
+    setNewQualityId(q.id);
+    setNewQualityName('');
+    setShowNewQualityInput(false);
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+  };
+
   const reset = () => {
     setSelected(null); setSkeins(1);
     setNewBrandId(null); setNewQualityId(null);
-    setNewColorName(''); setNewColorHex('#CCCCCC');
+    setNewColorName(''); setSelectedColorHex('#C0D4F4'); setCustomHex('');
     setNewSkeinsTotal(1); setNewSkeinsProject(1);
     setNewGramsPerSkein(''); setNewMetersPerSkein('');
     setShowNewBrandInput(false); setNewBrandName('');
+    setShowNewQualityInput(false); setNewQualityName('');
     setMode('lager');
   };
 
@@ -161,6 +247,8 @@ function AddYarnModal({
     reset(); onClose();
   };
 
+  const finalHex = customHex.startsWith('#') && customHex.length >= 4 ? customHex : selectedColorHex;
+
   const handleAddNew = () => {
     if (!newQualityId || !newColorName.trim()) return;
     const g = parseInt(newGramsPerSkein) || 0;
@@ -168,7 +256,7 @@ function AddYarnModal({
     if (g > 0 || m > 0) {
       updateQuality(newQualityId, { gramsPerSkein: g, metersPerSkein: m });
     }
-    onAddNew(newQualityId, newColorName.trim(), newColorHex, newSkeinsTotal, newSkeinsProject);
+    onAddNew(newQualityId, newColorName.trim(), finalHex, newSkeinsTotal, newSkeinsProject);
     reset(); onClose();
   };
 
@@ -322,7 +410,7 @@ function AddYarnModal({
                   </View>
                 )}
 
-                {newBrandId && qualitiesForBrand.length > 0 && (
+                {newBrandId && (
                   <>
                     <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Kvalitet</Text>
                     <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -4 }}>
@@ -330,7 +418,7 @@ function AddYarnModal({
                         {qualitiesForBrand.map(q => (
                           <Pressable
                             key={q.id}
-                            onPress={() => handleQualitySelect(q.id)}
+                            onPress={() => { handleQualitySelect(q.id); setShowNewQualityInput(false); Haptics.selectionAsync(); }}
                             style={[styles.pill, {
                               backgroundColor: newQualityId === q.id ? colors.primaryBtn : colors.background,
                               borderColor: newQualityId === q.id ? colors.primaryBtn : colors.border,
@@ -342,8 +430,44 @@ function AddYarnModal({
                             }]}>{q.name}</Text>
                           </Pressable>
                         ))}
+                        <Pressable
+                          onPress={() => { setShowNewQualityInput(true); setNewQualityId(null); Haptics.selectionAsync(); }}
+                          style={[styles.pill, {
+                            backgroundColor: showNewQualityInput ? colors.primaryBtn : colors.background,
+                            borderColor: showNewQualityInput ? colors.primaryBtn : colors.border,
+                            borderStyle: 'dashed',
+                          }]}
+                        >
+                          <Ionicons name="add" size={14} color={showNewQualityInput ? '#fff' : colors.textSecondary} />
+                          <Text style={[styles.pillText, {
+                            color: showNewQualityInput ? '#fff' : colors.textSecondary,
+                            fontFamily: 'Inter_400Regular',
+                          }]}>Ny kvalitet</Text>
+                        </Pressable>
                       </View>
                     </ScrollView>
+                    {showNewQualityInput && (
+                      <View style={[styles.inlineInputRow, { backgroundColor: colors.background }]}>
+                        <TextInput
+                          style={[styles.inlineInput, { color: colors.text, fontFamily: 'Inter_400Regular' }]}
+                          placeholder="Navn på kvalitet"
+                          placeholderTextColor={colors.textTertiary}
+                          value={newQualityName}
+                          onChangeText={setNewQualityName}
+                          autoFocus
+                          autoCapitalize="words"
+                          returnKeyType="done"
+                          onSubmitEditing={handleAddQuality}
+                        />
+                        <Pressable
+                          onPress={handleAddQuality}
+                          style={[styles.inlineBtn, { backgroundColor: newQualityName.trim() ? colors.primaryBtn : colors.border }]}
+                          disabled={!newQualityName.trim()}
+                        >
+                          <Text style={[styles.inlineBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Legg til</Text>
+                        </Pressable>
+                      </View>
+                    )}
                   </>
                 )}
 
@@ -356,18 +480,40 @@ function AddYarnModal({
                   placeholderTextColor={colors.textTertiary}
                 />
 
-                <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Fargekode (valgfritt)</Text>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                  <View style={[styles.yarnOptionDot, { backgroundColor: newColorHex, borderWidth: 0.5, borderColor: 'rgba(0,0,0,0.1)' }]} />
+                <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Velg farge</Text>
+                <View style={styles.colorPreviewRow}>
+                  <View style={[styles.colorPreviewSwatch, { backgroundColor: finalHex }]} />
                   <TextInput
                     style={[styles.detailInput, { flex: 1, color: colors.text, backgroundColor: colors.background, borderColor: colors.border, fontFamily: 'Inter_400Regular' }]}
-                    value={newColorHex}
-                    onChangeText={setNewColorHex}
-                    placeholder="#RRGGBB"
+                    value={customHex}
+                    onChangeText={setCustomHex}
+                    placeholder="#hex (valgfritt)"
                     placeholderTextColor={colors.textTertiary}
                     autoCapitalize="none"
                     autoCorrect={false}
                   />
+                </View>
+                <View style={styles.colorGrid}>
+                  {Array.from({ length: 7 }, (_, rowIndex) => (
+                    <View key={rowIndex} style={styles.colorRow}>
+                      {PRESET_COLORS.slice(rowIndex * 10, rowIndex * 10 + 10).map(c => (
+                        <Pressable
+                          key={c.hex}
+                          onPress={() => {
+                            setSelectedColorHex(c.hex);
+                            setCustomHex('');
+                            setNewColorName(prev => prev || c.name);
+                            Haptics.selectionAsync();
+                          }}
+                          style={[
+                            styles.presetColor,
+                            { backgroundColor: c.hex },
+                            selectedColorHex === c.hex && !customHex && styles.presetColorSelected,
+                          ]}
+                        />
+                      ))}
+                    </View>
+                  ))}
                 </View>
 
                 <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Kjøpte nøster totalt</Text>
@@ -1397,6 +1543,12 @@ const styles = StyleSheet.create({
   yarnOptionDot: { width: 32, height: 32, borderRadius: 16 },
   yarnOptionName: { fontSize: 14 },
   yarnOptionSub: { fontSize: 12, marginTop: 2 },
+  colorPreviewRow: { flexDirection: 'row', gap: 12, alignItems: 'center' },
+  colorPreviewSwatch: { width: 44, height: 44, borderRadius: 22, borderWidth: 0.5, borderColor: 'rgba(0,0,0,0.1)' },
+  colorGrid: { gap: 6 },
+  colorRow: { flexDirection: 'row', justifyContent: 'space-between' },
+  presetColor: { width: 27, height: 27, borderRadius: 14, borderWidth: 0.5, borderColor: 'rgba(0,0,0,0.1)' },
+  presetColorSelected: { borderWidth: 2.5, borderColor: Colors.palette.navy },
   counter: { flexDirection: 'row', alignItems: 'center', gap: 20, justifyContent: 'center' },
   counterBtn: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
   counterValue: { fontSize: 24 },
