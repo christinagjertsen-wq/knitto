@@ -73,7 +73,7 @@ function Counter({ label, color }: { label: string; color: string }) {
         <Text style={[styles.counterHint, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>trykk for å telle</Text>
       </Pressable>
       <View style={styles.counterRow}>
-        <Pressable style={[styles.counterBtn, { backgroundColor: colors.background }]} onPress={decrement}>
+        <Pressable style={[styles.counterBtn, { backgroundColor: colors.border }]} onPress={decrement}>
           <Ionicons name="remove" size={22} color={count === 0 ? colors.textTertiary : colors.text} />
         </Pressable>
         <Pressable style={[styles.counterBtn, { backgroundColor: color }]} onPress={increment}>

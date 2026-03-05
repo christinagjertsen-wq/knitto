@@ -51,7 +51,7 @@ export default {
   dark: {
     text: "#F0F4FF",
     textSecondary: "#9AAAC8",
-    textTertiary: "#5A6B85",
+    textTertiary: "#6B80A0",
     background: "#0D1220",
     surface: "#1A2340",
     border: "#2E3D6E",
@@ -67,8 +67,8 @@ export default {
     navyMid: "#1A2340",
     cream: "#2E3D6E",
     slate: palette.slate,
-    primaryBtn: palette.navyLight,
-    badgeBg: palette.navyLight,
+    primaryBtn: "#5B85C8",
+    badgeBg: "#243058",
     badgeText: "#E0E8FF",
   },
 };

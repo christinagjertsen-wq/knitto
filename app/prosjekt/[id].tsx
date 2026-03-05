@@ -861,8 +861,8 @@ export default function ProsjektScreen() {
 
   const DetailCell = ({ label, value, placeholder }: { label: string; value?: string; placeholder: string }) => (
     <View style={styles.detailCell}>
-      <Text style={[styles.detailCellLabel, { color: colors.primaryBtn, fontFamily: 'Inter_500Medium' }]}>{label}</Text>
-      <Text style={[styles.detailCellValue, { color: value ? colors.text : colors.textTertiary, fontFamily: value ? 'Inter_400Regular' : 'Inter_400Regular' }]}>
+      <Text style={[styles.detailCellLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{label}</Text>
+      <Text style={[styles.detailCellValue, { color: value ? colors.text : colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
         {value || placeholder}
       </Text>
     </View>
@@ -994,10 +994,10 @@ export default function ProsjektScreen() {
           <View style={styles.cardHeader}>
             <Text style={[styles.cardLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Detaljer</Text>
             <Pressable
-              style={[styles.editCircleBtn, { backgroundColor: colors.badgeBg }]}
+              style={[styles.editCircleBtn, { backgroundColor: colors.primaryBtn }]}
               onPress={() => { setShowEditDetails(true); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
             >
-              <Ionicons name="pencil" size={14} color={colors.primaryBtn} />
+              <Ionicons name="pencil" size={14} color="#fff" />
             </Pressable>
           </View>
 
