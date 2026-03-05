@@ -172,7 +172,7 @@ const ONBOARDING_SLIDES = [
   {
     icon: 'sparkles' as const,
     iconBg: '#E8EFF8',
-    title: 'Velkommen til Knitty',
+    title: 'Velkommen til Kerä',
     body: 'Din personlige strikkedagbok — hold styr på prosjekter, garn og pinner på ett sted.',
   },
   {

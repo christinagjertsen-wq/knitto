@@ -600,7 +600,7 @@ export default function InnstillingerScreen() {
 
         <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.settings.about}</Text>
         <View style={[styles.card, { backgroundColor: colors.surface }]}>
-          {[{ label: t.settings.aboutApp, value: 'Knitty' }, { label: t.settings.aboutVersion, value: '1.0.0' }].map((row, i, arr) => (
+          {[{ label: t.settings.aboutApp, value: 'Kerä' }, { label: t.settings.aboutVersion, value: '1.0.0' }].map((row, i, arr) => (
             <View key={row.label}>
               <View style={styles.row}>
                 <Text style={[styles.rowLabel, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>{row.label}</Text>
