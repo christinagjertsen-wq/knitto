@@ -218,7 +218,7 @@ function AddProjectModal({ visible, onClose }: { visible: boolean; onClose: () =
 
   const save = () => {
     if (!name.trim()) return;
-    addProject({ name: name.trim(), status, yarnAllocations: [], notes: '' });
+    addProject({ name: name.trim(), status, yarnAllocations: [], notes: '', progressPercent: 0, needleIds: [] });
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setName('');
     setStatus('planlagt');

@@ -16,6 +16,7 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
+import Svg, { Circle } from 'react-native-svg';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -23,6 +24,41 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
 import { useKnitting, Project, ProjectStatus } from '@/context/KnittingContext';
+
+function ProgressRing({ percent, size, strokeWidth, color }: { percent: number; size: number; strokeWidth: number; color: string }) {
+  const colors = Colors.light;
+  const r = (size - strokeWidth) / 2;
+  const circ = 2 * Math.PI * r;
+  const offset = circ - (Math.min(Math.max(percent, 0), 100) / 100) * circ;
+  return (
+    <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
+      <Svg width={size} height={size} style={{ position: 'absolute' }}>
+        <Circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          stroke={colors.border}
+          strokeWidth={strokeWidth}
+          fill="none"
+        />
+        <Circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          stroke={color}
+          strokeWidth={strokeWidth}
+          fill="none"
+          strokeDasharray={`${circ} ${circ}`}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          rotation="-90"
+          origin={`${size / 2}, ${size / 2}`}
+        />
+      </Svg>
+      <Text style={{ fontSize: 9, fontFamily: 'Inter_600SemiBold', color: color }}>{Math.round(percent)}%</Text>
+    </View>
+  );
+}
 
 const STATUS_LABELS: Record<ProjectStatus, string> = {
   planlagt: 'Planlagt',
@@ -180,6 +216,12 @@ function SwipeableProjectCard({
                 </View>
               )}
             </View>
+            <ProgressRing
+              percent={project.progressPercent ?? 0}
+              size={38}
+              strokeWidth={3}
+              color={STATUS_COLORS[project.status]}
+            />
           </View>
         </Pressable>
       </Animated.View>
@@ -195,7 +237,7 @@ function AddProjectModal({ visible, onClose }: { visible: boolean; onClose: () =
 
   const handleAdd = useCallback(() => {
     if (!name.trim()) return;
-    addProject({ name: name.trim(), status, notes: '', yarnAllocations: [], needleIds: [], startDate: new Date().toLocaleDateString('nb-NO') });
+    addProject({ name: name.trim(), status, notes: '', progressPercent: 0, yarnAllocations: [], needleIds: [], startDate: new Date().toLocaleDateString('nb-NO') });
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setName(''); setStatus('aktiv');
     onClose();

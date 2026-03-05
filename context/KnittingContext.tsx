@@ -54,8 +54,17 @@ export interface Project {
   gauge?: string;
   patternNeedleSize?: string;
   coverImage?: string;
+  progressPercent: number;
   yarnAllocations: YarnAllocation[];
   needleIds: string[];
+}
+
+export interface LogEntry {
+  id: string;
+  projectId: string;
+  date: string;
+  notes: string;
+  radStrikket?: number;
 }
 
 interface KnittingContextValue {
@@ -64,6 +73,7 @@ interface KnittingContextValue {
   yarnStock: YarnStock[];
   needles: Needle[];
   projects: Project[];
+  logEntries: LogEntry[];
   isLoading: boolean;
   addBrand: (name: string) => Brand;
   updateBrand: (id: string, name: string) => void;
@@ -82,6 +92,9 @@ interface KnittingContextValue {
   deleteProject: (id: string) => void;
   allocateYarnToProject: (projectId: string, yarnStockId: string, skeins: number) => void;
   removeYarnFromProject: (projectId: string, yarnStockId: string) => void;
+  addLogEntry: (entry: Omit<LogEntry, 'id'>) => LogEntry;
+  deleteLogEntry: (id: string) => void;
+  getLogsForProject: (projectId: string) => LogEntry[];
   getQualitiesForBrand: (brandId: string) => Quality[];
   getYarnStockForQuality: (qualityId: string) => YarnStock[];
   getTotalStats: () => { totalSkeins: number; totalGrams: number; totalMeters: number };
@@ -99,6 +112,7 @@ const STORAGE_KEYS = {
   yarnStock: 'knitting_yarn_stock',
   needles: 'knitting_needles',
   projects: 'knitting_projects',
+  logEntries: 'knitting_log_entries',
 };
 
 function genId(): string {
@@ -133,6 +147,7 @@ const DEMO_DATA = {
       status: 'aktiv' as ProjectStatus,
       startDate: '2026-01-15',
       notes: 'Klassisk norsk genser til vinteren',
+      progressPercent: 35,
       yarnAllocations: [{ yarnStockId: 'y1', skeinsAllocated: 3 }],
       needleIds: ['n1'],
     },
@@ -141,10 +156,12 @@ const DEMO_DATA = {
       name: 'Babylue',
       status: 'planlagt' as ProjectStatus,
       notes: '',
+      progressPercent: 0,
       yarnAllocations: [{ yarnStockId: 'y2', skeinsAllocated: 1 }],
       needleIds: ['n3'],
     },
   ] as Project[],
+  logEntries: [] as LogEntry[],
 };
 
 export function KnittingProvider({ children }: { children: ReactNode }) {
@@ -153,29 +170,34 @@ export function KnittingProvider({ children }: { children: ReactNode }) {
   const [yarnStock, setYarnStock] = useState<YarnStock[]>([]);
   const [needles, setNeedles] = useState<Needle[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [logEntries, setLogEntries] = useState<LogEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
       try {
-        const [b, q, y, n, p] = await Promise.all([
+        const [b, q, y, n, p, l] = await Promise.all([
           AsyncStorage.getItem(STORAGE_KEYS.brands),
           AsyncStorage.getItem(STORAGE_KEYS.qualities),
           AsyncStorage.getItem(STORAGE_KEYS.yarnStock),
           AsyncStorage.getItem(STORAGE_KEYS.needles),
           AsyncStorage.getItem(STORAGE_KEYS.projects),
+          AsyncStorage.getItem(STORAGE_KEYS.logEntries),
         ]);
         setBrands(b ? JSON.parse(b) : DEMO_DATA.brands);
         setQualities(q ? JSON.parse(q) : DEMO_DATA.qualities);
         setYarnStock(y ? JSON.parse(y) : DEMO_DATA.yarnStock);
         setNeedles(n ? JSON.parse(n) : DEMO_DATA.needles);
-        setProjects(p ? JSON.parse(p) : DEMO_DATA.projects);
+        const loadedProjects: Project[] = p ? JSON.parse(p) : DEMO_DATA.projects;
+        setProjects(loadedProjects.map(proj => ({ ...proj, progressPercent: proj.progressPercent ?? 0 })));
+        setLogEntries(l ? JSON.parse(l) : DEMO_DATA.logEntries);
       } catch (e) {
         setBrands(DEMO_DATA.brands);
         setQualities(DEMO_DATA.qualities);
         setYarnStock(DEMO_DATA.yarnStock);
         setNeedles(DEMO_DATA.needles);
         setProjects(DEMO_DATA.projects);
+        setLogEntries(DEMO_DATA.logEntries);
       } finally {
         setIsLoading(false);
       }
@@ -314,7 +336,11 @@ export function KnittingProvider({ children }: { children: ReactNode }) {
 
   const updateProject = useCallback((id: string, project: Partial<Omit<Project, 'id'>>) => {
     setProjects(prev => {
-      const next = prev.map(p => p.id === id ? { ...p, ...project } : p);
+      const updated = { ...project };
+      if (updated.status === 'ferdig') {
+        updated.progressPercent = 100;
+      }
+      const next = prev.map(p => p.id === id ? { ...p, ...updated } : p);
       save(STORAGE_KEYS.projects, next);
       return next;
     });
@@ -324,6 +350,11 @@ export function KnittingProvider({ children }: { children: ReactNode }) {
     setProjects(prev => {
       const next = prev.filter(p => p.id !== id);
       save(STORAGE_KEYS.projects, next);
+      return next;
+    });
+    setLogEntries(prev => {
+      const next = prev.filter(l => l.projectId !== id);
+      save(STORAGE_KEYS.logEntries, next);
       return next;
     });
   }, [save]);
@@ -374,6 +405,28 @@ export function KnittingProvider({ children }: { children: ReactNode }) {
     }
   }, [save]);
 
+  const addLogEntry = useCallback((entry: Omit<LogEntry, 'id'>): LogEntry => {
+    const l: LogEntry = { id: genId(), ...entry };
+    setLogEntries(prev => {
+      const next = [...prev, l];
+      save(STORAGE_KEYS.logEntries, next);
+      return next;
+    });
+    return l;
+  }, [save]);
+
+  const deleteLogEntry = useCallback((id: string) => {
+    setLogEntries(prev => {
+      const next = prev.filter(l => l.id !== id);
+      save(STORAGE_KEYS.logEntries, next);
+      return next;
+    });
+  }, [save]);
+
+  const getLogsForProject = useCallback((projectId: string) =>
+    logEntries.filter(l => l.projectId === projectId).sort((a, b) => b.date.localeCompare(a.date)),
+    [logEntries]);
+
   const getQualitiesForBrand = useCallback((brandId: string) => qualities.filter(q => q.brandId === brandId), [qualities]);
   const getYarnStockForQuality = useCallback((qualityId: string) => yarnStock.filter(y => y.qualityId === qualityId), [yarnStock]);
   const getBrandById = useCallback((id: string) => brands.find(b => b.id === id), [brands]);
@@ -397,19 +450,21 @@ export function KnittingProvider({ children }: { children: ReactNode }) {
   }, [yarnStock, qualities]);
 
   const value = useMemo<KnittingContextValue>(() => ({
-    brands, qualities, yarnStock, needles, projects, isLoading,
+    brands, qualities, yarnStock, needles, projects, logEntries, isLoading,
     addBrand, updateBrand, deleteBrand,
     addQuality, updateQuality, deleteQuality,
     addYarnStock, updateYarnStock, deleteYarnStock,
     addNeedle, updateNeedle, deleteNeedle,
     addProject, updateProject, deleteProject,
     allocateYarnToProject, removeYarnFromProject,
+    addLogEntry, deleteLogEntry, getLogsForProject,
     getQualitiesForBrand, getYarnStockForQuality,
     getTotalStats, getBrandById, getQualityById, getYarnStockById, getProjectById,
-  }), [brands, qualities, yarnStock, needles, projects, isLoading,
+  }), [brands, qualities, yarnStock, needles, projects, logEntries, isLoading,
     addBrand, updateBrand, deleteBrand, addQuality, updateQuality, deleteQuality,
     addYarnStock, updateYarnStock, deleteYarnStock, addNeedle, updateNeedle, deleteNeedle,
     addProject, updateProject, deleteProject, allocateYarnToProject, removeYarnFromProject,
+    addLogEntry, deleteLogEntry, getLogsForProject,
     getQualitiesForBrand, getYarnStockForQuality, getTotalStats, getBrandById, getQualityById, getYarnStockById, getProjectById]);
 
   return <KnittingContext.Provider value={value}>{children}</KnittingContext.Provider>;

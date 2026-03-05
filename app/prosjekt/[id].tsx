@@ -12,6 +12,7 @@ import {
   Alert,
   Image,
 } from 'react-native';
+import Svg, { Circle } from 'react-native-svg';
 import * as ImagePicker from 'expo-image-picker';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -20,6 +21,30 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
 import { useKnitting, ProjectStatus, YarnStock } from '@/context/KnittingContext';
+
+function ProgressRingLarge({ percent, size, strokeWidth, color }: { percent: number; size: number; strokeWidth: number; color: string }) {
+  const colors = Colors.light;
+  const r = (size - strokeWidth) / 2;
+  const circ = 2 * Math.PI * r;
+  const offset = circ - (Math.min(Math.max(percent, 0), 100) / 100) * circ;
+  return (
+    <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
+      <Svg width={size} height={size} style={{ position: 'absolute' }}>
+        <Circle cx={size / 2} cy={size / 2} r={r} stroke={colors.border} strokeWidth={strokeWidth} fill="none" />
+        <Circle
+          cx={size / 2} cy={size / 2} r={r}
+          stroke={color} strokeWidth={strokeWidth} fill="none"
+          strokeDasharray={`${circ} ${circ}`}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          rotation="-90"
+          origin={`${size / 2}, ${size / 2}`}
+        />
+      </Svg>
+      <Text style={{ fontSize: 14, fontFamily: 'Inter_700Bold', color: color }}>{Math.round(percent)}%</Text>
+    </View>
+  );
+}
 
 const STATUS_LABELS: Record<ProjectStatus, string> = {
   planlagt: 'Planlagt',
@@ -618,15 +643,18 @@ export default function ProsjektScreen() {
   const [showAddYarn, setShowAddYarn] = useState(false);
   const [showAddNeedle, setShowAddNeedle] = useState(false);
   const [showEditDetails, setShowEditDetails] = useState(false);
+  const [showAddLog, setShowAddLog] = useState(false);
 
   const {
     getProjectById, updateProject, deleteProject,
     yarnStock, qualities, brands, needles,
     allocateYarnToProject, removeYarnFromProject,
     addYarnStock, addNeedle, getQualityById,
+    addLogEntry, deleteLogEntry, getLogsForProject,
   } = useKnitting();
 
   const project = getProjectById(id);
+  const projectLogs = useMemo(() => project ? getLogsForProject(project.id) : [], [project, getLogsForProject]);
 
   const pickImage = useCallback(async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -775,6 +803,40 @@ export default function ProsjektScreen() {
                 <StatusButton s="ferdig" />
               </View>
             </View>
+            <View style={{ alignItems: 'center', gap: 8, marginLeft: 12 }}>
+              <ProgressRingLarge
+                percent={project.status === 'ferdig' ? 100 : (project.progressPercent ?? 0)}
+                size={64}
+                strokeWidth={5}
+                color={STATUS_COLORS[project.status]}
+              />
+              {project.status !== 'ferdig' && (
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Pressable
+                    style={[styles.progressStepBtn, { backgroundColor: colors.background }]}
+                    onPress={() => {
+                      const next = Math.max(0, (project.progressPercent ?? 0) - 5);
+                      updateProject(id, { progressPercent: next });
+                      Haptics.selectionAsync();
+                    }}
+                    hitSlop={6}
+                  >
+                    <Ionicons name="remove" size={14} color={colors.textSecondary} />
+                  </Pressable>
+                  <Pressable
+                    style={[styles.progressStepBtn, { backgroundColor: colors.background }]}
+                    onPress={() => {
+                      const next = Math.min(100, (project.progressPercent ?? 0) + 5);
+                      updateProject(id, { progressPercent: next });
+                      Haptics.selectionAsync();
+                    }}
+                    hitSlop={6}
+                  >
+                    <Ionicons name="add" size={14} color={colors.textSecondary} />
+                  </Pressable>
+                </View>
+              )}
+            </View>
           </View>
         </View>
 
@@ -922,6 +984,61 @@ export default function ProsjektScreen() {
           )}
         </View>
 
+        <View style={[styles.card, { backgroundColor: colors.surface }]}>
+          <View style={styles.cardHeader}>
+            <Text style={[styles.cardLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>
+              Logg ({projectLogs.length})
+            </Text>
+            <Pressable
+              style={[styles.addSmallBtn, { backgroundColor: colors.primaryBtn }]}
+              onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setShowAddLog(true); }}
+            >
+              <Ionicons name="add" size={16} color="#fff" />
+            </Pressable>
+          </View>
+          {projectLogs.length === 0 ? (
+            <Pressable
+              style={[styles.emptyYarnRow, { borderColor: colors.border }]}
+              onPress={() => setShowAddLog(true)}
+            >
+              <Ionicons name="journal-outline" size={20} color={colors.textTertiary} />
+              <Text style={[styles.emptyYarnText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
+                Ingen innslag ennå — trykk + for å starte
+              </Text>
+            </Pressable>
+          ) : (
+            projectLogs.map((entry, idx) => (
+              <Pressable
+                key={entry.id}
+                style={[styles.logRow, { borderBottomColor: colors.border, borderBottomWidth: idx < projectLogs.length - 1 ? StyleSheet.hairlineWidth : 0 }]}
+                onLongPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  Alert.alert('Slett innslag', 'Vil du slette dette logg-innslaget?', [
+                    { text: 'Avbryt', style: 'cancel' },
+                    { text: 'Slett', style: 'destructive', onPress: () => deleteLogEntry(entry.id) },
+                  ]);
+                }}
+              >
+                <View style={styles.logRowTop}>
+                  <Text style={[styles.logDate, { color: Colors.palette.navy, fontFamily: 'Inter_600SemiBold' }]}>{entry.date}</Text>
+                  {entry.radStrikket ? (
+                    <View style={[styles.logBadge, { backgroundColor: STATUS_COLORS[project.status] + '22' }]}>
+                      <Text style={[styles.logBadgeText, { color: STATUS_COLORS[project.status], fontFamily: 'Inter_600SemiBold' }]}>
+                        {entry.radStrikket} rader
+                      </Text>
+                    </View>
+                  ) : null}
+                </View>
+                {entry.notes ? (
+                  <Text style={[styles.logNotes, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
+                    {entry.notes}
+                  </Text>
+                ) : null}
+              </Pressable>
+            ))
+          )}
+        </View>
+
         <View style={styles.bottomBtnRow}>
           <Pressable
             style={({ pressed }) => [
@@ -1002,7 +1119,86 @@ export default function ProsjektScreen() {
           });
         }}
       />
+
+      <AddLogModal
+        visible={showAddLog}
+        onClose={() => setShowAddLog(false)}
+        onSave={(date, notes, radStrikket) => {
+          addLogEntry({ projectId: id, date, notes, radStrikket });
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        }}
+      />
     </View>
+  );
+}
+
+function AddLogModal({ visible, onClose, onSave }: {
+  visible: boolean;
+  onClose: () => void;
+  onSave: (date: string, notes: string, radStrikket?: number) => void;
+}) {
+  const colors = Colors.light;
+  const today = new Date().toLocaleDateString('nb-NO', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const [date, setDate] = useState(today);
+  const [notes, setNotes] = useState('');
+  const [rader, setRader] = useState('');
+
+  const handleSave = () => {
+    if (!date.trim()) return;
+    onSave(date.trim(), notes.trim(), rader ? parseInt(rader, 10) || undefined : undefined);
+    setDate(today);
+    setNotes('');
+    setRader('');
+    onClose();
+  };
+
+  return (
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalOverlay}>
+        <View style={[styles.modalSheet, { backgroundColor: colors.surface }]}>
+          <View style={styles.modalHandle} />
+          <View style={styles.modalHeaderRow}>
+            <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold', flex: 1 }]}>Nytt innslag</Text>
+            <Pressable onPress={onClose} hitSlop={10}>
+              <Ionicons name="close" size={24} color={colors.textTertiary} />
+            </Pressable>
+          </View>
+          <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Dato</Text>
+          <TextInput
+            style={[styles.detailInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border, fontFamily: 'Inter_400Regular' }]}
+            value={date}
+            onChangeText={setDate}
+            placeholder="DD.MM.YYYY"
+            placeholderTextColor={colors.textTertiary}
+          />
+          <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Notater</Text>
+          <TextInput
+            style={[styles.detailInput, styles.notesInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border, fontFamily: 'Inter_400Regular' }]}
+            value={notes}
+            onChangeText={setNotes}
+            placeholder="Hva strikket du i dag?"
+            placeholderTextColor={colors.textTertiary}
+            multiline
+            maxLength={300}
+          />
+          <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Rader strikket (valgfritt)</Text>
+          <TextInput
+            style={[styles.detailInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border, fontFamily: 'Inter_400Regular' }]}
+            value={rader}
+            onChangeText={setRader}
+            placeholder="f.eks. 12"
+            placeholderTextColor={colors.textTertiary}
+            keyboardType="number-pad"
+          />
+          <Pressable
+            style={({ pressed }) => [styles.modalBtn, { backgroundColor: colors.primaryBtn, opacity: pressed ? 0.85 : 1, marginTop: 8 }]}
+            onPress={handleSave}
+          >
+            <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Lagre</Text>
+          </Pressable>
+        </View>
+      </KeyboardAvoidingView>
+    </Modal>
   );
 }
 
@@ -1208,4 +1404,28 @@ const styles = StyleSheet.create({
   modalBtnText: { color: '#fff', fontSize: 16 },
   cancelBtn: { alignItems: 'center', padding: 10 },
   cancelBtnText: { fontSize: 15 },
+  progressStepBtn: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logRow: {
+    paddingVertical: 10,
+    gap: 4,
+  },
+  logRowTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  logDate: { fontSize: 14 },
+  logBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 10,
+  },
+  logBadgeText: { fontSize: 11 },
+  logNotes: { fontSize: 13, lineHeight: 19 },
 });
