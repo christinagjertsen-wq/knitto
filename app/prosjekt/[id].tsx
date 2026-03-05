@@ -883,13 +883,14 @@ export default function ProsjektScreen() {
           {project.name}
         </Text>
         <Pressable
+          style={{ padding: 4 }}
           onPress={() => {
             Alert.alert(t.project.deleteProject, t.project.confirmDelete.replace('%s', project.name), [
               { text: t.common.cancel, style: 'cancel' },
               {
                 text: t.common.delete, style: 'destructive', onPress: () => {
                   deleteProject(id);
-                  router.back();
+                  router.replace('/(tabs)/prosjekter');
                 }
               },
             ]);
