@@ -577,7 +577,7 @@ const styles = StyleSheet.create({
   header: { paddingHorizontal: 24, paddingBottom: 20, borderBottomLeftRadius: 28, borderBottomRightRadius: 28 },
   headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   homeBtn: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
-  title: { fontSize: 32 },
+  title: { fontSize: 32, textAlign: 'center', alignSelf: 'center' },
   content: { padding: 20, gap: 12 },
   sectionTitle: { fontSize: 20, marginTop: 8, marginBottom: 4 },
   profileCard: { borderRadius: 20, padding: 20, flexDirection: 'row', alignItems: 'center', gap: 14 },
