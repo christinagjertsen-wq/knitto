@@ -243,9 +243,11 @@ export default function KvalitetScreen() {
   const isDark = colorScheme === 'dark';
   const colors = isDark ? Colors.dark : Colors.light;
   const insets = useSafeAreaInsets();
-  const { getQualityById, getYarnStockForQuality, getBrandById, deleteQuality, deleteYarnStock, updateYarnStock } = useKnitting();
+  const { getQualityById, getYarnStockForQuality, getBrandById, deleteQuality, deleteYarnStock, updateYarnStock, updateQuality } = useKnitting();
   const [showAdd, setShowAdd] = useState(false);
   const [showPremium, setShowPremium] = useState(false);
+  const [showFiberEdit, setShowFiberEdit] = useState(false);
+  const [fiberInput, setFiberInput] = useState('');
 
   const quality = getQualityById(id);
   const brand = quality ? getBrandById(quality.brandId) : undefined;
@@ -297,9 +299,21 @@ export default function KvalitetScreen() {
         showsVerticalScrollIndicator={false}
         contentInsetAdjustmentBehavior="automatic"
       >
-        <Text style={[styles.fiberLine, { color: colors.textSecondary, fontFamily: 'Inter_400Regular', textAlign: 'center' }]}>
-          {quality.fiberContent || 'Fiber ikke angitt'}
-        </Text>
+        {quality.fiberContent ? (
+          <Text style={[styles.fiberLine, { color: colors.textSecondary, fontFamily: 'Inter_400Regular', textAlign: 'center' }]}>
+            {quality.fiberContent}
+          </Text>
+        ) : (
+          <Pressable
+            style={({ pressed }) => [styles.fiberAddBtn, { opacity: pressed ? 0.7 : 1 }]}
+            onPress={() => { setFiberInput(''); setShowFiberEdit(true); }}
+          >
+            <Ionicons name="add-circle-outline" size={15} color={colors.primaryBtn} />
+            <Text style={[styles.fiberAddBtnText, { color: colors.primaryBtn, fontFamily: 'Inter_500Medium' }]}>
+              Legg til fiber
+            </Text>
+          </Pressable>
+        )}
         {quality.gramsPerSkein ? (
           <Text style={[styles.fiberLineSub, { color: colors.textTertiary, fontFamily: 'Inter_400Regular', textAlign: 'center' }]}>
             {quality.gramsPerSkein}g · {quality.metersPerSkein}m per nøste
@@ -349,6 +363,47 @@ export default function KvalitetScreen() {
 
       <AddYarnModal qualityId={id} visible={showAdd} onClose={() => setShowAdd(false)} onPaywall={() => setShowPremium(true)} />
       <PremiumModal visible={showPremium} onClose={() => setShowPremium(false)} />
+
+      <Modal visible={showFiberEdit} transparent animationType="slide" onRequestClose={() => setShowFiberEdit(false)}>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalOverlay}>
+          <View style={[styles.modalSheet, { backgroundColor: colors.surface, paddingBottom: Math.max(insets.bottom, 24) }]}>
+            <View style={styles.modalHandle} />
+            <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Fiberinnhold</Text>
+            <TextInput
+              style={[styles.modalInput, { color: colors.text, backgroundColor: colors.background, fontFamily: 'Inter_400Regular' }]}
+              placeholder="f.eks. 100% Merinoull"
+              placeholderTextColor={colors.textTertiary}
+              value={fiberInput}
+              onChangeText={setFiberInput}
+              autoFocus
+              autoCapitalize="sentences"
+              returnKeyType="done"
+              onSubmitEditing={() => {
+                if (fiberInput.trim()) {
+                  updateQuality(id, { fiberContent: fiberInput.trim() });
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                }
+                setShowFiberEdit(false);
+              }}
+            />
+            <Pressable
+              style={({ pressed }) => [styles.modalBtn, { backgroundColor: colors.primaryBtn, opacity: pressed ? 0.85 : 1 }]}
+              onPress={() => {
+                if (fiberInput.trim()) {
+                  updateQuality(id, { fiberContent: fiberInput.trim() });
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                }
+                setShowFiberEdit(false);
+              }}
+            >
+              <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Lagre</Text>
+            </Pressable>
+            <Pressable style={styles.modalCancel} onPress={() => setShowFiberEdit(false)}>
+              <Text style={[{ color: colors.textSecondary, fontSize: 15, fontFamily: 'Inter_400Regular' }]}>Avbryt</Text>
+            </Pressable>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
 
       <Pressable
         style={[styles.fab, { backgroundColor: colors.primaryBtn, bottom: (Platform.OS === 'web' ? 34 : insets.bottom) + 24 }]}
@@ -451,4 +506,17 @@ const styles = StyleSheet.create({
   modalBtnText: { color: '#fff', fontSize: 16 },
   cancelBtn: { alignItems: 'center', padding: 12 },
   cancelBtnText: { fontSize: 15 },
+  modalInput: { borderRadius: 12, padding: 14, fontSize: 15, marginTop: 4 },
+  modalCancel: { alignItems: 'center', padding: 10 },
+  fiberAddBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    alignSelf: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: 20,
+    marginBottom: 4,
+  },
+  fiberAddBtnText: { fontSize: 14 },
 });
