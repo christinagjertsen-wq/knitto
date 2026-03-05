@@ -442,8 +442,8 @@ const styles = StyleSheet.create({
   },
   headerBadgeRow: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
-    marginBottom: 20,
+    justifyContent: 'flex-start',
+    marginBottom: 12,
   },
   basicBadge: {
     flexDirection: 'row',
