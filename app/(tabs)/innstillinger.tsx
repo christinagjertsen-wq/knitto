@@ -348,12 +348,6 @@ export default function InnstillingerScreen() {
               {quote}
             </Text>
           </View>
-          <Pressable
-            style={styles.editNameBtn}
-            onPress={() => { setNameInput(firstName); setShowEditName(true); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
-          >
-            <Ionicons name="pencil" size={18} color="rgba(255,255,255,0.8)" />
-          </Pressable>
         </View>
 
         <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Verktøy</Text>
