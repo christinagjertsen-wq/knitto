@@ -174,44 +174,43 @@ function SwipeableProjectCard({
               resizeMode="cover"
             />
           )}
-          <View style={styles.projectCardTop}>
-            <View style={styles.yarnSwatches}>
-              {yarnColors.length > 0 ? (
-                yarnColors.map((c, i) => (
-                  <View
-                    key={i}
-                    style={[styles.swatch, { backgroundColor: c.hex, marginLeft: i > 0 ? -8 : 0, zIndex: 5 - i }]}
-                  />
-                ))
-              ) : (
-                <View style={[styles.swatch, { backgroundColor: colors.border }]} />
-              )}
-            </View>
-            <View style={[styles.statusBadge, { backgroundColor: STATUS_BG[project.status] }]}>
-              <Text style={[styles.statusBadgeText, { color: STATUS_COLORS[project.status], fontFamily: 'Inter_600SemiBold' }]}>
-                {STATUS_LABELS[project.status]}
+          <View style={styles.cardBody}>
+            <View style={styles.cardLeft}>
+              <View style={styles.yarnSwatches}>
+                {yarnColors.length > 0 ? (
+                  yarnColors.map((c, i) => (
+                    <View
+                      key={i}
+                      style={[styles.swatch, { backgroundColor: c.hex, marginLeft: i > 0 ? -8 : 0, zIndex: 5 - i }]}
+                    />
+                  ))
+                ) : (
+                  <View style={[styles.swatch, { backgroundColor: colors.border }]} />
+                )}
+              </View>
+              <Text style={[styles.projectName, { color: colors.text, fontFamily: 'Inter_700Bold' }]} numberOfLines={1}>
+                {project.name}
               </Text>
+              <View style={styles.cardMeta}>
+                <View style={[styles.statusBadge, { backgroundColor: STATUS_BG[project.status] }]}>
+                  <Text style={[styles.statusBadgeText, { color: STATUS_COLORS[project.status], fontFamily: 'Inter_600SemiBold' }]}>
+                    {STATUS_LABELS[project.status]}
+                  </Text>
+                </View>
+                <Text style={[styles.footerText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
+                  {project.yarnAllocations.length} {project.yarnAllocations.length === 1 ? 'garnfarge' : 'garnfarger'}
+                  {projectNeedles.length > 0 ? ` · ${projectNeedles.map(n => `${n!.size}mm`).join(', ')}` : ''}
+                </Text>
+              </View>
             </View>
-          </View>
-          <Text style={[styles.projectName, { color: colors.text, fontFamily: 'Inter_700Bold' }]} numberOfLines={1}>
-            {project.name}
-          </Text>
-          {project.notes?.trim() ? (
-            <Text style={[styles.projectNotes, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]} numberOfLines={2}>
-              {project.notes.trim()}
-            </Text>
-          ) : null}
-          <View style={styles.projectFooter}>
-            <Text style={[styles.footerText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular', flex: 1 }]}>
-              {project.yarnAllocations.length} {project.yarnAllocations.length === 1 ? 'garnfarge' : 'garnfarger'}
-              {projectNeedles.length > 0 ? ` · ${projectNeedles.map(n => `${n!.size}mm`).join(', ')}` : ''}
-            </Text>
-            <ProgressRing
-              percent={project.progressPercent ?? 0}
-              size={38}
-              strokeWidth={3}
-              color={STATUS_COLORS[project.status]}
-            />
+            <View style={styles.cardRight}>
+              <ProgressRing
+                percent={project.status === 'ferdig' ? 100 : (project.progressPercent ?? 0)}
+                size={42}
+                strokeWidth={3.5}
+                color={STATUS_COLORS[project.status]}
+              />
+            </View>
           </View>
         </Pressable>
       </Animated.View>
@@ -475,7 +474,6 @@ const styles = StyleSheet.create({
   projectCard: {
     borderRadius: 20,
     overflow: 'hidden',
-    gap: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.07,
@@ -486,6 +484,27 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 140,
   },
+  cardBody: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 18,
+    paddingVertical: 16,
+    gap: 12,
+  },
+  cardLeft: {
+    flex: 1,
+    gap: 8,
+  },
+  cardRight: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cardMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    flexWrap: 'wrap',
+  },
   projectCardTop: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -494,11 +513,11 @@ const styles = StyleSheet.create({
     paddingTop: 16,
   },
   yarnSwatches: { flexDirection: 'row' },
-  swatch: { width: 32, height: 32, borderRadius: 16, borderWidth: 2, borderColor: '#fff' },
-  statusBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20 },
-  statusBadgeText: { fontSize: 12 },
-  projectName: { fontSize: 18, paddingHorizontal: 18 },
-  projectNotes: { fontSize: 13, lineHeight: 18, paddingHorizontal: 18 },
+  swatch: { width: 28, height: 28, borderRadius: 14, borderWidth: 2, borderColor: '#fff' },
+  statusBadge: { paddingHorizontal: 9, paddingVertical: 3, borderRadius: 20 },
+  statusBadgeText: { fontSize: 11 },
+  projectName: { fontSize: 17 },
+  projectNotes: { fontSize: 13, lineHeight: 18 },
   projectFooter: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 18, paddingBottom: 16 },
   footerLeft: { flex: 1, gap: 4 },
   footerItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
