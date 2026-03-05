@@ -19,6 +19,7 @@ import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
 import { useKnitting } from '@/context/KnittingContext';
 import { useUser } from '@/context/UserContext';
+import { PremiumModal, PREMIUM_FEATURES } from '@/components/PremiumModal';
 
 const colors = Colors.light;
 
@@ -351,6 +352,7 @@ export default function InnstillingerScreen() {
   const { projects, yarnStock, needles } = useKnitting();
   const [showEditName, setShowEditName] = useState(false);
   const [nameInput, setNameInput] = useState('');
+  const [showPremium, setShowPremium] = useState(false);
   const [activeSection, setActiveSection] = useState<ToolSection>('tellere');
   const tabScrollRef = useRef<ScrollView>(null);
   const chipOffsets = useRef<Record<string, number>>({});
@@ -503,28 +505,35 @@ export default function InnstillingerScreen() {
         </View>
 
         <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Premium</Text>
-        <View style={[styles.premiumCard, { backgroundColor: '#2C3E6B' }]}>
+        <View style={[styles.premiumCard, { backgroundColor: '#1A2340' }]}>
           <View style={styles.premiumTop}>
-            <View>
-              <Text style={[styles.premiumTitle, { fontFamily: 'Inter_700Bold' }]}>Prøv Premium gratis</Text>
-              <Text style={[styles.premiumSub, { fontFamily: 'Inter_400Regular' }]}>14 dager, ingen binding</Text>
+            <View style={styles.premiumIconCircle}>
+              <Ionicons name="diamond-outline" size={20} color="#fff" />
             </View>
-            <View style={[styles.premiumBadge, { backgroundColor: 'rgba(255,255,255,0.15)' }]}>
-              <Text style={[styles.premiumBadgeText, { fontFamily: 'Inter_600SemiBold' }]}>GRATIS</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.premiumTitle, { fontFamily: 'Inter_700Bold' }]}>Prøv Knitty Premium gratis</Text>
+              <Text style={[styles.premiumSub, { fontFamily: 'Inter_400Regular' }]}>14 dager uten kostnad, ingen binding</Text>
             </View>
           </View>
+          <View style={[styles.premiumDivider]} />
           <View style={styles.premiumFeatures}>
-            {['Ubegrenset prosjekter', 'Ubegrenset garnlager', 'Sikkerhetskopiering'].map(f => (
-              <View key={f} style={styles.premiumFeatureRow}>
-                <Ionicons name="checkmark-circle" size={16} color="rgba(255,255,255,0.7)" />
-                <Text style={[styles.premiumFeatureText, { fontFamily: 'Inter_400Regular' }]}>{f}</Text>
+            {PREMIUM_FEATURES.map(f => (
+              <View key={f.label} style={styles.premiumFeatureRow}>
+                <View style={styles.premiumFeatureIcon}>
+                  <Ionicons name={f.icon} size={15} color="rgba(255,255,255,0.9)" />
+                </View>
+                <Text style={[styles.premiumFeatureText, { fontFamily: 'Inter_400Regular' }]}>{f.label}</Text>
               </View>
             ))}
           </View>
-          <Pressable style={[styles.premiumBtn, { backgroundColor: '#fff' }]}>
-            <Text style={[styles.premiumBtnText, { color: '#2C3E6B', fontFamily: 'Inter_700Bold' }]}>
-              Start 14-dagers prøveperiode
+          <Pressable
+            style={({ pressed }) => [styles.premiumBtn, { backgroundColor: '#fff', opacity: pressed ? 0.92 : 1 }]}
+            onPress={() => setShowPremium(true)}
+          >
+            <Text style={[styles.premiumBtnText, { color: '#1A2340', fontFamily: 'Inter_700Bold' }]}>
+              Start gratis prøveperiode
             </Text>
+            <Text style={[styles.premiumBtnSub, { fontFamily: 'Inter_400Regular' }]}>Deretter 69 kr / mnd</Text>
           </Pressable>
         </View>
 
@@ -568,6 +577,8 @@ export default function InnstillingerScreen() {
           </View>
         </KeyboardAvoidingView>
       </Modal>
+
+      <PremiumModal visible={showPremium} onClose={() => setShowPremium(false)} />
     </View>
   );
 }
@@ -638,17 +649,19 @@ const styles = StyleSheet.create({
   rowLabel: { flex: 1, fontSize: 15 },
   rowValue: { fontSize: 15 },
   divider: { height: 1, marginHorizontal: 16 },
-  premiumCard: { borderRadius: 20, padding: 20, gap: 16 },
-  premiumTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  premiumTitle: { fontSize: 18, color: '#fff' },
-  premiumSub: { fontSize: 13, color: 'rgba(255,255,255,0.65)', marginTop: 2 },
-  premiumBadge: { borderRadius: 8, paddingHorizontal: 10, paddingVertical: 5 },
-  premiumBadgeText: { color: '#fff', fontSize: 11, letterSpacing: 0.5 },
-  premiumFeatures: { gap: 8 },
-  premiumFeatureRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  premiumCard: { borderRadius: 20, padding: 20, gap: 14 },
+  premiumTop: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  premiumIconCircle: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.12)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' },
+  premiumTitle: { fontSize: 15, color: '#fff', lineHeight: 20 },
+  premiumSub: { fontSize: 12, color: 'rgba(255,255,255,0.55)', marginTop: 2 },
+  premiumDivider: { height: 1, backgroundColor: 'rgba(255,255,255,0.1)' },
+  premiumFeatures: { gap: 10 },
+  premiumFeatureRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  premiumFeatureIcon: { width: 30, height: 30, borderRadius: 8, backgroundColor: 'rgba(255,255,255,0.1)', alignItems: 'center', justifyContent: 'center' },
   premiumFeatureText: { color: 'rgba(255,255,255,0.85)', fontSize: 14 },
-  premiumBtn: { borderRadius: 14, padding: 16, alignItems: 'center' },
+  premiumBtn: { borderRadius: 14, paddingVertical: 14, paddingHorizontal: 16, alignItems: 'center', gap: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.15, shadowRadius: 8, elevation: 4 },
   premiumBtnText: { fontSize: 15 },
+  premiumBtnSub: { fontSize: 11, color: 'rgba(26,35,64,0.5)' },
   modalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.4)' },
   modalSheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40, gap: 12 },
   modalHandle: { width: 36, height: 4, borderRadius: 2, backgroundColor: '#ccc', alignSelf: 'center', marginBottom: 4 },

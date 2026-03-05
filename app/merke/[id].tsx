@@ -11,7 +11,6 @@ import {
   KeyboardAvoidingView,
   Alert,
 } from 'react-native';
-import { useColorScheme } from '@/hooks/useColorScheme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -21,9 +20,7 @@ import { useKnitting, Quality } from '@/context/KnittingContext';
 
 
 function QualityCard({ quality, onPress, onDelete }: { quality: Quality; onPress: () => void; onDelete: () => void }) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
-  const colors = isDark ? Colors.dark : Colors.light;
+  const colors = Colors.light;
   const { getYarnStockForQuality } = useKnitting();
   const stock = getYarnStockForQuality(quality.id);
   const totalSkeins = stock.reduce((s, y) => s + y.skeins, 0);
@@ -69,9 +66,7 @@ function QualityCard({ quality, onPress, onDelete }: { quality: Quality; onPress
 }
 
 function AddQualityModal({ brandId, visible, onClose }: { brandId: string; visible: boolean; onClose: () => void }) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
-  const colors = isDark ? Colors.dark : Colors.light;
+  const colors = Colors.light;
   const [name, setName] = useState('');
   const [fiber, setFiber] = useState('');
   const [grams, setGrams] = useState('50');
@@ -163,9 +158,7 @@ function AddQualityModal({ brandId, visible, onClose }: { brandId: string; visib
 
 export default function MerkeScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
-  const colors = isDark ? Colors.dark : Colors.light;
+  const colors = Colors.light;
   const insets = useSafeAreaInsets();
   const { getBrandById, getQualitiesForBrand, deleteBrand, deleteQuality } = useKnitting();
   const [showAdd, setShowAdd] = useState(false);

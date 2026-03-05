@@ -16,7 +16,6 @@ import {
 } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { GlassView, isLiquidGlassAvailable } from 'expo-glass-effect';
-import { useColorScheme } from '@/hooks/useColorScheme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -40,17 +39,8 @@ const NEEDLE_MATERIAL_LABELS: Record<NeedleMaterial, string> = {
   tre: 'Tre',
 };
 
-const NEEDLE_MATERIAL_ICONS: Record<NeedleMaterial, string> = {
-  bambus: '🌿',
-  metall: '⚡',
-  plast: '💎',
-  tre: '🌲',
-};
-
 function BrandCard({ brand }: { brand: Brand }) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
-  const colors = isDark ? Colors.dark : Colors.light;
+  const colors = Colors.light;
   const { getQualitiesForBrand, getYarnStockForQuality } = useKnitting();
   const qualities = getQualitiesForBrand(brand.id);
   const allYarn = qualities.flatMap(q => getYarnStockForQuality(q.id));
@@ -194,9 +184,7 @@ function NeedleCard({ needle, onDelete, onQuantityChange }: { needle: Needle; on
 }
 
 function AddBrandModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
-  const colors = isDark ? Colors.dark : Colors.light;
+  const colors = Colors.light;
   const [name, setName] = useState('');
   const { addBrand } = useKnitting();
 
@@ -245,9 +233,7 @@ function AddBrandModal({ visible, onClose }: { visible: boolean; onClose: () => 
 }
 
 function AddNeedleModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
-  const colors = isDark ? Colors.dark : Colors.light;
+  const colors = Colors.light;
   const [size, setSize] = useState('');
   const [type, setType] = useState<NeedleType>('rundpinne');
   const [length, setLength] = useState('');
@@ -366,9 +352,7 @@ function AddNeedleModal({ visible, onClose }: { visible: boolean; onClose: () =>
 }
 
 export default function LagerScreen() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
-  const colors = isDark ? Colors.dark : Colors.light;
+  const colors = Colors.light;
   const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState<Tab>('garn');
   const [search, setSearch] = useState('');
@@ -431,7 +415,7 @@ export default function LagerScreen() {
           <BlurView
             intensity={Platform.OS === 'ios' ? 60 : 0}
             tint="light"
-            style={[styles.segment, { backgroundColor: Platform.OS === 'ios' ? 'rgba(255,255,255,0.45)' : (isDark ? colors.surface : '#E1E8F0') }]}
+            style={[styles.segment, { backgroundColor: Platform.OS === 'ios' ? 'rgba(255,255,255,0.45)' : '#E1E8F0' }]}
           >
             {(['garn', 'pinner'] as Tab[]).map(tab => (
               <Pressable

@@ -14,7 +14,6 @@ import {
 } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import * as ImagePicker from 'expo-image-picker';
-import { useColorScheme } from '@/hooks/useColorScheme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -134,8 +133,7 @@ const STATUS_COLORS: Record<ProjectStatus, string> = {
 };
 
 function Counter({ value, onChange, max }: { value: number; onChange: (v: number) => void; max?: number }) {
-  const colorScheme = useColorScheme();
-  const colors = colorScheme === 'dark' ? Colors.dark : Colors.light;
+  const colors = Colors.light;
   return (
     <View style={styles.counter}>
       <Pressable
@@ -168,8 +166,7 @@ function AddYarnModal({
   onAddNew: (qualityId: string, colorName: string, colorHex: string, skeinsTotal: number, skeinsForProject: number) => void;
   excludeIds: string[];
 }) {
-  const colorScheme = useColorScheme();
-  const colors = colorScheme === 'dark' ? Colors.dark : Colors.light;
+  const colors = Colors.light;
   const { yarnStock, qualities, brands, getQualityById, getQualitiesForBrand, updateQuality, addBrand, addQuality } = useKnitting();
 
   const [mode, setMode] = useState<'lager' | 'nytt'>('lager');
@@ -568,8 +565,7 @@ function AddNeedleModal({
   onAdd: (needle: { size: string; type: import('@/context/KnittingContext').NeedleType; lengthCm: number; material: import('@/context/KnittingContext').NeedleMaterial; quantity: number }) => void;
   defaultSize?: string;
 }) {
-  const colorScheme = useColorScheme();
-  const colors = colorScheme === 'dark' ? Colors.dark : Colors.light;
+  const colors = Colors.light;
   const [size, setSize] = useState(defaultSize ?? '');
   const [type, setType] = useState<'rundpinne' | 'strømpepinner' | 'rett' | 'utskiftbar'>('rundpinne');
   const [lengthCm, setLengthCm] = useState('');
@@ -687,9 +683,7 @@ function EditDetailsModal({
   onSave: (data: { recipient: string; size: string; gauge: string; patternNeedleSize: string; startDate: string; endDate: string; notes: string }) => void;
   status: ProjectStatus;
 }) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
-  const colors = isDark ? Colors.dark : Colors.light;
+  const colors = Colors.light;
   const [recipient, setRecipient] = useState(initial.recipient ?? '');
   const [size, setSize] = useState(initial.size ?? '');
   const [gauge, setGauge] = useState(initial.gauge ?? '');
@@ -770,9 +764,7 @@ function EditDetailsModal({
 
 export default function ProsjektScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
-  const colors = isDark ? Colors.dark : Colors.light;
+  const colors = Colors.light;
   const insets = useSafeAreaInsets();
   const topInset = Platform.OS === 'web' ? 67 : insets.top;
   const [showAddYarn, setShowAddYarn] = useState(false);

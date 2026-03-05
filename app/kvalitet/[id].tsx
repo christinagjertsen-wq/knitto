@@ -11,7 +11,6 @@ import {
   KeyboardAvoidingView,
   Alert,
 } from 'react-native';
-import { useColorScheme } from '@/hooks/useColorScheme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -100,9 +99,7 @@ const PRESET_COLORS = [
 ];
 
 function SkeinCounter({ value, onChange }: { value: number; onChange: (v: number) => void }) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
-  const colors = isDark ? Colors.dark : Colors.light;
+  const colors = Colors.light;
 
   return (
     <View style={styles.counter}>
@@ -124,9 +121,7 @@ function SkeinCounter({ value, onChange }: { value: number; onChange: (v: number
 }
 
 function YarnCard({ yarn, onDelete, onSkeinChange }: { yarn: YarnStock; onDelete: () => void; onSkeinChange: (v: number) => void }) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
-  const colors = isDark ? Colors.dark : Colors.light;
+  const colors = Colors.light;
 
   const handleSkeinChange = (v: number) => {
     if (v <= 0) {
@@ -155,9 +150,7 @@ function YarnCard({ yarn, onDelete, onSkeinChange }: { yarn: YarnStock; onDelete
 }
 
 function AddYarnModal({ qualityId, visible, onClose, onPaywall }: { qualityId: string; visible: boolean; onClose: () => void; onPaywall: () => void }) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
-  const colors = isDark ? Colors.dark : Colors.light;
+  const colors = Colors.light;
   const [colorName, setColorName] = useState('');
   const [selectedHex, setSelectedHex] = useState('#C97B84');
   const [skeins, setSkeins] = useState(1);
@@ -239,9 +232,7 @@ function AddYarnModal({ qualityId, visible, onClose, onPaywall }: { qualityId: s
 
 export default function KvalitetScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
-  const colors = isDark ? Colors.dark : Colors.light;
+  const colors = Colors.light;
   const insets = useSafeAreaInsets();
   const { getQualityById, getYarnStockForQuality, getBrandById, deleteQuality, deleteYarnStock, updateYarnStock, updateQuality } = useKnitting();
   const [showAdd, setShowAdd] = useState(false);
