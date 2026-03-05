@@ -318,13 +318,7 @@ export default function ProsjekterScreen() {
         colors={[Colors.palette.nordicBlue, Colors.palette.nordicIce]}
         style={[styles.topBar, { paddingTop: topInset + 16 }]}
       >
-        <View style={styles.topBarRow}>
-          <Pressable onPress={() => router.navigate('/(tabs)')} hitSlop={10} style={styles.homeBtn}>
-            <Ionicons name="chevron-back" size={26} color={Colors.palette.navy} />
-          </Pressable>
-          <Text style={[styles.screenTitle, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>Prosjekter</Text>
-          <View style={styles.homeBtn} />
-        </View>
+        <Text style={[styles.screenTitle, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>Prosjekter</Text>
       </LinearGradient>
 
       <View style={[styles.searchBar, { backgroundColor: colors.surface }]}>
@@ -415,7 +409,7 @@ export default function ProsjekterScreen() {
       <AddProjectModal visible={showAdd} onClose={() => setShowAdd(false)} />
 
       <Pressable
-        style={[styles.fab, { backgroundColor: colors.primaryBtn, bottom: bottomInset + 88 }]}
+        style={[styles.fab, { backgroundColor: colors.primaryBtn, bottom: 16 }]}
         onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setShowAdd(true); }}
       >
         <Ionicons name="add" size={28} color="#fff" />
@@ -427,9 +421,7 @@ export default function ProsjekterScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   topBar: {
-    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: 24,
     paddingBottom: 20,
     borderBottomLeftRadius: 28,

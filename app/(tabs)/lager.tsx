@@ -398,11 +398,7 @@ export default function LagerScreen() {
         colors={[Colors.palette.nordicBlue, Colors.palette.nordicIce]}
         style={[styles.topBar, { paddingTop: topInset + 16 }]}
       >
-        <Pressable onPress={() => router.navigate('/(tabs)')} hitSlop={10} style={styles.homeBtn}>
-          <Ionicons name="chevron-back" size={26} color={Colors.palette.navy} />
-        </Pressable>
         <Text style={[styles.screenTitle, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>Lager</Text>
-        <View style={styles.homeBtn} />
       </LinearGradient>
 
       <View style={styles.segmentContainer}>
@@ -548,7 +544,7 @@ export default function LagerScreen() {
       <AddNeedleModal visible={showAddNeedle} onClose={() => setShowAddNeedle(false)} />
 
       <Pressable
-        style={[styles.fab, { backgroundColor: colors.primaryBtn, bottom: bottomInset + 88 }]}
+        style={[styles.fab, { backgroundColor: colors.primaryBtn, bottom: 16 }]}
         onPress={() => {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           activeTab === 'garn' ? setShowAddBrand(true) : setShowAddNeedle(true);
@@ -563,9 +559,7 @@ export default function LagerScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   topBar: {
-    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: 24,
     paddingBottom: 20,
     borderBottomLeftRadius: 28,
