@@ -658,7 +658,7 @@ const styles = StyleSheet.create({
   brandInitialText: { fontSize: 20, color: '#fff' },
   brandName: { fontSize: 16, marginBottom: 3 },
   brandMeta: { fontSize: 13, marginBottom: 4 },
-  colorStrip: { flexDirection: 'row', gap: 4 },
+  colorStrip: { flexDirection: 'row' },
   colorDot: { width: 14, height: 14, borderRadius: 7, borderWidth: 2, borderColor: '#fff' },
   needleCard: {
     flexDirection: 'row',
