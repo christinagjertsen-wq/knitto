@@ -1,24 +1,38 @@
 import { Tabs } from "expo-router";
+import { NativeTabs, Icon, Label } from "expo-router/unstable-native-tabs";
+import { isLiquidGlassAvailable } from "expo-glass-effect";
 import { Platform, StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import Colors from "@/constants/colors";
 
-function TabBarBackground() {
-  if (Platform.OS === 'web') {
-    return <View style={[StyleSheet.absoluteFill, { backgroundColor: Colors.light.surface }]} />;
-  }
+function NativeTabLayout() {
   return (
-    <BlurView
-      intensity={Platform.OS === 'ios' ? 80 : 60}
-      tint="light"
-      style={StyleSheet.absoluteFill}
-    />
+    <NativeTabs>
+      <NativeTabs.Trigger name="index">
+        <Icon sf={{ default: "house", selected: "house.fill" }} />
+        <Label>Hjem</Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="prosjekter">
+        <Icon sf={{ default: "list.bullet", selected: "list.bullet" }} />
+        <Label>Prosjekter</Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="lager">
+        <Icon sf={{ default: "archivebox", selected: "archivebox.fill" }} />
+        <Label>Lager</Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="innstillinger">
+        <Icon sf={{ default: "ellipsis.circle", selected: "ellipsis.circle.fill" }} />
+        <Label>Mer</Label>
+      </NativeTabs.Trigger>
+    </NativeTabs>
   );
 }
 
-export default function TabLayout() {
+function ClassicTabLayout() {
   const colors = Colors.light;
+  const isIOS = Platform.OS === "ios";
+  const isWeb = Platform.OS === "web";
 
   return (
     <Tabs
@@ -26,20 +40,25 @@ export default function TabLayout() {
         headerShown: false,
         tabBarActiveTintColor: colors.primaryBtn,
         tabBarInactiveTintColor: colors.textTertiary,
-        tabBarBackground: () => <TabBarBackground />,
         tabBarStyle: {
-          position: 'absolute',
-          backgroundColor: 'transparent',
-          borderTopWidth: StyleSheet.hairlineWidth,
-          borderTopColor: 'rgba(160,180,210,0.25)',
-          height: Platform.OS === 'ios' ? 84 : 64,
-          paddingBottom: Platform.OS === 'ios' ? 28 : 8,
+          position: "absolute",
+          backgroundColor: isIOS ? "transparent" : colors.surface,
+          borderTopWidth: isWeb ? 1 : StyleSheet.hairlineWidth,
+          borderTopColor: "rgba(160,180,210,0.25)",
+          height: isIOS ? 84 : isWeb ? 84 : 64,
+          paddingBottom: isIOS ? 28 : isWeb ? 34 : 8,
           paddingTop: 8,
           elevation: 0,
         },
+        tabBarBackground: () =>
+          isIOS ? (
+            <BlurView intensity={100} tint="light" style={StyleSheet.absoluteFill} />
+          ) : (
+            <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.surface }]} />
+          ),
         tabBarLabelStyle: {
           fontSize: 10,
-          fontFamily: 'Inter_500Medium',
+          fontFamily: "Inter_500Medium",
           marginTop: 2,
         },
       }}
@@ -47,7 +66,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Hjem',
+          title: "Hjem",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home-outline" size={size} color={color} />
           ),
@@ -56,7 +75,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="prosjekter"
         options={{
-          title: 'Prosjekter',
+          title: "Prosjekter",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="list-outline" size={size} color={color} />
           ),
@@ -65,7 +84,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="lager"
         options={{
-          title: 'Lager',
+          title: "Lager",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="archive-outline" size={size} color={color} />
           ),
@@ -74,7 +93,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="innstillinger"
         options={{
-          title: 'Mer',
+          title: "Mer",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="ellipsis-horizontal-circle-outline" size={size} color={color} />
           ),
@@ -84,4 +103,11 @@ export default function TabLayout() {
       <Tabs.Screen name="verktoy" options={{ href: null }} />
     </Tabs>
   );
+}
+
+export default function TabLayout() {
+  if (isLiquidGlassAvailable()) {
+    return <NativeTabLayout />;
+  }
+  return <ClassicTabLayout />;
 }
