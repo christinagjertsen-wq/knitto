@@ -322,7 +322,7 @@ export default function ProsjekterScreen() {
         colors={isDark ? ['#1A2340', '#0D1220'] : [Colors.palette.nordicBlue, Colors.palette.nordicIce]}
         style={[styles.topBar, { paddingTop: topInset + 24 }]}
       >
-        <Text style={[styles.screenTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Prosjekter</Text>
+        <Text style={[styles.screenTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.nav.projects}</Text>
       </LinearGradient>
 
       <View style={[styles.searchBar, { backgroundColor: colors.surface }]}>
