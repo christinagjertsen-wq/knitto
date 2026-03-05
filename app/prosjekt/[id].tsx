@@ -574,20 +574,22 @@ function AddNeedleModal({
   visible,
   onClose,
   onAdd,
+  defaultSize,
 }: {
   visible: boolean;
   onClose: () => void;
   onAdd: (needle: { size: string; type: import('@/context/KnittingContext').NeedleType; lengthCm: number; material: import('@/context/KnittingContext').NeedleMaterial; quantity: number }) => void;
+  defaultSize?: string;
 }) {
   const colorScheme = useColorScheme();
   const colors = colorScheme === 'dark' ? Colors.dark : Colors.light;
-  const [size, setSize] = useState('');
+  const [size, setSize] = useState(defaultSize ?? '');
   const [type, setType] = useState<'rundpinne' | 'strømpepinner' | 'rett'>('rundpinne');
   const [lengthCm, setLengthCm] = useState('');
   const [material, setMaterial] = useState<'bambus' | 'metall' | 'plast' | 'tre'>('metall');
   const [quantity, setQuantity] = useState(1);
 
-  const reset = () => { setSize(''); setType('rundpinne'); setLengthCm(''); setMaterial('metall'); setQuantity(1); };
+  const reset = () => { setSize(defaultSize ?? ''); setType('rundpinne'); setLengthCm(''); setMaterial('metall'); setQuantity(1); };
   const handleClose = () => { reset(); onClose(); };
   const handleAdd = () => {
     if (!size.trim() || !lengthCm.trim()) return;
@@ -835,6 +837,17 @@ export default function ProsjektScreen() {
     if (!project) return [];
     return project.needleIds.map(nid => needles.find(n => n.id === nid)).filter(Boolean);
   }, [project, needles]);
+
+  const normalizeSize = (s: string) => s.replace(',', '.').replace(/[^0-9.]/g, '').trim();
+
+  const patternSize = project?.patternNeedleSize?.trim() ?? '';
+  const filteredNeedles = useMemo(() => {
+    if (!patternSize) return needles;
+    const target = normalizeSize(patternSize);
+    return needles.filter(n => normalizeSize(n.size) === target);
+  }, [needles, patternSize]);
+
+  const defaultNeedleSize = patternSize ? normalizeSize(patternSize) : '';
 
   if (!project) {
     return (
@@ -1086,19 +1099,29 @@ export default function ProsjektScreen() {
               <Ionicons name="add" size={16} color="#fff" />
             </Pressable>
           </View>
-          {needles.length === 0 ? (
-            <Pressable
-              style={[styles.emptyYarnRow, { borderColor: colors.border }]}
-              onPress={() => setShowAddNeedle(true)}
-            >
-              <Ionicons name="add-circle-outline" size={20} color={colors.textTertiary} />
-              <Text style={[styles.emptyYarnText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                Legg til ny pinne
-              </Text>
-            </Pressable>
+          {filteredNeedles.length === 0 ? (
+            patternSize ? (
+              <View style={[styles.emptyYarnRow, { borderColor: colors.border }]}>
+                <Ionicons name="information-circle-outline" size={20} color={colors.textTertiary} />
+                <Text style={[styles.emptyYarnText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
+                  Ingen {normalizeSize(patternSize)} mm pinner på lager
+                </Text>
+              </View>
+            ) : (
+              <Pressable
+                style={[styles.emptyYarnRow, { borderColor: colors.border }]}
+                onPress={() => setShowAddNeedle(true)}
+              >
+                <Ionicons name="add-circle-outline" size={20} color={colors.textTertiary} />
+                <Text style={[styles.emptyYarnText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
+                  Legg til ny pinne
+                </Text>
+              </Pressable>
+            )
           ) : (
-            needles.map(needle => {
+            filteredNeedles.map(needle => {
               const isLinked = project.needleIds.includes(needle.id);
+              const TYPE_LABELS: Record<string, string> = { rundpinne: 'rundpinne', strømpepinner: 'strømpepinner', rett: 'rett' };
               return (
                 <Pressable
                   key={needle.id}
@@ -1111,12 +1134,17 @@ export default function ProsjektScreen() {
                     Haptics.selectionAsync();
                   }}
                 >
-                  <View style={[styles.needleSize, { backgroundColor: colors.badgeBg }]}>
-                    <Text style={[styles.needleSizeText, { color: colors.badgeText, fontFamily: 'Inter_700Bold' }]}>{needle.size}</Text>
+                  <View style={[styles.needleSize, { backgroundColor: isLinked ? colors.primaryBtn + '22' : colors.badgeBg }]}>
+                    <Text style={[styles.needleSizeText, { color: isLinked ? colors.primaryBtn : colors.badgeText, fontFamily: 'Inter_700Bold' }]}>{needle.size}</Text>
                   </View>
-                  <Text style={[styles.needleLabel, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>
-                    {needle.size}mm {needle.type === 'rundpinne' ? 'rundpinne' : needle.type === 'strømpepinner' ? 'strømpepinner' : 'rett'}, {needle.lengthCm}cm
-                  </Text>
+                  <View style={{ flex: 1 }}>
+                    <Text style={[styles.needleLabel, { color: colors.text, fontFamily: isLinked ? 'Inter_500Medium' : 'Inter_400Regular' }]}>
+                      {TYPE_LABELS[needle.type]}, {needle.lengthCm} cm
+                    </Text>
+                    <Text style={[{ fontSize: 12, color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
+                      {needle.material}
+                    </Text>
+                  </View>
                   <View style={[
                     styles.checkbox,
                     { borderColor: isLinked ? colors.primaryBtn : colors.border },
@@ -1234,6 +1262,7 @@ export default function ProsjektScreen() {
       <AddNeedleModal
         visible={showAddNeedle}
         onClose={() => setShowAddNeedle(false)}
+        defaultSize={defaultNeedleSize}
         onAdd={(needle) => {
           const newNeedle = addNeedle(needle);
           updateProject(id, { needleIds: [...project.needleIds, newNeedle.id] });
