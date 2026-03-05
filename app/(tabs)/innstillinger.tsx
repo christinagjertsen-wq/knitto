@@ -320,7 +320,7 @@ export default function InnstillingerScreen() {
         colors={[Colors.palette.nordicBlue, Colors.palette.nordicIce]}
         style={[styles.header, { paddingTop: topInset + 16 }]}
       >
-        <Text style={[styles.title, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>Mer</Text>
+        <Text style={[styles.title, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>Innstillinger</Text>
       </LinearGradient>
 
       <ScrollView

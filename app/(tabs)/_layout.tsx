@@ -23,7 +23,7 @@ function NativeTabLayout() {
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="innstillinger">
         <Icon sf={{ default: "ellipsis.circle", selected: "ellipsis.circle.fill" }} />
-        <Label>Mer</Label>
+        <Label>Innstillinger</Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );
@@ -93,7 +93,7 @@ function ClassicTabLayout() {
       <Tabs.Screen
         name="innstillinger"
         options={{
-          title: "Mer",
+          title: "Innstillinger",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="ellipsis-horizontal-circle-outline" size={size} color={color} />
           ),
