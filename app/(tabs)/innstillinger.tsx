@@ -395,17 +395,7 @@ export default function InnstillingerScreen() {
     return () => clearTimeout(timer);
   }, [scrollToActive]));
 
-  const QUOTES = [
-    'Å strikke det er å være',
-    'Garn er kjærlighet i ull',
-    'Maske for maske! Det er livet!',
-    'I hvert nøste bor en liten drøm',
-    'Strikk sakte. Lev godt.',
-    'Hendene er rolige når hjertet er urolig',
-    'Ull er kjærlighet på pinner',
-  ];
-
-  const quote = useMemo(() => QUOTES[new Date().getDay() % QUOTES.length], []);
+  const quote = useMemo(() => t.settings.quotes[new Date().getDay() % t.settings.quotes.length], [t]);
 
   const activeProjects = projects.filter(p => p.status === 'aktiv').length;
   const finishedProjects = projects.filter(p => p.status === 'ferdig').length;
@@ -432,7 +422,7 @@ export default function InnstillingerScreen() {
           colors={isDark ? ['#1A2340', '#0D1220'] : [Colors.palette.nordicBlue, Colors.palette.nordicIce]}
           style={[styles.header, { paddingTop: topInset + 24, marginHorizontal: -20, marginTop: -20 }]}
         >
-          <Text style={[styles.title, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Innstillinger</Text>
+          <Text style={[styles.title, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.settings.title}</Text>
         </LinearGradient>
         <View style={[styles.profileCard, { backgroundColor: colors.primaryBtn }]}>
           <View style={styles.avatarCircle}>

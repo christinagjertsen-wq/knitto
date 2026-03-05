@@ -273,6 +273,15 @@ const no = {
     toolYarnCalc: 'Garnkalkulator',
     toolNeedleSizes: 'Pinnestørrelser',
     addName: 'Legg til navn',
+    quotes: [
+      'Å strikke det er å være',
+      'Garn er kjærlighet i ull',
+      'Maske for maske! Det er livet!',
+      'I hvert nøste bor en liten drøm',
+      'Strikk sakte. Lev godt.',
+      'Hendene er rolige når hjertet er urolig',
+      'Ull er kjærlighet på pinner',
+    ],
   },
   premium: {
     title: 'Prøv Kerä Premium gratis',
@@ -601,6 +610,15 @@ const en: typeof no = {
     toolYarnCalc: 'Yarn calculator',
     toolNeedleSizes: 'Needle sizes',
     addName: 'Add name',
+    quotes: [
+      'To knit is to be',
+      'Yarn is love in wool',
+      'Stitch by stitch — that is life!',
+      'In every skein lives a little dream',
+      'Knit slow. Live well.',
+      'Hands are calm when the heart is restless',
+      'Wool is love on needles',
+    ],
   },
   premium: {
     title: 'Try Kerä Premium for free',
