@@ -318,7 +318,7 @@ export default function KvalitetScreen() {
         </View>
 
         <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
-          Farger ({yarnStock.length})
+          {yarnStock.length} {yarnStock.length === 1 ? 'farge' : 'farger'}
         </Text>
 
         {yarnStock.length === 0 ? (
