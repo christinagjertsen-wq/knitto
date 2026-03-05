@@ -20,7 +20,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
 import { useColors } from '@/context/ThemeContext';
-import { useT } from '@/context/LanguageContext';
+import { useT, useLanguage } from '@/context/LanguageContext';
 import { useKnitting, ProjectStatus, YarnStock } from '@/context/KnittingContext';
 import { PremiumModal } from '@/components/PremiumModal';
 
@@ -289,7 +289,7 @@ function AddYarnModal({
                     color: mode === m ? '#fff' : colors.textSecondary,
                     fontFamily: mode === m ? 'Inter_600SemiBold' : 'Inter_400Regular',
                   }]}>
-                    {m === 'lager' ? 'Fra lager' : 'Nytt garn'}
+                    {m === 'lager' ? t.project.fromStorage : t.project.newYarn}
                   </Text>
                 </Pressable>
               ))}
@@ -584,8 +584,8 @@ function AddNeedleModal({
     reset(); onClose();
   };
 
-  const TYPE_LABELS: Record<string, string> = { rundpinne: 'Rundpinne', strømpepinner: 'Strømpepinner', rett: 'Rett', utskiftbar: 'Utskiftbar' };
-  const MAT_LABELS: Record<string, string> = { metall: 'Metall', bambus: 'Bambus', tre: 'Tre', plast: 'Plast' };
+  const TYPE_LABELS: Record<string, string> = { rundpinne: t.needleTypes.rundpinne, strømpepinner: t.needleTypes.strompepinner, rett: t.needleTypes.rett, utskiftbar: t.needleTypes.utskiftbar };
+  const MAT_LABELS: Record<string, string> = { metall: t.needleMaterials.metall, bambus: t.needleMaterials.bambus, tre: t.needleMaterials.tre, plast: t.needleMaterials.plast };
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={handleClose}>
@@ -593,19 +593,19 @@ function AddNeedleModal({
         <View style={[styles.editModalSheet, { backgroundColor: colors.surface }]}>
           <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.editModalContent, { gap: 12 }]}>
             <View style={styles.modalHandle} />
-            <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Ny pinne</Text>
+            <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.storage.newNeedle}</Text>
 
-            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Størrelse (mm)</Text>
+            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.storage.sizeMm}</Text>
             <TextInput
               style={[styles.detailInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border, fontFamily: 'Inter_400Regular' }]}
               value={size}
               onChangeText={setSize}
-              placeholder="f.eks. 3.5"
+              placeholder={t.storage.sizePlaceholder}
               placeholderTextColor={colors.textTertiary}
               keyboardType="decimal-pad"
             />
 
-            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Type</Text>
+            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.storage.type}</Text>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
               {(['rundpinne', 'strømpepinner', 'rett', 'utskiftbar'] as const).map(t => (
                 <Pressable
@@ -623,17 +623,17 @@ function AddNeedleModal({
               ))}
             </View>
 
-            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Lengde (cm)</Text>
+            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.storage.lengthCm}</Text>
             <TextInput
               style={[styles.detailInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border, fontFamily: 'Inter_400Regular' }]}
               value={lengthCm}
               onChangeText={setLengthCm}
-              placeholder="f.eks. 80"
+              placeholder={t.storage.lengthPlaceholder}
               placeholderTextColor={colors.textTertiary}
               keyboardType="number-pad"
             />
 
-            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Materiale</Text>
+            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.storage.material}</Text>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
               {(['metall', 'bambus', 'tre', 'plast'] as const).map(m => (
                 <Pressable
@@ -651,7 +651,7 @@ function AddNeedleModal({
               ))}
             </View>
 
-            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Antall</Text>
+            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.storage.quantity}</Text>
             <Counter value={quantity} onChange={setQuantity} />
 
             <Pressable
@@ -662,10 +662,10 @@ function AddNeedleModal({
               onPress={handleAdd}
               disabled={!size.trim() || !lengthCm.trim()}
             >
-              <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Legg til</Text>
+              <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>{t.common.add}</Text>
             </Pressable>
             <Pressable style={styles.cancelBtn} onPress={handleClose}>
-              <Text style={[styles.cancelBtnText, { color: colors.textSecondary }]}>Avbryt</Text>
+              <Text style={[styles.cancelBtnText, { color: colors.textSecondary }]}>{t.common.cancel}</Text>
             </Pressable>
           </ScrollView>
         </View>
@@ -734,21 +734,21 @@ function EditDetailsModal({
               <Pressable onPress={onClose} hitSlop={8}>
                 <Ionicons name="chevron-back" size={22} color={colors.text} />
               </Pressable>
-              <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold', flex: 1, marginLeft: 4 }]}>Detaljer</Text>
+              <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold', flex: 1, marginLeft: 4 }]}>{t.project.details}</Text>
             </View>
-            <Field label="Til" value={recipient} onChangeText={setRecipient} placeholder="Hvem strikker du til?" />
-            <Field label="Størrelse" value={size} onChangeText={setSize} placeholder="f.eks. M, 38, Barn 4 år" />
-            <Field label="Strikkefasthet" value={gauge} onChangeText={setGauge} placeholder="f.eks. 22 m / 10 cm" hint="Masker per 10 cm" />
-            <Field label="Pinnestørrelse" value={patternNeedleSize} onChangeText={setPatternNeedleSize} placeholder="f.eks. 3,5 mm" hint="Fra oppskriften" />
-            <Field label={status === 'planlagt' ? 'Forventet startdato (valgfritt)' : 'Startet'} value={startDate} onChangeText={setStartDate} placeholder="DD.MM.ÅÅÅÅ" />
-            <Field label="Fullført" value={endDate} onChangeText={setEndDate} placeholder="DD.MM.ÅÅÅÅ" />
+            <Field label={t.project.to} value={recipient} onChangeText={setRecipient} placeholder={t.project.toPlaceholder} />
+            <Field label={t.project.size} value={size} onChangeText={setSize} placeholder={t.project.sizePlaceholder} />
+            <Field label={t.project.gauge} value={gauge} onChangeText={setGauge} placeholder={t.project.gaugePlaceholder} hint={t.project.gaugeHint} />
+            <Field label={t.project.needleSize} value={patternNeedleSize} onChangeText={setPatternNeedleSize} placeholder={t.project.needleSizePlaceholder} hint={t.project.needleSizeHint} />
+            <Field label={status === 'planlagt' ? t.project.expectedStart : t.project.started} value={startDate} onChangeText={setStartDate} placeholder={t.project.startDatePlaceholder} />
+            <Field label={t.project.completed} value={endDate} onChangeText={setEndDate} placeholder={t.project.startDatePlaceholder} />
             <View style={{ gap: 4 }}>
-              <Text style={[styles.detailFieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Notater</Text>
+              <Text style={[styles.detailFieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.project.notes}</Text>
               <TextInput
                 style={[styles.detailInput, styles.notesInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border, fontFamily: 'Inter_400Regular' }]}
                 value={notes}
                 onChangeText={setNotes}
-                placeholder="Notater, tanker, tilpasninger..."
+                placeholder={t.project.notesPlaceholder}
                 placeholderTextColor={colors.textTertiary}
                 multiline
                 numberOfLines={4}
@@ -758,7 +758,7 @@ function EditDetailsModal({
               style={({ pressed }) => [styles.modalBtn, { backgroundColor: colors.primaryBtn, opacity: pressed ? 0.85 : 1, marginTop: 8 }]}
               onPress={handleSave}
             >
-              <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Lagre</Text>
+              <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>{t.common.save}</Text>
             </Pressable>
           </ScrollView>
         </View>
@@ -770,6 +770,8 @@ function EditDetailsModal({
 export default function ProsjektScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const colors = useColors();
+  const t = useT();
+  const { language } = useLanguage();
   const insets = useSafeAreaInsets();
   const topInset = Platform.OS === 'web' ? 67 : insets.top;
   const [showAddYarn, setShowAddYarn] = useState(false);
@@ -792,7 +794,7 @@ export default function ProsjektScreen() {
   const pickImage = useCallback(async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('Tillatelse nødvendig', 'Appen trenger tilgang til bilder for å legge til prosjektbilde.');
+      Alert.alert(t.project.permissionNeeded, t.project.photoPermission);
       return;
     }
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -837,7 +839,7 @@ export default function ProsjektScreen() {
   if (!project) {
     return (
       <View style={[styles.container, { backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }]}>
-        <Text style={{ color: colors.textTertiary }}>Prosjekt ikke funnet</Text>
+        <Text style={{ color: colors.textTertiary }}>{t.project.notFound}</Text>
       </View>
     );
   }
@@ -857,7 +859,7 @@ export default function ProsjektScreen() {
         color: project.status === s ? '#fff' : colors.textSecondary,
         fontFamily: project.status === s ? 'Inter_600SemiBold' : 'Inter_400Regular',
       }]}>
-        {STATUS_LABELS[s]}
+        {t.status[s]}
       </Text>
     </Pressable>
   );
@@ -882,10 +884,10 @@ export default function ProsjektScreen() {
         </Text>
         <Pressable
           onPress={() => {
-            Alert.alert('Slett prosjekt', `Slett "${project.name}"?`, [
-              { text: 'Avbryt', style: 'cancel' },
+            Alert.alert(t.project.deleteProject, t.project.confirmDelete.replace('%s', project.name), [
+              { text: t.common.cancel, style: 'cancel' },
               {
-                text: 'Slett', style: 'destructive', onPress: () => {
+                text: t.common.delete, style: 'destructive', onPress: () => {
                   deleteProject(id);
                   router.back();
                 }
@@ -924,9 +926,9 @@ export default function ProsjektScreen() {
               <Pressable
                 style={[styles.coverImageDeleteBtn, { backgroundColor: 'rgba(0,0,0,0.45)' }]}
                 onPress={() => {
-                  Alert.alert('Slett bilde', 'Vil du fjerne dette bildet?', [
-                    { text: 'Avbryt', style: 'cancel' },
-                    { text: 'Slett', style: 'destructive', onPress: () => updateProject(id, { coverImage: undefined }) },
+                  Alert.alert(t.project.deleteImage, t.project.confirmDeleteImage, [
+                    { text: t.common.cancel, style: 'cancel' },
+                    { text: t.common.delete, style: 'destructive', onPress: () => updateProject(id, { coverImage: undefined }) },
                   ]);
                 }}
                 hitSlop={8}
@@ -940,7 +942,7 @@ export default function ProsjektScreen() {
                 <Ionicons name="image-outline" size={36} color={colors.textTertiary} />
               </View>
               <Text style={[styles.coverImageHint, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                Legg til bilde
+                {t.project.addImage}
               </Text>
             </View>
           )}
@@ -995,7 +997,7 @@ export default function ProsjektScreen() {
 
         <View style={[styles.card, { backgroundColor: colors.surface }]}>
           <View style={styles.cardHeader}>
-            <Text style={[styles.cardLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Detaljer</Text>
+            <Text style={[styles.cardLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.project.details}</Text>
             <Pressable
               style={[styles.editCircleBtn, { backgroundColor: colors.primaryBtn }]}
               onPress={() => { setShowEditDetails(true); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
@@ -1005,21 +1007,21 @@ export default function ProsjektScreen() {
           </View>
 
           <View style={styles.detailGrid}>
-            <DetailCell label="Til" value={project.recipient} placeholder="Navn" />
-            <DetailCell label="Størrelse" value={project.size} placeholder="Størrelse" />
-            <DetailCell label="Strikkefasthet" value={project.gauge} placeholder="Strikkefasthet" />
-            <DetailCell label="Pinnestørrelse" value={project.patternNeedleSize} placeholder="Pinnestørrelse" />
-            <DetailCell label="Startet" value={project.startDate} placeholder="Ikke satt" />
+            <DetailCell label={t.project.to} value={project.recipient} placeholder={t.project.namePlaceholder} />
+            <DetailCell label={t.project.size} value={project.size} placeholder={t.project.size} />
+            <DetailCell label={t.project.gauge} value={project.gauge} placeholder={t.project.gauge} />
+            <DetailCell label={t.project.needleSize} value={project.patternNeedleSize} placeholder={t.project.needleSize} />
+            <DetailCell label={t.project.started} value={project.startDate} placeholder={t.project.notSet} />
             <DetailCell
-              label="Fullført"
+              label={t.project.completed}
               value={project.endDate}
-              placeholder={project.status === 'ferdig' ? 'Ikke satt' : 'Ikke ennå'}
+              placeholder={project.status === 'ferdig' ? t.project.notSet : t.project.notYet}
             />
           </View>
 
           {project.notes ? (
             <View style={[styles.notesBox, { backgroundColor: colors.background }]}>
-              <Text style={[styles.notesLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Notater</Text>
+              <Text style={[styles.notesLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.project.notes}</Text>
               <Text style={[styles.notesText, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>{project.notes}</Text>
             </View>
           ) : null}
@@ -1028,7 +1030,7 @@ export default function ProsjektScreen() {
         <View style={[styles.card, { backgroundColor: colors.surface }]}>
           <View style={styles.cardHeader}>
             <Text style={[styles.cardLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>
-              Garn ({allocatedYarn.length})
+              {t.project.yarn} ({allocatedYarn.length})
             </Text>
             <Pressable
               style={[styles.addSmallBtn, { backgroundColor: colors.primaryBtn }]}
@@ -1045,7 +1047,7 @@ export default function ProsjektScreen() {
             >
               <Ionicons name="add-circle-outline" size={20} color={colors.textTertiary} />
               <Text style={[styles.emptyYarnText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                Legg til garn fra lager
+                {t.project.addYarnFromStorage}
               </Text>
             </Pressable>
           ) : (
@@ -1054,18 +1056,18 @@ export default function ProsjektScreen() {
                 <View style={[styles.allocDot, { backgroundColor: yarn?.colorHex ?? '#ccc' }]} />
                 <View style={{ flex: 1 }}>
                   <Text style={[styles.allocName, { color: colors.text, fontFamily: 'Inter_500Medium' }]} numberOfLines={1}>
-                    {yarn?.colorName ?? 'Ukjent'}
+                    {yarn?.colorName ?? t.project.unknown}
                   </Text>
                   <Text style={[styles.allocSub, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                    {brand?.name} {quality?.name} · {alloc.skeinsAllocated} nøster
+                    {brand?.name} {quality?.name} · {alloc.skeinsAllocated} {t.home.statSkeins}
                   </Text>
                 </View>
                 <Pressable
                   onPress={() => {
-                    Alert.alert('Fjern garn', 'Legge nøstene tilbake på lager?', [
-                      { text: 'Avbryt', style: 'cancel' },
+                    Alert.alert(t.project.removeYarn, t.project.returnToStorage, [
+                      { text: t.common.cancel, style: 'cancel' },
                       {
-                        text: 'Fjern', style: 'destructive', onPress: () => {
+                        text: t.project.remove, style: 'destructive', onPress: () => {
                           removeYarnFromProject(id, alloc.yarnStockId);
                           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
                         }
@@ -1084,7 +1086,7 @@ export default function ProsjektScreen() {
         <View style={[styles.card, { backgroundColor: colors.surface }]}>
           <View style={styles.cardHeader}>
             <Text style={[styles.cardLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>
-              Pinner ({projectNeedles.length})
+              {t.project.needles} ({projectNeedles.length})
             </Text>
             <Pressable
               style={[styles.addSmallBtn, { backgroundColor: colors.primaryBtn }]}
@@ -1098,7 +1100,7 @@ export default function ProsjektScreen() {
               <View style={[styles.emptyYarnRow, { borderColor: colors.border }]}>
                 <Ionicons name="information-circle-outline" size={20} color={colors.textTertiary} />
                 <Text style={[styles.emptyYarnText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                  Ingen {normalizeSize(patternSize)} mm pinner på lager
+                  {t.project.noSizeNeedles.replace('%s', normalizeSize(patternSize) ?? '')}
                 </Text>
               </View>
             ) : (
@@ -1108,14 +1110,14 @@ export default function ProsjektScreen() {
               >
                 <Ionicons name="add-circle-outline" size={20} color={colors.textTertiary} />
                 <Text style={[styles.emptyYarnText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                  Legg til ny pinne
+                  {t.project.addNewNeedle}
                 </Text>
               </Pressable>
             )
           ) : (
             filteredNeedles.map(needle => {
               const isLinked = project.needleIds.includes(needle.id);
-              const TYPE_LABELS: Record<string, string> = { rundpinne: 'rundpinne', strømpepinner: 'strømpepinner', rett: 'rett' };
+              const TYPE_LABELS: Record<string, string> = { rundpinne: t.needleTypes.rundpinne, strømpepinner: t.needleTypes.strompepinner, rett: t.needleTypes.rett };
               return (
                 <Pressable
                   key={needle.id}
@@ -1136,7 +1138,7 @@ export default function ProsjektScreen() {
                       {TYPE_LABELS[needle.type]}, {needle.lengthCm} cm
                     </Text>
                     <Text style={[{ fontSize: 12, color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                      {needle.material}
+                      {t.needleMaterials[needle.material as keyof typeof t.needleMaterials] ?? needle.material}
                     </Text>
                   </View>
                   <View style={[
@@ -1155,7 +1157,7 @@ export default function ProsjektScreen() {
         <View style={[styles.card, { backgroundColor: colors.surface }]}>
           <View style={styles.cardHeader}>
             <Text style={[styles.cardLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>
-              Logg ({projectLogs.length})
+              {t.project.log} ({projectLogs.length})
             </Text>
             <Pressable
               style={[styles.addSmallBtn, { backgroundColor: colors.primaryBtn }]}
@@ -1171,7 +1173,7 @@ export default function ProsjektScreen() {
             >
               <Ionicons name="journal-outline" size={20} color={colors.textTertiary} />
               <Text style={[styles.emptyYarnText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                Ingen innslag ennå — trykk + for å starte
+                {t.project.noLogEntries}
               </Text>
             </Pressable>
           ) : (
@@ -1181,9 +1183,9 @@ export default function ProsjektScreen() {
                 style={[styles.logRow, { borderBottomColor: colors.border, borderBottomWidth: idx < projectLogs.length - 1 ? StyleSheet.hairlineWidth : 0 }]}
                 onLongPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                  Alert.alert('Slett innslag', 'Vil du slette dette logg-innslaget?', [
-                    { text: 'Avbryt', style: 'cancel' },
-                    { text: 'Slett', style: 'destructive', onPress: () => deleteLogEntry(entry.id) },
+                  Alert.alert(t.project.deleteEntry, t.project.confirmDeleteEntry, [
+                    { text: t.common.cancel, style: 'cancel' },
+                    { text: t.common.delete, style: 'destructive', onPress: () => deleteLogEntry(entry.id) },
                   ]);
                 }}
               >
@@ -1217,14 +1219,14 @@ export default function ProsjektScreen() {
               const newStatus: ProjectStatus = project.status === 'ferdig' ? 'aktiv' : 'ferdig';
               updateProject(id, {
                 status: newStatus,
-                endDate: newStatus === 'ferdig' ? new Date().toLocaleDateString('nb-NO') : undefined,
+                endDate: newStatus === 'ferdig' ? new Date().toLocaleDateString(language === 'no' ? 'nb-NO' : 'en-US') : undefined,
               });
               Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             }}
           >
             <Ionicons name={project.status === 'ferdig' ? 'refresh-outline' : 'checkmark-circle-outline'} size={18} color="#fff" />
             <Text style={[styles.finishBtnText, { fontFamily: 'Inter_600SemiBold' }]}>
-              {project.status === 'ferdig' ? 'Gjenåpne' : 'Fullfør prosjekt'}
+              {project.status === 'ferdig' ? t.project.reopen : t.project.completeProject}
             </Text>
           </Pressable>
           {project.status !== 'planlagt' && (
@@ -1232,7 +1234,7 @@ export default function ProsjektScreen() {
               style={({ pressed }) => [styles.planBtn, { borderColor: colors.primaryBtn, opacity: pressed ? 0.8 : 1 }]}
               onPress={() => { updateProject(id, { status: 'planlagt' }); Haptics.selectionAsync(); }}
             >
-              <Text style={[styles.planBtnText, { color: colors.primaryBtn, fontFamily: 'Inter_500Medium' }]}>Flytt til planer</Text>
+              <Text style={[styles.planBtnText, { color: colors.primaryBtn, fontFamily: 'Inter_500Medium' }]}>{t.project.moveToPlans}</Text>
             </Pressable>
           )}
         </View>
@@ -1315,7 +1317,10 @@ function AddLogModal({ visible, onClose, onSave }: {
   onSave: (date: string, notes: string, mengde?: number, enhet?: 'cm' | 'omg') => void;
 }) {
   const colors = useColors();
-  const today = new Date().toLocaleDateString('nb-NO', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const t = useT();
+  const { language } = useLanguage();
+  const locale = language === 'no' ? 'nb-NO' : 'en-US';
+  const today = new Date().toLocaleDateString(locale, { day: '2-digit', month: '2-digit', year: 'numeric' });
   const [date, setDate] = useState(today);
   const [notes, setNotes] = useState('');
   const [mengde, setMengde] = useState('');
@@ -1337,36 +1342,36 @@ function AddLogModal({ visible, onClose, onSave }: {
         <View style={[styles.modalSheet, { backgroundColor: colors.surface }]}>
           <View style={styles.modalHandle} />
           <View style={styles.modalHeaderRow}>
-            <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold', flex: 1 }]}>Nytt innslag</Text>
+            <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold', flex: 1 }]}>{t.project.logEntry}</Text>
             <Pressable onPress={onClose} hitSlop={10}>
               <Ionicons name="close" size={24} color={colors.textTertiary} />
             </Pressable>
           </View>
-          <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Dato</Text>
+          <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.project.logDate}</Text>
           <TextInput
             style={[styles.detailInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border, fontFamily: 'Inter_400Regular' }]}
             value={date}
             onChangeText={setDate}
-            placeholder="DD.MM.YYYY"
+            placeholder={t.project.startDatePlaceholder}
             placeholderTextColor={colors.textTertiary}
           />
-          <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Notater</Text>
+          <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.project.notes}</Text>
           <TextInput
             style={[styles.detailInput, styles.notesInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border, fontFamily: 'Inter_400Regular' }]}
             value={notes}
             onChangeText={setNotes}
-            placeholder="Hva strikket du i dag?"
+            placeholder={t.project.logPlaceholder}
             placeholderTextColor={colors.textTertiary}
             multiline
             maxLength={300}
           />
-          <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Mengde strikket (valgfritt)</Text>
+          <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.project.logAmountLabel}</Text>
           <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
             <TextInput
               style={[styles.detailInput, { flex: 1, color: colors.text, backgroundColor: colors.background, borderColor: colors.border, fontFamily: 'Inter_400Regular' }]}
               value={mengde}
               onChangeText={setMengde}
-              placeholder="f.eks. 10"
+              placeholder={t.project.rowsPlaceholder}
               placeholderTextColor={colors.textTertiary}
               keyboardType="number-pad"
             />
@@ -1380,7 +1385,7 @@ function AddLogModal({ visible, onClose, onSave }: {
                   <Text style={[styles.logEnhetText, {
                     color: enhet === e ? '#fff' : colors.textSecondary,
                     fontFamily: enhet === e ? 'Inter_600SemiBold' : 'Inter_400Regular',
-                  }]}>{e}</Text>
+                  }]}>{e === 'omg' ? t.project.unitRounds : e}</Text>
                 </Pressable>
               ))}
             </View>
@@ -1389,7 +1394,7 @@ function AddLogModal({ visible, onClose, onSave }: {
             style={({ pressed }) => [styles.modalBtn, { backgroundColor: colors.primaryBtn, opacity: pressed ? 0.85 : 1, marginTop: 8 }]}
             onPress={handleSave}
           >
-            <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Lagre</Text>
+            <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>{t.common.save}</Text>
           </Pressable>
         </View>
       </KeyboardAvoidingView>
