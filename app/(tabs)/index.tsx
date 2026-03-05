@@ -234,7 +234,15 @@ function NameOnboardingModal({ visible, onDone }: { visible: boolean; onDone: (n
             {!isLast ? (
               <>
                 <View style={[styles.onboardingIconWrap, { backgroundColor: currentSlide.iconBg }]}>
-                  <Ionicons name={currentSlide.icon} size={44} color={Colors.palette.navy} />
+                  {step === 0 ? (
+                    <Image
+                      source={require('@/assets/images/yarn-logo.png')}
+                      style={{ width: 70, height: 70 }}
+                      resizeMode="contain"
+                    />
+                  ) : (
+                    <Ionicons name={currentSlide.icon} size={44} color={Colors.palette.navy} />
+                  )}
                 </View>
                 <Text style={[styles.onboardingTitle, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>
                   {currentSlide.title}
