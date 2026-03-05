@@ -318,7 +318,6 @@ export default function HomeScreen() {
         style={{ flex: 1 }}
         contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 34 : 16 }}
         showsVerticalScrollIndicator={false}
-        contentInsetAdjustmentBehavior="automatic"
       >
         <LinearGradient
           colors={[Colors.palette.nordicBlue, Colors.palette.nordicIce]}
