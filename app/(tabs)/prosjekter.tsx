@@ -196,9 +196,9 @@ function SwipeableProjectCard({
           <Text style={[styles.projectName, { color: colors.text, fontFamily: 'Inter_700Bold' }]} numberOfLines={1}>
             {project.name}
           </Text>
-          {project.notes ? (
+          {project.notes?.trim() ? (
             <Text style={[styles.projectNotes, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]} numberOfLines={2}>
-              {project.notes}
+              {project.notes.trim()}
             </Text>
           ) : null}
           <View style={styles.projectFooter}>
