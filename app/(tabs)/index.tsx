@@ -173,48 +173,49 @@ function ProjectRow({ project }: { project: Project }) {
   );
 }
 
-function PremiumModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
-  const colors = Colors.light;
-  const insets = useSafeAreaInsets();
+const PREMIUM_FEATURES = [
+  'Ubegrenset antall prosjekter',
+  'Ubegrenset garnlager',
+  'Ubegrenset pinnelager',
+  'Prosjektlogg og fremdrift',
+  'Avansert statistikk',
+  'Sikkerhetskopiering',
+];
 
-  const features = [
-    { icon: 'infinite-outline' as const, text: 'Ubegrenset antall prosjekter' },
-    { icon: 'cube-outline' as const, text: 'Ubegrenset garnlager' },
-    { icon: 'construct-outline' as const, text: 'Ubegrenset pinnelager' },
-    { icon: 'journal-outline' as const, text: 'Prosjektlogg og fremdrift' },
-    { icon: 'stats-chart-outline' as const, text: 'Avansert statistikk' },
-    { icon: 'cloud-outline' as const, text: 'Sikkerhetskopiering' },
-  ];
+function PremiumModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
+  const insets = useSafeAreaInsets();
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <Pressable style={styles.premiumOverlay} onPress={onClose}>
-        <Pressable style={[styles.premiumSheet, { backgroundColor: colors.surface, paddingBottom: Math.max(insets.bottom, 28) }]} onPress={() => {}}>
+        <Pressable style={[styles.premiumSheet, { paddingBottom: Math.max(insets.bottom, 28) }]} onPress={() => {}}>
           <View style={styles.modalHandle} />
-          <View style={[styles.premiumIconWrap, { backgroundColor: Colors.palette.nordicBlue + '18' }]}>
-            <Ionicons name="star" size={28} color={Colors.palette.navy} />
+          <View style={styles.premiumTop}>
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.premiumTitle, { fontFamily: 'Inter_700Bold' }]}>Prøv Premium gratis</Text>
+              <Text style={[styles.premiumSub, { fontFamily: 'Inter_400Regular' }]}>14 dager, ingen binding</Text>
+            </View>
+            <View style={styles.premiumBadge}>
+              <Text style={[styles.premiumBadgeText, { fontFamily: 'Inter_600SemiBold' }]}>GRATIS</Text>
+            </View>
           </View>
-          <Text style={[styles.premiumTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Knitty Premium</Text>
-          <Text style={[styles.premiumSubtitle, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
-            Få tilgang til alle funksjoner og strikk uten grenser
-          </Text>
           <View style={styles.premiumFeatures}>
-            {features.map((f, i) => (
+            {PREMIUM_FEATURES.map((f, i) => (
               <View key={i} style={styles.premiumFeatureRow}>
-                <Ionicons name={f.icon} size={18} color={Colors.palette.navy} />
-                <Text style={[styles.premiumFeatureText, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>{f.text}</Text>
+                <Ionicons name="checkmark-circle" size={16} color="rgba(255,255,255,0.7)" />
+                <Text style={[styles.premiumFeatureText, { fontFamily: 'Inter_400Regular' }]}>{f}</Text>
               </View>
             ))}
           </View>
           <Pressable
-            style={({ pressed }) => [styles.premiumBtn, { backgroundColor: Colors.palette.navy, opacity: pressed ? 0.85 : 1 }]}
+            style={({ pressed }) => [styles.premiumBtn, { opacity: pressed ? 0.9 : 1 }]}
             onPress={onClose}
           >
-            <Text style={[styles.premiumBtnPrice, { fontFamily: 'Inter_700Bold' }]}>69 kr / mnd</Text>
-            <Text style={[styles.premiumBtnSub, { fontFamily: 'Inter_400Regular' }]}>Start med 7 dager gratis</Text>
+            <Text style={[styles.premiumBtnText, { fontFamily: 'Inter_700Bold' }]}>Start 14-dagers prøveperiode</Text>
+            <Text style={[styles.premiumBtnSub, { fontFamily: 'Inter_400Regular' }]}>Deretter 69 kr / mnd</Text>
           </Pressable>
           <Pressable onPress={onClose} hitSlop={12}>
-            <Text style={[styles.premiumDismiss, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>Ikke nå</Text>
+            <Text style={[styles.premiumDismiss, { fontFamily: 'Inter_400Regular' }]}>Ikke nå</Text>
           </Pressable>
         </Pressable>
       </Pressable>
@@ -742,18 +743,20 @@ const styles = StyleSheet.create({
   },
   modalTitle: { fontSize: 24, textAlign: 'center' },
   modalSubtitle: { fontSize: 15, marginBottom: 4, textAlign: 'center' },
-  premiumOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.4)' },
-  premiumSheet: { borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 24, gap: 12 },
-  premiumIconWrap: { width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', alignSelf: 'center' },
-  premiumTitle: { fontSize: 24, textAlign: 'center' },
-  premiumSubtitle: { fontSize: 14, textAlign: 'center', lineHeight: 20 },
-  premiumFeatures: { gap: 10, marginVertical: 4 },
-  premiumFeatureRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  premiumFeatureText: { fontSize: 15 },
-  premiumBtn: { borderRadius: 16, padding: 16, alignItems: 'center', gap: 2, marginTop: 4 },
-  premiumBtnPrice: { color: '#fff', fontSize: 18 },
-  premiumBtnSub: { color: 'rgba(255,255,255,0.7)', fontSize: 12 },
-  premiumDismiss: { textAlign: 'center', fontSize: 14, paddingVertical: 4 },
+  premiumOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.5)' },
+  premiumSheet: { borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 24, gap: 14, backgroundColor: '#2C3E6B' },
+  premiumTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  premiumTitle: { fontSize: 18, color: '#fff' },
+  premiumSub: { fontSize: 13, color: 'rgba(255,255,255,0.65)', marginTop: 2 },
+  premiumBadge: { borderRadius: 8, paddingHorizontal: 10, paddingVertical: 5, backgroundColor: 'rgba(255,255,255,0.15)' },
+  premiumBadgeText: { color: '#fff', fontSize: 11, letterSpacing: 0.5 },
+  premiumFeatures: { gap: 8 },
+  premiumFeatureRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  premiumFeatureText: { color: 'rgba(255,255,255,0.85)', fontSize: 14 },
+  premiumBtn: { borderRadius: 14, padding: 16, alignItems: 'center', backgroundColor: '#fff', gap: 2 },
+  premiumBtnText: { color: '#2C3E6B', fontSize: 15 },
+  premiumBtnSub: { color: 'rgba(44,62,107,0.6)', fontSize: 12 },
+  premiumDismiss: { textAlign: 'center', fontSize: 14, paddingVertical: 4, color: 'rgba(255,255,255,0.5)' },
   fieldLabel: { fontSize: 13, marginBottom: 4 },
   input: { borderRadius: 14, padding: 16, fontSize: 16 },
   primaryBtn: { borderRadius: 14, padding: 16, alignItems: 'center', marginTop: 4 },
