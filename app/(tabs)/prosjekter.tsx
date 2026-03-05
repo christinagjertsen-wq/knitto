@@ -175,19 +175,8 @@ function SwipeableProjectCard({
             />
           )}
           <View style={styles.cardBody}>
+            <View style={[styles.colorCircle, { backgroundColor: yarnColors[0]?.hex ?? colors.border }]} />
             <View style={styles.cardLeft}>
-              <View style={styles.yarnSwatches}>
-                {yarnColors.length > 0 ? (
-                  yarnColors.map((c, i) => (
-                    <View
-                      key={i}
-                      style={[styles.swatch, { backgroundColor: c.hex, marginLeft: i > 0 ? -8 : 0, zIndex: 5 - i }]}
-                    />
-                  ))
-                ) : (
-                  <View style={[styles.swatch, { backgroundColor: colors.border }]} />
-                )}
-              </View>
               <Text style={[styles.projectName, { color: colors.text, fontFamily: 'Inter_700Bold' }]} numberOfLines={1}>
                 {project.name}
               </Text>
@@ -368,7 +357,7 @@ export default function ProsjekterScreen() {
 
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={[styles.listContent, { paddingBottom: Platform.OS === 'web' ? 34 : 20 }]}
+        contentContainerStyle={[styles.listContent, { paddingBottom: bottomInset + 130 }]}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
@@ -408,7 +397,7 @@ export default function ProsjekterScreen() {
       <AddProjectModal visible={showAdd} onClose={() => setShowAdd(false)} />
 
       <Pressable
-        style={[styles.fab, { backgroundColor: colors.primaryBtn, bottom: 16 }]}
+        style={[styles.fab, { backgroundColor: colors.primaryBtn, bottom: bottomInset + 66 }]}
         onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setShowAdd(true); }}
       >
         <Ionicons name="add" size={28} color="#fff" />
@@ -489,11 +478,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 18,
     paddingVertical: 16,
-    gap: 12,
+    gap: 14,
+  },
+  colorCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    flexShrink: 0,
+    borderWidth: 1.5,
+    borderColor: 'rgba(255,255,255,0.6)',
   },
   cardLeft: {
     flex: 1,
-    gap: 8,
+    gap: 6,
   },
   cardRight: {
     alignItems: 'center',

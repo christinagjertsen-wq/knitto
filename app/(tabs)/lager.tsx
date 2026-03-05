@@ -459,7 +459,7 @@ export default function LagerScreen() {
         style={{ flex: 1 }}
         contentContainerStyle={[
           styles.listContent,
-          { paddingBottom: Platform.OS === 'web' ? 34 : 20 },
+          { paddingBottom: bottomInset + 130 },
         ]}
         showsVerticalScrollIndicator={false}
         contentInsetAdjustmentBehavior="automatic"
@@ -544,7 +544,7 @@ export default function LagerScreen() {
       <AddNeedleModal visible={showAddNeedle} onClose={() => setShowAddNeedle(false)} />
 
       <Pressable
-        style={[styles.fab, { backgroundColor: colors.primaryBtn, bottom: 16 }]}
+        style={[styles.fab, { backgroundColor: colors.primaryBtn, bottom: bottomInset + 66 }]}
         onPress={() => {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           activeTab === 'garn' ? setShowAddBrand(true) : setShowAddNeedle(true);
