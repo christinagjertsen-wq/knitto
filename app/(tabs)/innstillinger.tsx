@@ -235,21 +235,21 @@ function OkeFelleKalkulator() {
           />
         </View>
       </View>
-      {result && (
-        <View style={[styles.resultBox, { backgroundColor: colors.primaryBtn + '18' }]}>
-          <Text style={[styles.resultLine, { color: colors.primaryBtn, fontFamily: 'Inter_700Bold' }]}>
-            {result.isØke ? 'Øk' : 'Fell'} {result.changes} masker totalt
+      <View style={[styles.resultBox, { backgroundColor: colors.primaryBtn + '18' }]}>
+        <Text style={[styles.resultLine, { color: colors.primaryBtn, fontFamily: 'Inter_700Bold' }]}>
+          {result ? (result.isØke ? 'Øk' : 'Fell') : 'Øk/Fell'} {result?.changes ?? 0} masker totalt
+        </Text>
+        {result && result.lines.map((line, i) => (
+          <Text key={i} style={[styles.resultSub, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
+            {line}
           </Text>
-          {result.lines.map((line, i) => (
-            <Text key={i} style={[styles.resultSub, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
-              {line}
-            </Text>
-          ))}
+        ))}
+        {result && (
           <Text style={[styles.resultSub, { color: colors.textTertiary, fontFamily: 'Inter_400Regular', marginTop: 4 }]}>
             {result.from} → {result.to} masker
           </Text>
-        </View>
-      )}
+        )}
+      </View>
     </View>
   );
 }
