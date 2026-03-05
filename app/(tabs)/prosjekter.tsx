@@ -78,6 +78,8 @@ const STATUS_BG: Record<ProjectStatus, string> = {
   ferdig: 'rgba(74,104,152,0.15)',
 };
 
+const STATUS_ORDER: Record<ProjectStatus, number> = { aktiv: 0, planlagt: 1, ferdig: 2 };
+
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SWIPE_THRESHOLD = 80;
 
@@ -310,7 +312,7 @@ export default function ProsjekterScreen() {
     if (search.trim()) {
       list = list.filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
     }
-    return list;
+    return [...list].sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status]);
   }, [projects, activeFilter, search]);
 
   const counts = useMemo(() => ({
