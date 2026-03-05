@@ -524,6 +524,7 @@ export default function HomeScreen() {
         style={{ flex: 1 }}
         contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 34 : 16 }}
         showsVerticalScrollIndicator={false}
+        bounces={false}
       >
         <View style={styles.content}>
           <View style={styles.sectionHeader}>
