@@ -329,11 +329,7 @@ export default function ProsjekterScreen() {
         style={[styles.topBar, { paddingTop: topInset + 16 }]}
       >
         <View style={styles.topBarRow}>
-          <Pressable onPress={() => router.navigate('/(tabs)')} hitSlop={10} style={styles.homeBtn}>
-            <Ionicons name="home-outline" size={20} color={Colors.palette.navy} />
-          </Pressable>
           <Text style={[styles.screenTitle, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>Prosjekter</Text>
-          <View style={styles.homeBtn} />
         </View>
       </LinearGradient>
 
@@ -445,7 +441,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
   },
-  topBarRow: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  topBarRow: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
   homeBtn: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
   screenTitle: { fontSize: 32 },
   addBtn: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
