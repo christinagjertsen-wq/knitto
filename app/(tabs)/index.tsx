@@ -323,11 +323,18 @@ export default function HomeScreen() {
           colors={[Colors.palette.nordicBlue, Colors.palette.nordicIce]}
           style={[styles.header, { paddingTop: topInset + 16 }]}
         >
+          <View style={styles.headerBadgeRow}>
+            <View style={[styles.basicBadge, { backgroundColor: 'rgba(26,35,64,0.08)' }]}>
+              <Ionicons name="leaf-outline" size={12} color={Colors.palette.navy} />
+              <Text style={[styles.basicBadgeText, { color: Colors.palette.navy, fontFamily: 'Inter_600SemiBold' }]}>Basic</Text>
+            </View>
+          </View>
+
           <View style={styles.headerTopRow}>
-            <Text style={[styles.greetingLarge, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold', textAlign: 'center' }]}>
+            <Text style={[styles.greetingLarge, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>
               {greeting}
             </Text>
-            <Text style={[styles.greetingTagline, { color: Colors.palette.textTertiary, fontFamily: 'Inter_400Regular', textAlign: 'center' }]}>
+            <Text style={[styles.greetingTagline, { color: Colors.palette.textTertiary, fontFamily: 'Inter_400Regular' }]}>
               På tide å strikke litt?
             </Text>
           </View>
@@ -433,8 +440,25 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
   },
-  headerTopRow: {
+  headerBadgeRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginBottom: 20,
+  },
+  basicBadge: {
+    flexDirection: 'row',
     alignItems: 'center',
+    gap: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 20,
+  },
+  basicBadgeText: {
+    fontSize: 12,
+    letterSpacing: 0.3,
+  },
+  headerTopRow: {
+    alignItems: 'flex-start',
     marginBottom: 24,
     gap: 4,
   },
