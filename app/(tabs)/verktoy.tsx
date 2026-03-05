@@ -44,6 +44,7 @@ const NEEDLE_SIZES = [
 
 function Counter({ label, color }: { label: string; color: string }) {
   const colors = useColors();
+  const t = useT();
   const [count, setCount] = useState(0);
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
@@ -70,7 +71,7 @@ function Counter({ label, color }: { label: string; color: string }) {
         <Animated.Text style={[styles.counterNumber, { color, fontFamily: 'Inter_700Bold', transform: [{ scale: scaleAnim }] }]}>
           {count}
         </Animated.Text>
-        <Text style={[styles.counterHint, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>trykk for å telle</Text>
+        <Text style={[styles.counterHint, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{t.tools.tapToCount}</Text>
       </Pressable>
       <View style={styles.counterRow}>
         <Pressable style={[styles.counterBtn, { backgroundColor: colors.border }]} onPress={decrement}>
@@ -86,6 +87,7 @@ function Counter({ label, color }: { label: string; color: string }) {
 
 function YarnCalculator() {
   const colors = useColors();
+  const t = useT();
   const [metersPerSkein, setMetersPerSkein] = useState('');
   const [skeins, setSkeins] = useState('');
   const [stitchGauge, setStitchGauge] = useState('');
@@ -104,13 +106,13 @@ function YarnCalculator() {
 
   return (
     <View style={[styles.calcCard, { backgroundColor: colors.surface }]}>
-      <Text style={[styles.calcTitle, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>Garnkalkulator</Text>
+      <Text style={[styles.calcTitle, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>{t.tools.calcTitle}</Text>
       <Text style={[styles.calcSubtitle, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-        Beregn hvor mye du kan strikke med garnbeholdningen din
+        {t.tools.calcSubtitle}
       </Text>
       <View style={styles.inputRow}>
         <View style={{ flex: 1 }}>
-          <Text style={[styles.inputLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Meter/nøste</Text>
+          <Text style={[styles.inputLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.tools.metersPerSkein}</Text>
           <TextInput
             style={[styles.calcInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border }]}
             value={metersPerSkein}
@@ -121,7 +123,7 @@ function YarnCalculator() {
           />
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={[styles.inputLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Antall nøster</Text>
+          <Text style={[styles.inputLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.tools.skeinsCount}</Text>
           <TextInput
             style={[styles.calcInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border }]}
             value={skeins}
@@ -133,7 +135,7 @@ function YarnCalculator() {
         </View>
       </View>
       <Text style={[styles.inputLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium', marginTop: 4 }]}>
-        Strikkefasthet (masker / cm)
+        {t.tools.gaugeLabel}
       </Text>
       <View style={styles.inputRow}>
         <View style={{ flex: 1 }}>
@@ -141,7 +143,7 @@ function YarnCalculator() {
             style={[styles.calcInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border }]}
             value={stitchGauge}
             onChangeText={setStitchGauge}
-            placeholder="22 masker/10cm"
+            placeholder={t.tools.gaugeStitchPlaceholder}
             placeholderTextColor={colors.textTertiary}
             keyboardType="number-pad"
           />
@@ -151,7 +153,7 @@ function YarnCalculator() {
             style={[styles.calcInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border }]}
             value={rowGauge}
             onChangeText={setRowGauge}
-            placeholder="28 rader/10cm"
+            placeholder={t.tools.gaugeRowPlaceholder}
             placeholderTextColor={colors.textTertiary}
             keyboardType="number-pad"
           />
@@ -160,13 +162,13 @@ function YarnCalculator() {
       {result && (
         <View style={[styles.resultBox, { backgroundColor: colors.primaryBtn + '18' }]}>
           <Text style={[styles.resultLine, { color: colors.primaryBtn, fontFamily: 'Inter_700Bold' }]}>
-            {result.totalMeters} meter garn
+            {result.totalMeters} {t.tools.metersOfYarn}
           </Text>
           <Text style={[styles.resultSub, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
-            ≈ {result.areaCm2} cm² strikket areal
+            ≈ {result.areaCm2} {t.tools.knitArea}
           </Text>
           <Text style={[styles.resultSub, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
-            f.eks. {result.widthCm} × {result.widthCm} cm
+            {t.tools.forExample} {result.widthCm} × {result.widthCm} cm
           </Text>
         </View>
       )}
@@ -176,6 +178,7 @@ function YarnCalculator() {
 
 function YarnStats() {
   const colors = useColors();
+  const t = useT();
   const { projects, yarnStock, qualities, brands, getQualityById } = useKnitting();
 
   const usedYarn = useMemo(() => {
@@ -209,7 +212,7 @@ function YarnStats() {
         <View style={{ paddingVertical: 24, alignItems: 'center', gap: 8 }}>
           <Ionicons name="stats-chart-outline" size={32} color={colors.textTertiary} />
           <Text style={[{ color: colors.textTertiary, fontFamily: 'Inter_400Regular', textAlign: 'center' }]}>
-            Ingen garn er koblet til prosjekter ennå
+            {t.tools.noYarnLinked}
           </Text>
         </View>
       </View>
@@ -221,11 +224,11 @@ function YarnStats() {
       <View style={[styles.summaryRow]}>
         <View style={[styles.summaryChip, { backgroundColor: colors.surface }]}>
           <Text style={[styles.summaryNum, { color: colors.primaryBtn, fontFamily: 'Inter_700Bold' }]}>{totalAllocated}</Text>
-          <Text style={[styles.summaryLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>nøster brukt</Text>
+          <Text style={[styles.summaryLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{t.tools.skeinsUsed}</Text>
         </View>
         <View style={[styles.summaryChip, { backgroundColor: colors.surface }]}>
           <Text style={[styles.summaryNum, { color: '#6A8EC8', fontFamily: 'Inter_700Bold' }]}>{usedYarn.length}</Text>
-          <Text style={[styles.summaryLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>garntyper</Text>
+          <Text style={[styles.summaryLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{t.tools.yarnTypes}</Text>
         </View>
       </View>
       <View style={[styles.statsCard, { backgroundColor: colors.surface }]}>
@@ -242,7 +245,7 @@ function YarnStats() {
                     <View style={[styles.barFill, { backgroundColor: colors.primaryBtn, width: `${Math.round(item.pct * 100)}%` as any }]} />
                   </View>
                   <Text style={[styles.barLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                    {item.allocated}/{item.total} nøster
+                    {item.allocated}/{item.total} {t.quality.skeins}
                   </Text>
                 </View>
               </View>
@@ -258,6 +261,7 @@ function YarnStats() {
 export default function VerktoyScreen() {
   const colors = useColors();
   const isDark = useIsDark();
+  const t = useT();
   const insets = useSafeAreaInsets();
   const topInset = Platform.OS === 'web' ? 67 : insets.top;
   const [activeSection, setActiveSection] = useState<'tellere' | 'kalkulator' | 'statistikk' | 'naaler'>('tellere');
@@ -274,15 +278,15 @@ export default function VerktoyScreen() {
   }, [activeSection]);
 
   useFocusEffect(useCallback(() => {
-    const t = setTimeout(() => scrollToActive(false), 80);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => scrollToActive(false), 80);
+    return () => clearTimeout(timer);
   }, [scrollToActive]));
 
   const sections = [
-    { key: 'tellere', label: 'Tellere', icon: 'add-circle-outline' as const },
-    { key: 'kalkulator', label: 'Kalkulator', icon: 'calculator-outline' as const },
-    { key: 'statistikk', label: 'Garn brukt', icon: 'stats-chart-outline' as const },
-    { key: 'naaler', label: 'Pinner', icon: 'list-outline' as const },
+    { key: 'tellere', label: t.tools.rowCounter.replace(' counter', 's').replace(' teller', 'e'), icon: 'add-circle-outline' as const },
+    { key: 'kalkulator', label: t.tools.calculator, icon: 'calculator-outline' as const },
+    { key: 'statistikk', label: t.tools.yarnUsed, icon: 'stats-chart-outline' as const },
+    { key: 'naaler', label: t.storage.needles, icon: 'list-outline' as const },
   ] as const;
 
   return (
