@@ -2,11 +2,14 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const STORAGE_KEY = 'user_first_name';
+const ONBOARDING_KEY = 'onboarding_complete';
 
 interface UserContextValue {
   firstName: string;
   setFirstName: (name: string) => void;
   isLoading: boolean;
+  onboardingComplete: boolean;
+  completeOnboarding: () => void;
 }
 
 const UserContext = createContext<UserContextValue>({
