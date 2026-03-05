@@ -18,6 +18,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
 import { useKnitting, YarnStock } from '@/context/KnittingContext';
+import { PremiumModal } from '@/components/PremiumModal';
 
 const PRESET_COLORS = [
   { name: 'Lys grå', hex: '#E8E8E8' },
@@ -153,22 +154,27 @@ function YarnCard({ yarn, onDelete, onSkeinChange }: { yarn: YarnStock; onDelete
   );
 }
 
-function AddYarnModal({ qualityId, visible, onClose }: { qualityId: string; visible: boolean; onClose: () => void }) {
+function AddYarnModal({ qualityId, visible, onClose, onPaywall }: { qualityId: string; visible: boolean; onClose: () => void; onPaywall: () => void }) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
   const colors = isDark ? Colors.dark : Colors.light;
   const [colorName, setColorName] = useState('');
   const [selectedHex, setSelectedHex] = useState('#C97B84');
   const [skeins, setSkeins] = useState(1);
-  const { addYarnStock } = useKnitting();
+  const { addYarnStock, yarnStock } = useKnitting();
 
   const handleAdd = useCallback(() => {
     if (!colorName.trim()) return;
+    if (yarnStock.length >= 5) {
+      onClose();
+      onPaywall();
+      return;
+    }
     addYarnStock({ qualityId, colorName: colorName.trim(), colorHex: selectedHex, skeins });
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setColorName(''); setSkeins(1); setSelectedHex('#C97B84');
     onClose();
-  }, [colorName, selectedHex, skeins, qualityId, addYarnStock, onClose]);
+  }, [colorName, selectedHex, skeins, qualityId, addYarnStock, onClose, onPaywall, yarnStock]);
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
@@ -239,6 +245,7 @@ export default function KvalitetScreen() {
   const insets = useSafeAreaInsets();
   const { getQualityById, getYarnStockForQuality, getBrandById, deleteQuality, deleteYarnStock, updateYarnStock } = useKnitting();
   const [showAdd, setShowAdd] = useState(false);
+  const [showPremium, setShowPremium] = useState(false);
 
   const quality = getQualityById(id);
   const brand = quality ? getBrandById(quality.brandId) : undefined;
@@ -340,7 +347,8 @@ export default function KvalitetScreen() {
         )}
       </ScrollView>
 
-      <AddYarnModal qualityId={id} visible={showAdd} onClose={() => setShowAdd(false)} />
+      <AddYarnModal qualityId={id} visible={showAdd} onClose={() => setShowAdd(false)} onPaywall={() => setShowPremium(true)} />
+      <PremiumModal visible={showPremium} onClose={() => setShowPremium(false)} />
 
       <Pressable
         style={[styles.fab, { backgroundColor: colors.primaryBtn, bottom: (Platform.OS === 'web' ? 34 : insets.bottom) + 24 }]}

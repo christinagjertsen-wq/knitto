@@ -21,6 +21,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
 import { useKnitting, ProjectStatus, YarnStock } from '@/context/KnittingContext';
+import { PremiumModal } from '@/components/PremiumModal';
 
 function ProgressRingLarge({ percent, size, strokeWidth, color }: { percent: number; size: number; strokeWidth: number; color: string }) {
   const colors = Colors.light;
@@ -778,6 +779,7 @@ export default function ProsjektScreen() {
   const [showAddNeedle, setShowAddNeedle] = useState(false);
   const [showEditDetails, setShowEditDetails] = useState(false);
   const [showAddLog, setShowAddLog] = useState(false);
+  const [showPremium, setShowPremium] = useState(false);
 
   const {
     getProjectById, updateProject, deleteProject,
@@ -1247,6 +1249,11 @@ export default function ProsjektScreen() {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         }}
         onAddNew={(qualityId, colorName, colorHex, skeinsTotal, skeinsForProject) => {
+          if (yarnStock.length >= 5) {
+            setShowAddYarn(false);
+            setShowPremium(true);
+            return;
+          }
           const newYarn = addYarnStock({ qualityId, colorName, colorHex, skeins: skeinsTotal });
           allocateYarnToProject(id, newYarn.id, skeinsForProject);
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -1264,6 +1271,8 @@ export default function ProsjektScreen() {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         }}
       />
+
+      <PremiumModal visible={showPremium} onClose={() => setShowPremium(false)} />
 
       <EditDetailsModal
         visible={showEditDetails}
