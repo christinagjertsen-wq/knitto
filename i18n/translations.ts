@@ -341,7 +341,7 @@ const en: typeof no = {
   nav: {
     home: 'Home',
     projects: 'Projects',
-    storage: 'Storage',
+    storage: 'Stash',
     settings: 'Settings',
   },
   status: {
@@ -390,9 +390,9 @@ const en: typeof no = {
     statSkeinsUsed: 'Skeins used from storage',
     statNeedlesRegistered: 'Needles registered',
     sectionProjects: 'Projects',
-    sectionYarnStorage: 'Yarn Storage',
+    sectionYarnStorage: 'Yarn stash',
     seeAllProjects: 'See all projects',
-    seeYarnStorage: 'See yarn storage',
+    seeYarnStorage: 'See yarn stash',
     startFirstProject: 'Start your first project',
     noProjects: 'No projects yet',
   },
@@ -401,7 +401,7 @@ const en: typeof no = {
     slide1Body: 'Your personal knitting journal — keep track of projects, yarn, and needles in one place.',
     slide2Title: 'Projects',
     slide2Body: 'Create projects, set status, and follow your progress from plan to finished garment.',
-    slide3Title: 'Yarn Storage',
+    slide3Title: 'Yarn stash',
     slide3Body: 'Register your yarn by brand, quality, and color — always know what you have at home.',
     slide4Title: 'Log & Progress',
     slide4Body: 'Keep a knitting journal per project and see percentage progress on all your cards.',
@@ -432,7 +432,7 @@ const en: typeof no = {
     newTitle: 'New project',
   },
   storage: {
-    title: 'Storage',
+    title: 'Stash',
     yarn: 'Yarn',
     needles: 'Needles',
     searchPlaceholder: 'Search...',

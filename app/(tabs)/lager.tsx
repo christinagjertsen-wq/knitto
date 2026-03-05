@@ -378,7 +378,7 @@ export default function LagerScreen() {
         colors={isDark ? ['#1A2340', '#0D1220'] : [Colors.palette.nordicBlue, Colors.palette.nordicIce]}
         style={[styles.topBar, { paddingTop: topInset + 24 }]}
       >
-        <Text style={[styles.screenTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Lager</Text>
+        <Text style={[styles.screenTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.storage.title}</Text>
       </LinearGradient>
 
       <View style={styles.segmentContainer}>
