@@ -434,7 +434,12 @@ export default function HomeScreen() {
           </View>
 
           <View style={styles.headerTopRow}>
-            <Text style={[styles.greetingLarge, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>
+            <Text
+              style={[styles.greetingLarge, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.65}
+            >
               {greeting}
             </Text>
             <Text style={[styles.greetingTagline, { color: Colors.palette.textTertiary, fontFamily: 'Inter_400Regular' }]}>
@@ -576,8 +581,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   greetingLarge: {
-    fontSize: 32,
-    lineHeight: 38,
+    fontSize: 28,
+    lineHeight: 34,
   },
   greetingTagline: {
     fontSize: 14,
