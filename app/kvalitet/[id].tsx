@@ -145,9 +145,6 @@ function YarnCard({ yarn, onDelete, onSkeinChange }: { yarn: YarnStock; onDelete
         <Text style={[styles.colorName, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
           {yarn.colorName}
         </Text>
-        <Text style={[styles.hexCode, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-          {yarn.colorHex}
-        </Text>
       </View>
       <View style={styles.yarnCardRight}>
         <SkeinCounter value={yarn.skeins} onChange={handleSkeinChange} />
@@ -415,7 +412,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   colorSwatch: { width: 56, alignSelf: 'stretch', minHeight: 72 },
-  yarnCardContent: { flex: 1, padding: 14, gap: 3 },
+  yarnCardContent: { flex: 1, padding: 14, justifyContent: 'center' },
   colorName: { fontSize: 15 },
   hexCode: { fontSize: 12 },
   yarnCardRight: { paddingRight: 14, alignItems: 'center', gap: 10 },
