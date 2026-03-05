@@ -396,7 +396,7 @@ export default function LagerScreen() {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <LinearGradient
         colors={[Colors.palette.nordicBlue, Colors.palette.nordicIce]}
-        style={[styles.topBar, { paddingTop: topInset + 16 }]}
+        style={[styles.topBar, { paddingTop: topInset + 24 }]}
       >
         <Text style={[styles.screenTitle, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>Lager</Text>
       </LinearGradient>

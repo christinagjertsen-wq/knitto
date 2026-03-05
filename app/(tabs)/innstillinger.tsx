@@ -398,7 +398,7 @@ export default function InnstillingerScreen() {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <LinearGradient
         colors={[Colors.palette.nordicBlue, Colors.palette.nordicIce]}
-        style={[styles.header, { paddingTop: topInset + 16 }]}
+        style={[styles.header, { paddingTop: topInset + 24 }]}
       >
         <Text style={[styles.title, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>Innstillinger</Text>
       </LinearGradient>
