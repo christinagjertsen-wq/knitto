@@ -397,7 +397,11 @@ export default function LagerScreen() {
         colors={[Colors.palette.nordicBlue, Colors.palette.nordicIce]}
         style={[styles.topBar, { paddingTop: topInset + 16 }]}
       >
+        <Pressable onPress={() => router.navigate('/(tabs)')} hitSlop={10} style={styles.homeBtn}>
+          <Ionicons name="chevron-back" size={26} color={Colors.palette.navy} />
+        </Pressable>
         <Text style={[styles.screenTitle, { color: Colors.palette.navy, fontFamily: 'Inter_700Bold' }]}>Lager</Text>
+        <View style={styles.homeBtn} />
       </LinearGradient>
 
       <View style={styles.segmentContainer}>
