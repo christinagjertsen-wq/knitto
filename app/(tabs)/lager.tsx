@@ -15,6 +15,7 @@ import {
   PanResponder,
 } from 'react-native';
 import { BlurView } from 'expo-blur';
+import { GlassView, isLiquidGlassAvailable } from 'expo-glass-effect';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -377,6 +378,7 @@ export default function LagerScreen() {
 
   const stats = getTotalStats();
   const topInset = Platform.OS === 'web' ? 67 : insets.top;
+  const glassAvailable = isLiquidGlassAvailable();
 
   const filteredBrands = useMemo(() =>
     brands.filter(b => b.name.toLowerCase().includes(search.toLowerCase())),
@@ -402,40 +404,61 @@ export default function LagerScreen() {
       </LinearGradient>
 
       <View style={styles.segmentContainer}>
-        <BlurView
-          intensity={Platform.OS === 'ios' ? 60 : 0}
-          tint="light"
-          style={[styles.segment, { backgroundColor: Platform.OS === 'ios' ? 'rgba(255,255,255,0.45)' : (isDark ? colors.surface : '#E1E8F0') }]}
-        >
-          {(['garn', 'pinner'] as Tab[]).map(tab => (
-            <Pressable
-              key={tab}
-              style={[
-                styles.segmentTab,
-                activeTab === tab && {
-                  backgroundColor: '#fff',
-                  shadowColor: '#000',
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.1,
-                  shadowRadius: 6,
-                  elevation: 3,
-                },
-              ]}
-              onPress={() => {
-                setActiveTab(tab);
-                setSearch('');
-                Haptics.selectionAsync();
-              }}
-            >
-              <Text style={[styles.segmentText, {
-                color: activeTab === tab ? colors.text : colors.textTertiary,
-                fontFamily: activeTab === tab ? 'Inter_600SemiBold' : 'Inter_400Regular',
-              }]}>
-                {tab === 'garn' ? 'Garn' : 'Pinner'}
-              </Text>
-            </Pressable>
-          ))}
-        </BlurView>
+        {glassAvailable ? (
+          <GlassView glassEffectStyle="regular" style={styles.segment}>
+            {(['garn', 'pinner'] as Tab[]).map(tab => (
+              <Pressable
+                key={tab}
+                style={styles.segmentTab}
+                onPress={() => { setActiveTab(tab); setSearch(''); Haptics.selectionAsync(); }}
+              >
+                {activeTab === tab && (
+                  <GlassView
+                    glassEffectStyle="clear"
+                    style={[StyleSheet.absoluteFill, { borderRadius: 10 }]}
+                  />
+                )}
+                <Text style={[styles.segmentText, {
+                  color: activeTab === tab ? colors.text : colors.textTertiary,
+                  fontFamily: activeTab === tab ? 'Inter_600SemiBold' : 'Inter_400Regular',
+                }]}>
+                  {tab === 'garn' ? 'Garn' : 'Pinner'}
+                </Text>
+              </Pressable>
+            ))}
+          </GlassView>
+        ) : (
+          <BlurView
+            intensity={Platform.OS === 'ios' ? 60 : 0}
+            tint="light"
+            style={[styles.segment, { backgroundColor: Platform.OS === 'ios' ? 'rgba(255,255,255,0.45)' : (isDark ? colors.surface : '#E1E8F0') }]}
+          >
+            {(['garn', 'pinner'] as Tab[]).map(tab => (
+              <Pressable
+                key={tab}
+                style={[
+                  styles.segmentTab,
+                  activeTab === tab && {
+                    backgroundColor: '#fff',
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.1,
+                    shadowRadius: 6,
+                    elevation: 3,
+                  },
+                ]}
+                onPress={() => { setActiveTab(tab); setSearch(''); Haptics.selectionAsync(); }}
+              >
+                <Text style={[styles.segmentText, {
+                  color: activeTab === tab ? colors.text : colors.textTertiary,
+                  fontFamily: activeTab === tab ? 'Inter_600SemiBold' : 'Inter_400Regular',
+                }]}>
+                  {tab === 'garn' ? 'Garn' : 'Pinner'}
+                </Text>
+              </Pressable>
+            ))}
+          </BlurView>
+        )}
       </View>
 
       <View style={[styles.searchBar, { backgroundColor: colors.surface }]}>
