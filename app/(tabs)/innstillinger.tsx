@@ -520,10 +520,8 @@ export default function InnstillingerScreen() {
             <View style={styles.premiumIconCircle}>
               <Ionicons name="diamond-outline" size={20} color="#fff" />
             </View>
-            <View style={{ flex: 1 }}>
-              <Text style={[styles.premiumTitle, { fontFamily: 'Inter_700Bold' }]}>{t.premium.cardTitle}</Text>
-              <Text style={[styles.premiumSub, { fontFamily: 'Inter_400Regular' }]}>{t.premium.cardSub}</Text>
-            </View>
+            <Text style={[styles.premiumTitle, { fontFamily: 'Inter_700Bold', textAlign: 'center' }]}>{t.premium.cardTitle}</Text>
+            <Text style={[styles.premiumSub, { fontFamily: 'Inter_400Regular', textAlign: 'center' }]}>{t.premium.cardSub}</Text>
           </View>
           <View style={[styles.premiumDivider]} />
           <View style={styles.premiumFeatures}>
@@ -712,13 +710,13 @@ const styles = StyleSheet.create({
   rowValue: { fontSize: 15 },
   divider: { height: 1, marginHorizontal: 16 },
   premiumCard: { borderRadius: 20, padding: 20, gap: 14 },
-  premiumTop: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  premiumTop: { flexDirection: 'column', alignItems: 'center', gap: 8 },
   premiumIconCircle: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.12)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' },
   premiumTitle: { fontSize: 15, color: '#fff', lineHeight: 20 },
   premiumSub: { fontSize: 12, color: 'rgba(255,255,255,0.55)', marginTop: 2 },
   premiumDivider: { height: 1, backgroundColor: 'rgba(255,255,255,0.1)' },
   premiumFeatures: { gap: 10 },
-  premiumFeatureRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  premiumFeatureRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 },
   premiumFeatureIcon: { width: 30, height: 30, borderRadius: 8, backgroundColor: 'rgba(255,255,255,0.1)', alignItems: 'center', justifyContent: 'center' },
   premiumFeatureText: { color: 'rgba(255,255,255,0.85)', fontSize: 14 },
   premiumBtn: { borderRadius: 14, paddingVertical: 14, paddingHorizontal: 16, alignItems: 'center', gap: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.15, shadowRadius: 8, elevation: 4 },
