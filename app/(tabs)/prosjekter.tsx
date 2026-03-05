@@ -24,6 +24,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
 import { useKnitting, Project, ProjectStatus } from '@/context/KnittingContext';
+import { PremiumModal } from '@/components/PremiumModal';
 
 function ProgressRing({ percent, size, strokeWidth, color }: { percent: number; size: number; strokeWidth: number; color: string }) {
   const colors = Colors.light;
@@ -279,6 +280,7 @@ export default function ProsjekterScreen() {
   const insets = useSafeAreaInsets();
   const [activeFilter, setActiveFilter] = useState<ProjectStatus | 'alle'>('alle');
   const [showAdd, setShowAdd] = useState(false);
+  const [showPremium, setShowPremium] = useState(false);
   const [search, setSearch] = useState('');
   const { projects, deleteProject, updateProject } = useKnitting();
   const topInset = Platform.OS === 'web' ? 67 : insets.top;
@@ -395,10 +397,18 @@ export default function ProsjekterScreen() {
       </ScrollView>
 
       <AddProjectModal visible={showAdd} onClose={() => setShowAdd(false)} />
+      <PremiumModal visible={showPremium} onClose={() => setShowPremium(false)} />
 
       <Pressable
         style={[styles.fab, { backgroundColor: colors.primaryBtn, bottom: bottomInset + 66 }]}
-        onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setShowAdd(true); }}
+        onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          if (projects.length >= 3) {
+            setShowPremium(true);
+          } else {
+            setShowAdd(true);
+          }
+        }}
       >
         <Ionicons name="add" size={28} color="#fff" />
       </Pressable>

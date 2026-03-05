@@ -21,6 +21,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
 import { useKnitting, Project, ProjectStatus } from '@/context/KnittingContext';
+import { PremiumModal } from '@/components/PremiumModal';
 import { useUser, getGreeting } from '@/context/UserContext';
 
 const ADD_STATUS_LABELS: Record<ProjectStatus, string> = {
@@ -173,55 +174,6 @@ function ProjectRow({ project }: { project: Project }) {
   );
 }
 
-const PREMIUM_FEATURES = [
-  'Ubegrenset antall prosjekter',
-  'Ubegrenset garnlager',
-  'Ubegrenset pinnelager',
-  'Prosjektlogg og fremdrift',
-  'Avansert statistikk',
-  'Sikkerhetskopiering',
-];
-
-function PremiumModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
-  const insets = useSafeAreaInsets();
-
-  return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable style={styles.premiumOverlay} onPress={onClose}>
-        <Pressable style={[styles.premiumSheet, { paddingBottom: Math.max(insets.bottom, 28) }]} onPress={() => {}}>
-          <View style={styles.modalHandle} />
-          <View style={styles.premiumTop}>
-            <View style={{ flex: 1 }}>
-              <Text style={[styles.premiumTitle, { fontFamily: 'Inter_700Bold' }]}>Prøv Premium gratis</Text>
-              <Text style={[styles.premiumSub, { fontFamily: 'Inter_400Regular' }]}>14 dager, ingen binding</Text>
-            </View>
-            <View style={styles.premiumBadge}>
-              <Text style={[styles.premiumBadgeText, { fontFamily: 'Inter_600SemiBold' }]}>GRATIS</Text>
-            </View>
-          </View>
-          <View style={styles.premiumFeatures}>
-            {PREMIUM_FEATURES.map((f, i) => (
-              <View key={i} style={styles.premiumFeatureRow}>
-                <Ionicons name="checkmark-circle" size={16} color="rgba(255,255,255,0.7)" />
-                <Text style={[styles.premiumFeatureText, { fontFamily: 'Inter_400Regular' }]}>{f}</Text>
-              </View>
-            ))}
-          </View>
-          <Pressable
-            style={({ pressed }) => [styles.premiumBtn, { opacity: pressed ? 0.9 : 1 }]}
-            onPress={onClose}
-          >
-            <Text style={[styles.premiumBtnText, { fontFamily: 'Inter_700Bold' }]}>Start 14-dagers prøveperiode</Text>
-            <Text style={[styles.premiumBtnSub, { fontFamily: 'Inter_400Regular' }]}>Deretter 69 kr / mnd</Text>
-          </Pressable>
-          <Pressable onPress={onClose} hitSlop={12}>
-            <Text style={[styles.premiumDismiss, { fontFamily: 'Inter_400Regular' }]}>Ikke nå</Text>
-          </Pressable>
-        </Pressable>
-      </Pressable>
-    </Modal>
-  );
-}
 
 const SCREEN_W = Dimensions.get('window').width;
 

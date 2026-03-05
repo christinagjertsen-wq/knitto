@@ -514,7 +514,7 @@ export default function InnstillingerScreen() {
             </View>
           </View>
           <View style={styles.premiumFeatures}>
-            {['Ubegrenset prosjekter', 'Ubegrenset garnlager', 'Prosjektbilder', 'Full statistikk'].map(f => (
+            {['Ubegrenset prosjekter', 'Ubegrenset garnlager', 'Sikkerhetskopiering'].map(f => (
               <View key={f} style={styles.premiumFeatureRow}>
                 <Ionicons name="checkmark-circle" size={16} color="rgba(255,255,255,0.7)" />
                 <Text style={[styles.premiumFeatureText, { fontFamily: 'Inter_400Regular' }]}>{f}</Text>
