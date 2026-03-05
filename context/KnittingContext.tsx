@@ -23,7 +23,7 @@ export interface YarnStock {
   skeins: number;
 }
 
-export type NeedleType = 'rundpinne' | 'strømpepinner' | 'rett';
+export type NeedleType = 'rundpinne' | 'strømpepinner' | 'rett' | 'utskiftbar';
 export type NeedleMaterial = 'bambus' | 'metall' | 'plast' | 'tre';
 
 export interface Needle {

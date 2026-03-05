@@ -570,7 +570,7 @@ function AddNeedleModal({
   const colorScheme = useColorScheme();
   const colors = colorScheme === 'dark' ? Colors.dark : Colors.light;
   const [size, setSize] = useState(defaultSize ?? '');
-  const [type, setType] = useState<'rundpinne' | 'strømpepinner' | 'rett'>('rundpinne');
+  const [type, setType] = useState<'rundpinne' | 'strømpepinner' | 'rett' | 'utskiftbar'>('rundpinne');
   const [lengthCm, setLengthCm] = useState('');
   const [material, setMaterial] = useState<'bambus' | 'metall' | 'plast' | 'tre'>('metall');
   const [quantity, setQuantity] = useState(1);
@@ -583,7 +583,7 @@ function AddNeedleModal({
     reset(); onClose();
   };
 
-  const TYPE_LABELS: Record<string, string> = { rundpinne: 'Rundpinne', strømpepinner: 'Strømpepinner', rett: 'Rett' };
+  const TYPE_LABELS: Record<string, string> = { rundpinne: 'Rundpinne', strømpepinner: 'Strømpepinner', rett: 'Rett', utskiftbar: 'Utskiftbar' };
   const MAT_LABELS: Record<string, string> = { metall: 'Metall', bambus: 'Bambus', tre: 'Tre', plast: 'Plast' };
 
   return (
@@ -605,13 +605,12 @@ function AddNeedleModal({
             />
 
             <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Type</Text>
-            <View style={{ flexDirection: 'row', gap: 8 }}>
-              {(['rundpinne', 'strømpepinner', 'rett'] as const).map(t => (
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+              {(['rundpinne', 'strømpepinner', 'rett', 'utskiftbar'] as const).map(t => (
                 <Pressable
                   key={t}
                   onPress={() => setType(t)}
                   style={[styles.pill, {
-                    flex: 1, alignItems: 'center',
                     backgroundColor: type === t ? colors.primaryBtn : colors.background,
                     borderColor: type === t ? colors.primaryBtn : colors.border,
                   }]}
@@ -634,13 +633,12 @@ function AddNeedleModal({
             />
 
             <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Materiale</Text>
-            <View style={{ flexDirection: 'row', gap: 8 }}>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
               {(['metall', 'bambus', 'tre', 'plast'] as const).map(m => (
                 <Pressable
                   key={m}
                   onPress={() => setMaterial(m)}
                   style={[styles.pill, {
-                    flex: 1, alignItems: 'center',
                     backgroundColor: material === m ? colors.primaryBtn : colors.background,
                     borderColor: material === m ? colors.primaryBtn : colors.border,
                   }]}

@@ -28,6 +28,7 @@ type Tab = 'garn' | 'pinner';
 const NEEDLE_TYPE_LABELS: Record<NeedleType, string> = {
   rundpinne: 'Rundpinne',
   strømpepinner: 'Strømpepinner',
+  utskiftbar: 'Utskiftbar',
   rett: 'Rett',
 };
 
@@ -315,7 +316,7 @@ function AddNeedleModal({ visible, onClose }: { visible: boolean; onClose: () =>
 
             <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Type</Text>
             <View style={styles.pillRow}>
-              {(['rundpinne', 'strømpepinner', 'rett'] as NeedleType[]).map(t => (
+              {(['rundpinne', 'strømpepinner', 'rett', 'utskiftbar'] as NeedleType[]).map(t => (
                 <OptionPill key={t} label={NEEDLE_TYPE_LABELS[t]} selected={type === t} onPress={() => setType(t)} />
               ))}
             </View>
