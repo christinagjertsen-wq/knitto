@@ -585,7 +585,7 @@ function AddNeedleModal({
     reset(); onClose();
   };
 
-  const TYPE_LABELS: Record<string, string> = { rundpinne: t.needleTypes.rundpinne, strømpepinner: t.needleTypes.strompepinner, rett: t.needleTypes.rett, utskiftbar: t.needleTypes.utskiftbar };
+  const TYPE_LABELS: Record<string, string> = { rundpinne: t.needleTypes.rundpinne, strømpepinner: t.needleTypes.strømpepinner, rett: t.needleTypes.rett, utskiftbar: t.needleTypes.utskiftbar };
   const MAT_LABELS: Record<string, string> = { metall: t.needleMaterials.metall, bambus: t.needleMaterials.bambus, tre: t.needleMaterials.tre, plast: t.needleMaterials.plast };
 
   return (
@@ -1125,7 +1125,7 @@ export default function ProsjektScreen() {
           ) : (
             filteredNeedles.map(needle => {
               const isLinked = project.needleIds.includes(needle.id);
-              const TYPE_LABELS: Record<string, string> = { rundpinne: t.needleTypes.rundpinne, strømpepinner: t.needleTypes.strompepinner, rett: t.needleTypes.rett };
+              const TYPE_LABELS: Record<string, string> = { rundpinne: t.needleTypes.rundpinne, strømpepinner: t.needleTypes.strømpepinner, rett: t.needleTypes.rett };
               return (
                 <Pressable
                   key={needle.id}
