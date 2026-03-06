@@ -6,16 +6,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { useColors } from "@/context/ThemeContext";
 import { useT } from "@/context/LanguageContext";
-import { useSubscription } from "@/lib/revenuecat";
-
-function SettingsTabIcon({ color, size }: { color: string; size: number }) {
-  const { isSubscribed } = useSubscription();
-  return <Ionicons name={isSubscribed ? "diamond" : "leaf"} size={size} color={color} />;
-}
 
 function NativeTabLayout() {
   const t = useT();
-  const { isSubscribed } = useSubscription();
   return (
     <NativeTabs>
       <NativeTabs.Trigger name="index">
@@ -31,7 +24,7 @@ function NativeTabLayout() {
         <Label>{t.nav.storage}</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="innstillinger">
-        <Icon sf={{ default: isSubscribed ? "diamond" : "leaf", selected: isSubscribed ? "diamond.fill" : "leaf.fill" }} />
+        <Icon sf={{ default: "person.circle", selected: "person.circle.fill" }} />
         <Label>{t.nav.settings}</Label>
       </NativeTabs.Trigger>
     </NativeTabs>
@@ -104,7 +97,7 @@ function ClassicTabLayout() {
         name="innstillinger"
         options={{
           title: t.nav.settings,
-          tabBarIcon: ({ color, size }) => <SettingsTabIcon color={color} size={size} />,
+          tabBarIcon: ({ color, size }) => <Ionicons name="person-circle-outline" size={size} color={color} />,
         }}
       />
       <Tabs.Screen name="profil" options={{ href: null }} />
