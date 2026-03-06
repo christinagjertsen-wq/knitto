@@ -615,7 +615,7 @@ export default function InnstillingerScreen() {
         </View>
       </ScrollView>
 
-      <Modal visible={showEditName} transparent animationType="slide" onRequestClose={() => setShowEditName(false)}>
+      <Modal visible={showEditName} transparent animationType="fade" onRequestClose={() => setShowEditName(false)}>
         <View style={styles.modalOverlay}>
 
           <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>

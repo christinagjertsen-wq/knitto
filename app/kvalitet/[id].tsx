@@ -175,7 +175,7 @@ function AddYarnModal({ qualityId, visible, onClose, onPaywall }: { qualityId: s
   }, [colorName, selectedHex, skeins, qualityId, addYarnStock, onClose, onPaywall, yarnStock, isSubscribed]);
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.modalOverlay}>
 
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
@@ -364,7 +364,7 @@ export default function KvalitetScreen() {
       <AddYarnModal qualityId={id} visible={showAdd} onClose={() => setShowAdd(false)} onPaywall={() => setShowPremium(true)} />
       <PremiumModal visible={showPremium} onClose={() => setShowPremium(false)} />
 
-      <Modal visible={showFiberEdit} transparent animationType="slide" onRequestClose={() => setShowFiberEdit(false)}>
+      <Modal visible={showFiberEdit} transparent animationType="fade" onRequestClose={() => setShowFiberEdit(false)}>
         <View style={styles.modalOverlay}>
 
           <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>

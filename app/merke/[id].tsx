@@ -92,7 +92,7 @@ function AddQualityModal({ brandId, visible, onClose }: { brandId: string; visib
   }, [name, fiber, grams, meters, brandId, addQuality, onClose]);
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.modalOverlay}>
 
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>

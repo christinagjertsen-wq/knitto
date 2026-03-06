@@ -151,7 +151,7 @@ export default function ProfilScreen() {
         <Text style={[styles.byline, { color: colors.textTertiary }]}>{t.settings.byline}</Text>
       </ScrollView>
 
-      <Modal visible={showEditName} transparent animationType="slide" onRequestClose={() => setShowEditName(false)}>
+      <Modal visible={showEditName} transparent animationType="fade" onRequestClose={() => setShowEditName(false)}>
         <View style={styles.modalOverlay}>
 
           <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
