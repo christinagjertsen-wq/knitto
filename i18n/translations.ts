@@ -116,7 +116,7 @@ const no = {
   },
   needleTypes: {
     rundpinne: 'Rundpinne',
-    strompepinner: 'Strømpepinner',
+    strømpepinner: 'Strømpepinner',
     utskiftbar: 'Utskiftbar',
     rett: 'Rett',
   },
@@ -455,7 +455,7 @@ const en: typeof no = {
   },
   needleTypes: {
     rundpinne: 'Circular',
-    strompepinner: 'Double pointed',
+    strømpepinner: 'Double pointed',
     utskiftbar: 'Interchangeable',
     rett: 'Straight',
   },

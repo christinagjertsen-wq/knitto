@@ -486,7 +486,7 @@ export default function HomeScreen() {
             <View style={[styles.headerStatDivider, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(26,35,64,0.1)' }]} />
             <View style={styles.headerStat}>
               <Text style={[styles.headerStatNumber, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>
-                {needles.length}
+                {needles.reduce((sum, n) => sum + (n.quantity || 1), 0)}
               </Text>
               <Text style={[styles.headerStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
                 {t.home.statNeedles}
@@ -565,7 +565,7 @@ const styles = StyleSheet.create({
   },
   headerBadgeRow: {
     flexDirection: 'row',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     marginBottom: 12,
   },
   basicBadge: {
@@ -581,7 +581,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3,
   },
   headerTopRow: {
-    alignItems: 'flex-start',
+    alignItems: 'center',
     marginBottom: 24,
     gap: 4,
   },
@@ -617,7 +617,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     marginTop: 0,
   },
-  sectionTitle: { fontSize: 22, textAlign: 'left' },
+  sectionTitle: { fontSize: 22, textAlign: 'center' },
   projectsList: { gap: 10 },
   projectRow: {
     flexDirection: 'row',
