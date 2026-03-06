@@ -17,10 +17,9 @@ import { KnittingProvider } from "@/context/KnittingContext";
 import { UserProvider } from "@/context/UserContext";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { ThemeProvider } from "@/context/ThemeContext";
-import { SubscriptionProvider, initializeRevenueCat } from "@/lib/revenuecat";
+import { SubscriptionProvider } from "@/lib/revenuecat";
 
 SplashScreen.preventAutoHideAsync();
-initializeRevenueCat();
 
 function RootLayoutNav() {
   return (

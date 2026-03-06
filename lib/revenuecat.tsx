@@ -1,6 +1,6 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Platform } from 'react-native';
-import Purchases from 'react-native-purchases';
+import Purchases, { LOG_LEVEL } from 'react-native-purchases';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import Constants from 'expo-constants';
 
@@ -10,35 +10,48 @@ const REVENUECAT_ANDROID_API_KEY = process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_AP
 
 export const REVENUECAT_ENTITLEMENT_IDENTIFIER = 'premium';
 
-function getRevenueCatApiKey() {
-  if (!REVENUECAT_TEST_API_KEY || !REVENUECAT_IOS_API_KEY || !REVENUECAT_ANDROID_API_KEY) {
-    throw new Error('RevenueCat Public API Keys not found');
-  }
+function getRevenueCatApiKey(): string | null {
   if (__DEV__ || Platform.OS === 'web' || Constants.executionEnvironment === 'storeClient') {
-    return REVENUECAT_TEST_API_KEY;
+    return REVENUECAT_TEST_API_KEY ?? null;
   }
-  if (Platform.OS === 'ios') return REVENUECAT_IOS_API_KEY;
-  if (Platform.OS === 'android') return REVENUECAT_ANDROID_API_KEY;
-  return REVENUECAT_TEST_API_KEY;
-}
-
-export function initializeRevenueCat() {
-  const apiKey = getRevenueCatApiKey();
-  Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
-  Purchases.configure({ apiKey });
+  if (Platform.OS === 'ios') return REVENUECAT_IOS_API_KEY ?? null;
+  if (Platform.OS === 'android') return REVENUECAT_ANDROID_API_KEY ?? null;
+  return REVENUECAT_TEST_API_KEY ?? null;
 }
 
 function useSubscriptionContext() {
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const apiKey = getRevenueCatApiKey();
+    if (!apiKey) {
+      console.warn('[RevenueCat] API key not found — skipping initialization.');
+      setReady(true);
+      return;
+    }
+    try {
+      Purchases.setLogLevel(LOG_LEVEL.DEBUG);
+      Purchases.configure({ apiKey });
+    } catch (e) {
+      console.warn('[RevenueCat] configure() failed:', e);
+    }
+    setReady(true);
+  }, []);
+
   const customerInfoQuery = useQuery({
     queryKey: ['revenuecat', 'customer-info'],
     queryFn: () => Purchases.getCustomerInfo(),
+    enabled: ready,
     staleTime: 60 * 1000,
+    retry: 1,
   });
 
   const offeringsQuery = useQuery({
     queryKey: ['revenuecat', 'offerings'],
     queryFn: () => Purchases.getOfferings(),
+    enabled: ready,
     staleTime: 300 * 1000,
+    retry: 1,
   });
 
   const purchaseMutation = useMutation({
@@ -61,7 +74,7 @@ function useSubscriptionContext() {
     customerInfo: customerInfoQuery.data,
     offerings: offeringsQuery.data,
     isSubscribed,
-    isLoading: customerInfoQuery.isLoading || offeringsQuery.isLoading,
+    isLoading: !ready || customerInfoQuery.isLoading || offeringsQuery.isLoading,
     purchase: purchaseMutation.mutateAsync,
     restore: restoreMutation.mutateAsync,
     isPurchasing: purchaseMutation.isPending,
