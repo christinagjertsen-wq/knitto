@@ -18,6 +18,7 @@ import { useKnitting } from '@/context/KnittingContext';
 import { useUser, getGreeting } from '@/context/UserContext';
 import { useColors } from '@/context/ThemeContext';
 import { useT } from '@/context/LanguageContext';
+import { useSubscription } from '@/lib/revenuecat';
 
 export default function ProfilScreen() {
   const colors = useColors();
@@ -26,6 +27,7 @@ export default function ProfilScreen() {
   const topInset = Platform.OS === 'web' ? 67 : insets.top;
   const { firstName, setFirstName } = useUser();
   const { projects, yarnStock, needles } = useKnitting();
+  const { isSubscribed } = useSubscription();
   const [showEditName, setShowEditName] = useState(false);
   const [nameInput, setNameInput] = useState('');
 
@@ -57,9 +59,11 @@ export default function ProfilScreen() {
       >
         <View style={[styles.profileCard, { backgroundColor: colors.primaryBtn }]}>
           <View style={styles.avatarCircle}>
-            <Text style={[styles.avatarLetter, { fontFamily: 'Inter_700Bold' }]}>
-              {firstName ? firstName[0].toUpperCase() : '?'}
-            </Text>
+            <Ionicons
+              name={isSubscribed ? 'diamond' : 'leaf'}
+              size={26}
+              color="#fff"
+            />
           </View>
           <View style={{ flex: 1 }}>
             <Text style={[styles.greetingText, { fontFamily: 'Inter_400Regular' }]}>{greeting}</Text>
