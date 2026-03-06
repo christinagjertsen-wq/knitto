@@ -100,7 +100,7 @@ const PRESET_COLORS = [
   { name: 'Marineblå', hex: '#1850A0' },
   { name: 'Aubergine', hex: '#481888' },
   { name: 'Burgunder', hex: '#A01058' },
-  { name: 'Koks', hex: '#383838' },
+  { name: 'Svart', hex: '#000000' },
   { name: 'Mørk burgunder', hex: '#780830' },
   { name: 'Mørk rust', hex: '#783010' },
   { name: 'Mørk oker', hex: '#785808' },
@@ -487,7 +487,7 @@ function AddYarnModal({
                 <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Velg farge</Text>
                 <View style={[styles.colorPreviewSwatch, { backgroundColor: selectedColorHex, alignSelf: 'center' }, selectedColorHex === '#FFFFFF' && { borderWidth: 1.5, borderColor: 'rgba(0,0,0,0.2)' }]} />
                 <View style={styles.colorGrid}>
-                  {Array.from({ length: 7 }, (_, rowIndex) => (
+                  {Array.from({ length: 6 }, (_, rowIndex) => (
                     <View key={rowIndex} style={styles.colorRow}>
                       {PRESET_COLORS.slice(rowIndex * 10, rowIndex * 10 + 10).map(c => (
                         <Pressable

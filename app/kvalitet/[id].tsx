@@ -78,7 +78,7 @@ const PRESET_COLORS = [
   { name: 'Aubergine', hex: '#481888' },
   { name: 'Burgunder', hex: '#A01058' },
 
-  { name: 'Koks', hex: '#383838' },
+  { name: 'Svart', hex: '#000000' },
   { name: 'Mørk burgunder', hex: '#780830' },
   { name: 'Mørk rust', hex: '#783010' },
   { name: 'Mørk oker', hex: '#785808' },
@@ -201,7 +201,7 @@ function AddYarnModal({ qualityId, visible, onClose, onPaywall }: { qualityId: s
 
             <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.quality.chooseColor}</Text>
             <View style={styles.colorGrid}>
-              {Array.from({ length: 7 }, (_, rowIndex) => (
+              {Array.from({ length: 6 }, (_, rowIndex) => (
                 <View key={rowIndex} style={styles.colorRow}>
                   {PRESET_COLORS.slice(rowIndex * 10, rowIndex * 10 + 10).map(c => (
                     <Pressable
