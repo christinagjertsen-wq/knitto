@@ -238,7 +238,7 @@ function YarnStats() {
               <View style={[styles.colorDot, { backgroundColor: item.yarn.colorHex }]} />
               <View style={{ flex: 1 }}>
                 <Text style={[styles.yarnStatName, { color: colors.text, fontFamily: 'Inter_500Medium' }]} numberOfLines={1}>
-                  {item.brand?.name} {item.quality?.name} — {item.yarn.colorName}
+                  {item.brand?.name} {item.quality?.name} • {item.yarn.colorName}
                 </Text>
                 <View style={styles.barContainer}>
                   <View style={[styles.barBg, { backgroundColor: colors.border }]}>

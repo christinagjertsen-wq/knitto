@@ -265,7 +265,7 @@ function AddYarnModal({
     const quality = getQualityById(yarn.qualityId);
     const brand = quality ? brands.find(b => b.id === quality.brandId) : undefined;
     const parts = [brand?.name, quality?.name].filter(Boolean);
-    return parts.length > 0 ? `${parts.join(' ')} — ${yarn.colorName}` : yarn.colorName;
+    return parts.length > 0 ? `${parts.join(' ')} • ${yarn.colorName}` : yarn.colorName;
   };
 
   return (
