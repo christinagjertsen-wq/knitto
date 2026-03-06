@@ -607,8 +607,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   greetingLarge: {
-    fontSize: 28,
-    lineHeight: 34,
+    fontSize: 32,
+    lineHeight: 38,
   },
   greetingMedium: {
     fontSize: 22,
