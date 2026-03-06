@@ -422,7 +422,7 @@ export default function HomeScreen() {
     return [...active, ...planned];
   }, [projects]);
 
-  const greeting = getGreeting(firstName, t);
+  const greetingBase = getGreeting('', t);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -455,13 +455,16 @@ export default function HomeScreen() {
           </View>
 
           <View style={styles.headerTopRow}>
+            <Text style={[styles.greetingSmall, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
+              {greetingBase}
+            </Text>
             <Text
               style={[styles.greetingLarge, { color: colors.text, fontFamily: 'Inter_700Bold' }]}
               numberOfLines={1}
               adjustsFontSizeToFit
               minimumFontScale={0.65}
             >
-              {greeting}
+              {firstName || ''}
             </Text>
             <Text style={[styles.greetingTagline, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
               {t.home.tagline}
@@ -597,6 +600,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 20,
+  },
+  greetingSmall: {
+    fontSize: 14,
+    lineHeight: 18,
+    marginBottom: 2,
   },
   greetingLarge: {
     fontSize: 28,
