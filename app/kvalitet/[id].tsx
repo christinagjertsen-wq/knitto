@@ -20,6 +20,7 @@ import { useColors } from '@/context/ThemeContext';
 import { useT } from '@/context/LanguageContext';
 import { useKnitting, YarnStock } from '@/context/KnittingContext';
 import { PremiumModal } from '@/components/PremiumModal';
+import { useSubscription } from '@/lib/revenuecat';
 
 const PRESET_COLORS = [
   { name: 'Lys grå', hex: '#E8E8E8' },
@@ -158,10 +159,11 @@ function AddYarnModal({ qualityId, visible, onClose, onPaywall }: { qualityId: s
   const [selectedHex, setSelectedHex] = useState('#C97B84');
   const [skeins, setSkeins] = useState(1);
   const { addYarnStock, yarnStock } = useKnitting();
+  const { isSubscribed } = useSubscription();
 
   const handleAdd = useCallback(() => {
     if (!colorName.trim()) return;
-    if (yarnStock.length >= 5) {
+    if (!isSubscribed && yarnStock.length >= 5) {
       onClose();
       onPaywall();
       return;
@@ -170,7 +172,7 @@ function AddYarnModal({ qualityId, visible, onClose, onPaywall }: { qualityId: s
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setColorName(''); setSkeins(1); setSelectedHex('#C97B84');
     onClose();
-  }, [colorName, selectedHex, skeins, qualityId, addYarnStock, onClose, onPaywall, yarnStock]);
+  }, [colorName, selectedHex, skeins, qualityId, addYarnStock, onClose, onPaywall, yarnStock, isSubscribed]);
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>

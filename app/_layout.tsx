@@ -17,8 +17,10 @@ import { KnittingProvider } from "@/context/KnittingContext";
 import { UserProvider } from "@/context/UserContext";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { SubscriptionProvider, initializeRevenueCat } from "@/lib/revenuecat";
 
 SplashScreen.preventAutoHideAsync();
+initializeRevenueCat();
 
 function RootLayoutNav() {
   return (
@@ -50,19 +52,21 @@ export default function RootLayout() {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <KeyboardProvider>
-            <LanguageProvider>
-              <ThemeProvider>
-                <KnittingProvider>
-                  <UserProvider>
-                    <RootLayoutNav />
-                  </UserProvider>
-                </KnittingProvider>
-              </ThemeProvider>
-            </LanguageProvider>
-          </KeyboardProvider>
-        </GestureHandlerRootView>
+        <SubscriptionProvider>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <KeyboardProvider>
+              <LanguageProvider>
+                <ThemeProvider>
+                  <KnittingProvider>
+                    <UserProvider>
+                      <RootLayoutNav />
+                    </UserProvider>
+                  </KnittingProvider>
+                </ThemeProvider>
+              </LanguageProvider>
+            </KeyboardProvider>
+          </GestureHandlerRootView>
+        </SubscriptionProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );

@@ -1,10 +1,11 @@
-import React from 'react';
-import { View, Text, Modal, Pressable, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Modal, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useT } from '@/context/LanguageContext';
 import { T } from '@/i18n/translations';
+import { useSubscription } from '@/lib/revenuecat';
 
 export function getPremiumFeatures(t: T) {
   return [
@@ -24,6 +25,33 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
   const insets = useSafeAreaInsets();
   const t = useT();
   const features = getPremiumFeatures(t);
+  const { offerings, purchase, isPurchasing, restore, isRestoring } = useSubscription();
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const monthlyPackage = offerings?.current?.monthly ?? offerings?.current?.availablePackages[0];
+  const priceString = monthlyPackage?.product?.priceString;
+
+  const handlePurchase = async () => {
+    if (!monthlyPackage) return;
+    setErrorMsg(null);
+    try {
+      await purchase(monthlyPackage);
+      onClose();
+    } catch (e: any) {
+      if (e?.userCancelled) return;
+      setErrorMsg(e?.message ?? 'Noe gikk galt. Prøv igjen.');
+    }
+  };
+
+  const handleRestore = async () => {
+    setErrorMsg(null);
+    try {
+      await restore();
+      onClose();
+    } catch (e: any) {
+      setErrorMsg(e?.message ?? 'Klarte ikke gjenopprette kjøp.');
+    }
+  };
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
@@ -70,19 +98,36 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
 
             <View style={styles.divider} />
 
+            {errorMsg && (
+              <Text style={[styles.errorText, { fontFamily: 'Inter_400Regular' }]}>{errorMsg}</Text>
+            )}
+
             <Pressable
-              style={({ pressed }) => [styles.btn, { opacity: pressed ? 0.92 : 1 }]}
-              onPress={onClose}
+              style={({ pressed }) => [styles.btn, { opacity: (pressed || isPurchasing || isRestoring) ? 0.85 : 1 }]}
+              onPress={handlePurchase}
+              disabled={isPurchasing || isRestoring || !monthlyPackage}
             >
-              <Text style={[styles.btnText, { fontFamily: 'Inter_700Bold' }]}>
-                {t.premium.startTrial}
-              </Text>
-              <Text style={[styles.btnSub, { fontFamily: 'Inter_400Regular' }]}>
-                {t.premium.price}
+              {isPurchasing ? (
+                <ActivityIndicator color="#1A2340" />
+              ) : (
+                <>
+                  <Text style={[styles.btnText, { fontFamily: 'Inter_700Bold' }]}>
+                    {t.premium.startTrial}
+                  </Text>
+                  <Text style={[styles.btnSub, { fontFamily: 'Inter_400Regular' }]}>
+                    {priceString ? `${priceString} / mnd etter prøveperioden` : t.premium.price}
+                  </Text>
+                </>
+              )}
+            </Pressable>
+
+            <Pressable onPress={handleRestore} hitSlop={16} style={styles.dismissWrap} disabled={isPurchasing || isRestoring}>
+              <Text style={[styles.dismiss, { fontFamily: 'Inter_400Regular' }]}>
+                {isRestoring ? 'Gjenoppretter...' : 'Gjenopprett kjøp'}
               </Text>
             </Pressable>
 
-            <Pressable onPress={onClose} hitSlop={16} style={styles.dismissWrap}>
+            <Pressable onPress={onClose} hitSlop={16} style={[styles.dismissWrap, { marginTop: 6 }]} disabled={isPurchasing}>
               <Text style={[styles.dismiss, { fontFamily: 'Inter_400Regular' }]}>{t.premium.notNow}</Text>
             </Pressable>
           </LinearGradient>
@@ -182,6 +227,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 12,
     elevation: 6,
+    minHeight: 64,
+    justifyContent: 'center',
   },
   btnText: {
     color: '#1A2340',
@@ -190,6 +237,12 @@ const styles = StyleSheet.create({
   btnSub: {
     color: 'rgba(26,35,64,0.5)',
     fontSize: 12,
+  },
+  errorText: {
+    color: 'rgba(255,120,120,0.9)',
+    fontSize: 13,
+    textAlign: 'center',
+    marginBottom: 12,
   },
   dismissWrap: {
     alignItems: 'center',

@@ -24,6 +24,7 @@ import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
 import { useKnitting, Project, ProjectStatus } from '@/context/KnittingContext';
 import { PremiumModal } from '@/components/PremiumModal';
+import { useSubscription } from '@/lib/revenuecat';
 import { useColors, useIsDark } from '@/context/ThemeContext';
 import { useT } from '@/context/LanguageContext';
 
@@ -297,6 +298,7 @@ export default function ProsjekterScreen() {
   const [showPremium, setShowPremium] = useState(false);
   const [search, setSearch] = useState('');
   const { projects, deleteProject, updateProject } = useKnitting();
+  const { isSubscribed } = useSubscription();
   const topInset = Platform.OS === 'web' ? 67 : insets.top;
 
   const filtered = useMemo(() => {
@@ -417,7 +419,7 @@ export default function ProsjekterScreen() {
         style={[styles.fab, { backgroundColor: colors.primaryBtn, bottom: bottomInset + 66 }]}
         onPress={() => {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          if (projects.length >= 3) {
+          if (!isSubscribed && projects.length >= 3) {
             setShowPremium(true);
           } else {
             setShowAdd(true);

@@ -23,6 +23,7 @@ import { useColors } from '@/context/ThemeContext';
 import { useT, useLanguage } from '@/context/LanguageContext';
 import { useKnitting, ProjectStatus, YarnStock } from '@/context/KnittingContext';
 import { PremiumModal } from '@/components/PremiumModal';
+import { useSubscription } from '@/lib/revenuecat';
 
 function ProgressRingLarge({ percent, size, strokeWidth, color }: { percent: number; size: number; strokeWidth: number; color: string }) {
   const colors = useColors();
@@ -779,6 +780,7 @@ export default function ProsjektScreen() {
   const [showEditDetails, setShowEditDetails] = useState(false);
   const [showAddLog, setShowAddLog] = useState(false);
   const [showPremium, setShowPremium] = useState(false);
+  const { isSubscribed } = useSubscription();
 
   const {
     getProjectById, updateProject, deleteProject,
@@ -1255,7 +1257,7 @@ export default function ProsjektScreen() {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         }}
         onAddNew={(qualityId, colorName, colorHex, skeinsTotal, skeinsForProject) => {
-          if (yarnStock.length >= 5) {
+          if (!isSubscribed && yarnStock.length >= 5) {
             setShowAddYarn(false);
             setShowPremium(true);
             return;
