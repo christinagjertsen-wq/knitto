@@ -143,6 +143,8 @@ export default function ProfilScreen() {
             </View>
           ))}
         </View>
+
+        <Text style={[styles.byline, { color: colors.textTertiary }]}>{t.settings.byline}</Text>
       </ScrollView>
 
       <Modal visible={showEditName} transparent animationType="slide" onRequestClose={() => setShowEditName(false)}>
@@ -223,6 +225,7 @@ const styles = StyleSheet.create({
   statLabel: { flex: 1, fontSize: 15 },
   statValue: { fontSize: 15 },
   divider: { height: 1, marginHorizontal: 16 },
+  byline: { textAlign: 'center', fontSize: 13, fontFamily: 'Inter_400Regular', marginTop: 24, marginBottom: 8 },
   premiumCard: {
     borderRadius: 20,
     padding: 20,
