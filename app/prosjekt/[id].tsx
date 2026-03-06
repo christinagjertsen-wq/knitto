@@ -614,7 +614,7 @@ function AddNeedleModal({
 
             <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.storage.type}</Text>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-              {(['rundpinne', 'strømpepinner', 'rett', 'utskiftbar'] as const).map(t => (
+              {(['rundpinne', 'strømpepinner', 'utskiftbar'] as const).map(t => (
                 <Pressable
                   key={t}
                   onPress={() => setType(t)}
@@ -642,7 +642,7 @@ function AddNeedleModal({
 
             <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.storage.material}</Text>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-              {(['metall', 'bambus', 'tre', 'plast'] as const).map(m => (
+              {(['metall', 'tre', 'plast', 'bambus'] as const).map(m => (
                 <Pressable
                   key={m}
                   onPress={() => setMaterial(m)}

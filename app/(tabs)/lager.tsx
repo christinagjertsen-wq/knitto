@@ -294,7 +294,7 @@ function AddNeedleModal({ visible, onClose }: { visible: boolean; onClose: () =>
 
             <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.storage.type}</Text>
             <View style={styles.pillRow}>
-              {(['rundpinne', 'strømpepinner', 'rett', 'utskiftbar'] as NeedleType[]).map(ntype => (
+              {(['rundpinne', 'strømpepinner', 'utskiftbar'] as NeedleType[]).map(ntype => (
                 <OptionPill key={ntype} label={t.needleTypes[ntype]} selected={type === ntype} onPress={() => setType(ntype)} />
               ))}
             </View>
@@ -311,7 +311,7 @@ function AddNeedleModal({ visible, onClose }: { visible: boolean; onClose: () =>
 
             <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.storage.material}</Text>
             <View style={styles.pillRow}>
-              {(['bambus', 'metall', 'plast', 'tre'] as NeedleMaterial[]).map(nmat => (
+              {(['metall', 'tre', 'plast', 'bambus'] as NeedleMaterial[]).map(nmat => (
                 <OptionPill key={nmat} label={t.needleMaterials[nmat]} selected={material === nmat} onPress={() => setMaterial(nmat)} />
               ))}
             </View>
