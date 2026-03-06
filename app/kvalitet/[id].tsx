@@ -23,7 +23,7 @@ import { PremiumModal } from '@/components/PremiumModal';
 import { useSubscription } from '@/lib/revenuecat';
 
 const PRESET_COLORS = [
-  { name: 'Lys grå', hex: '#E8E8E8' },
+  { name: 'Hvit', hex: '#FFFFFF' },
   { name: 'Lys rosa', hex: '#FCC8D0' },
   { name: 'Lys fersken', hex: '#FCD8B0' },
   { name: 'Lys gul', hex: '#FAF0A0' },
