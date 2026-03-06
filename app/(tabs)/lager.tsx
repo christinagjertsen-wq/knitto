@@ -352,7 +352,7 @@ export default function LagerScreen() {
   const [search, setSearch] = useState('');
   const [showAddBrand, setShowAddBrand] = useState(false);
   const [showAddNeedle, setShowAddNeedle] = useState(false);
-  const { brands, needles, deleteNeedle, updateNeedle, getQualitiesForBrand, getYarnStockForQuality, getTotalStats } = useKnitting();
+  const { brands, needles, deleteNeedle, updateNeedle, getQualitiesForBrand, getYarnStockForQuality, getTotalStats, yarnStock, qualities, deleteYarnStock } = useKnitting();
 
   const stats = getTotalStats();
   const topInset = Platform.OS === 'web' ? 67 : insets.top;
@@ -369,6 +369,11 @@ export default function LagerScreen() {
       .sort((a, b) => parseFloat(a.size) - parseFloat(b.size))
       .filter(n => !q || n.size.includes(q) || t.needleTypes[n.type].toLowerCase().includes(q) || t.needleMaterials[n.material].toLowerCase().includes(q));
   }, [needles, search]);
+
+  const orphanedYarn = useMemo(() => {
+    const qualityIds = new Set(qualities.map(q => q.id));
+    return yarnStock.filter(y => !qualityIds.has(y.qualityId));
+  }, [yarnStock, qualities]);
 
   const bottomInset = Platform.OS === 'web' ? 34 : insets.bottom;
 
@@ -483,7 +488,7 @@ export default function LagerScreen() {
               </View>
             </View>
 
-            {filteredBrands.length === 0 ? (
+            {filteredBrands.length === 0 && orphanedYarn.length === 0 ? (
               <View style={styles.emptyState}>
                 <Ionicons name="archive-outline" size={40} color={colors.textTertiary} />
                 <Text style={[styles.emptyText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
@@ -499,7 +504,56 @@ export default function LagerScreen() {
                 )}
               </View>
             ) : (
-              filteredBrands.map(brand => <BrandCard key={brand.id} brand={brand} />)
+              <>
+                {filteredBrands.map(brand => <BrandCard key={brand.id} brand={brand} />)}
+                {orphanedYarn.length > 0 && !search && (
+                  <View style={[styles.brandCard, { backgroundColor: colors.surface }]}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                      <View style={[styles.brandInitial, { backgroundColor: colors.badgeBg }]}>
+                        <Text style={[styles.brandInitialText, { color: colors.badgeText, fontFamily: 'Inter_700Bold' }]}>?</Text>
+                      </View>
+                      <View style={{ flex: 1, marginLeft: 12 }}>
+                        <Text style={[styles.brandName, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>Uten merke</Text>
+                        <Text style={[styles.brandMeta, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
+                          {orphanedYarn.length} {orphanedYarn.length === 1 ? 'farge' : 'farger'}
+                        </Text>
+                      </View>
+                    </View>
+                    {orphanedYarn.map(yarn => (
+                      <View
+                        key={yarn.id}
+                        style={[{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          paddingVertical: 10,
+                          borderTopWidth: 0.5,
+                          borderTopColor: colors.border,
+                          gap: 10,
+                        }]}
+                      >
+                        <View style={[styles.colorDot, { backgroundColor: yarn.colorHex, width: 28, height: 28, borderRadius: 6 }]} />
+                        <View style={{ flex: 1 }}>
+                          <Text style={[{ color: colors.text, fontFamily: 'Inter_500Medium', fontSize: 15 }]}>{yarn.colorName}</Text>
+                          <Text style={[{ color: colors.textTertiary, fontFamily: 'Inter_400Regular', fontSize: 13 }]}>{yarn.skeins} nøster</Text>
+                        </View>
+                        <Pressable
+                          onPress={() => Alert.alert(
+                            'Slett garn',
+                            `Slette «${yarn.colorName}»?`,
+                            [
+                              { text: 'Avbryt', style: 'cancel' },
+                              { text: 'Slett', style: 'destructive', onPress: () => { deleteYarnStock(yarn.id); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); } },
+                            ]
+                          )}
+                          hitSlop={10}
+                        >
+                          <Ionicons name="trash-outline" size={18} color={colors.textTertiary} />
+                        </Pressable>
+                      </View>
+                    ))}
+                  </View>
+                )}
+              </>
             )}
           </>
         )}

@@ -264,7 +264,8 @@ function AddYarnModal({
   const getYarnLabel = (yarn: YarnStock) => {
     const quality = getQualityById(yarn.qualityId);
     const brand = quality ? brands.find(b => b.id === quality.brandId) : undefined;
-    return `${brand?.name ?? ''} ${quality?.name ?? ''} — ${yarn.colorName}`;
+    const parts = [brand?.name, quality?.name].filter(Boolean);
+    return parts.length > 0 ? `${parts.join(' ')} — ${yarn.colorName}` : yarn.colorName;
   };
 
   return (
@@ -324,7 +325,7 @@ function AddYarnModal({
                           {getYarnLabel(yarn)}
                         </Text>
                         <Text style={[styles.yarnOptionSub, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                          {yarn.skeins} nøster tilgjengelig
+                          {getAvailableSkeins(yarn.id)} nøster tilgjengelig
                         </Text>
                       </View>
                       {selected === yarn.id && <Ionicons name="checkmark-circle" size={20} color={colors.primaryBtn} />}
