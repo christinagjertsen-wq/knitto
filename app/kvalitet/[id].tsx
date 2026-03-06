@@ -139,7 +139,7 @@ function YarnCard({ yarn, onDelete, onSkeinChange }: { yarn: YarnStock; onDelete
 
   return (
     <View style={[styles.yarnCard, { backgroundColor: colors.surface }]}>
-      <View style={[styles.colorSwatch, { backgroundColor: yarn.colorHex }, yarn.colorHex === '#FFFFFF' && { borderWidth: 1, borderColor: 'rgba(0,0,0,0.15)' }]} />
+      <View style={[styles.colorSwatch, { backgroundColor: yarn.colorHex }]} />
       <View style={styles.yarnCardContent}>
         <Text style={[styles.colorName, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
           {yarn.colorName}
