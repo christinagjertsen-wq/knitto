@@ -139,7 +139,7 @@ function YarnCard({ yarn, onDelete, onSkeinChange }: { yarn: YarnStock; onDelete
 
   return (
     <View style={[styles.yarnCard, { backgroundColor: colors.surface }]}>
-      <View style={[styles.colorSwatch, { backgroundColor: yarn.colorHex }]} />
+      <View style={[styles.colorSwatch, { backgroundColor: yarn.colorHex }, yarn.colorHex === '#FFFFFF' && { borderWidth: 1, borderColor: 'rgba(0,0,0,0.15)' }]} />
       <View style={styles.yarnCardContent}>
         <Text style={[styles.colorName, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
           {yarn.colorName}
@@ -188,7 +188,7 @@ function AddYarnModal({ qualityId, visible, onClose, onPaywall }: { qualityId: s
             <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.quality.newColor}</Text>
 
             <View style={styles.colorPreviewRow}>
-              <View style={[styles.bigColorSwatch, { backgroundColor: selectedHex }]} />
+              <View style={[styles.bigColorSwatch, { backgroundColor: selectedHex }, selectedHex === '#FFFFFF' && { borderWidth: 1.5, borderColor: 'rgba(0,0,0,0.15)' }]} />
               <TextInput
                 style={[styles.input, { flex: 1, color: colors.text, backgroundColor: colors.background }]}
                 placeholder={t.quality.colorNamePlaceholder}

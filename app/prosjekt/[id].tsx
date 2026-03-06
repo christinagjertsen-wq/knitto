@@ -50,7 +50,7 @@ function ProgressRingLarge({ percent, size, strokeWidth, color }: { percent: num
 }
 
 const PRESET_COLORS = [
-  { name: 'Lys grå', hex: '#E8E8E8' },
+  { name: 'Hvit', hex: '#FFFFFF' },
   { name: 'Lys rosa', hex: '#FCC8D0' },
   { name: 'Lys fersken', hex: '#FCD8B0' },
   { name: 'Lys gul', hex: '#FAF0A0' },
@@ -485,7 +485,7 @@ function AddYarnModal({
                 />
 
                 <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Velg farge</Text>
-                <View style={[styles.colorPreviewSwatch, { backgroundColor: selectedColorHex, alignSelf: 'center' }]} />
+                <View style={[styles.colorPreviewSwatch, { backgroundColor: selectedColorHex, alignSelf: 'center' }, selectedColorHex === '#FFFFFF' && { borderWidth: 1.5, borderColor: 'rgba(0,0,0,0.2)' }]} />
                 <View style={styles.colorGrid}>
                   {Array.from({ length: 7 }, (_, rowIndex) => (
                     <View key={rowIndex} style={styles.colorRow}>
