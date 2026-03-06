@@ -456,7 +456,7 @@ export default function HomeScreen() {
 
           <View style={styles.headerTopRow}>
             <Text
-              style={[styles.greetingLarge, { color: colors.text, fontFamily: 'Inter_700Bold' }]}
+              style={[styles.greetingMedium, { color: colors.text, fontFamily: 'Inter_700Bold' }]}
               numberOfLines={1}
               adjustsFontSizeToFit
               minimumFontScale={0.65}
@@ -609,6 +609,10 @@ const styles = StyleSheet.create({
   greetingLarge: {
     fontSize: 28,
     lineHeight: 34,
+  },
+  greetingMedium: {
+    fontSize: 22,
+    lineHeight: 28,
   },
   greetingTagline: {
     fontSize: 14,
