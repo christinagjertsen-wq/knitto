@@ -11,14 +11,12 @@ export function getPremiumFeatures(t: T) {
   return [
     { icon: 'layers-outline' as const, label: t.premium.unlimitedProjects },
     { icon: 'cube-outline' as const, label: t.premium.unlimitedYarn },
-    { icon: 'cloud-upload-outline' as const, label: t.premium.backup },
   ];
 }
 
 export const PREMIUM_FEATURES = [
   { icon: 'layers-outline' as const, label: 'Ubegrenset prosjekter' },
   { icon: 'cube-outline' as const, label: 'Ubegrenset garnlager' },
-  { icon: 'cloud-upload-outline' as const, label: 'Sikkerhetskopiering' },
 ];
 
 export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
