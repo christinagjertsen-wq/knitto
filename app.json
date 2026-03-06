@@ -15,10 +15,10 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.ullogpinner"
+      "bundleIdentifier": "com.sisuknitwear.knitto"
     },
     "android": {
-      "package": "com.ullogpinner",
+      "package": "com.sisuknitwear.knitto",
       "adaptiveIcon": {
         "backgroundColor": "#1A2340",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
