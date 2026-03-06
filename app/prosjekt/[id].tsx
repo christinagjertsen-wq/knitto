@@ -270,7 +270,9 @@ function AddYarnModal({
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={handleClose}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalOverlay}>
+      <View style={styles.modalOverlay}>
+
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <View style={[styles.editModalSheet, { backgroundColor: colors.surface }]}>
           <ScrollView
             showsVerticalScrollIndicator={false}
@@ -554,7 +556,8 @@ function AddYarnModal({
             </Pressable>
           </ScrollView>
         </View>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </View>
     </Modal>
   );
 }
@@ -591,7 +594,9 @@ function AddNeedleModal({
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={handleClose}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalOverlay}>
+      <View style={styles.modalOverlay}>
+
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <View style={[styles.editModalSheet, { backgroundColor: colors.surface }]}>
           <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={[styles.editModalContent, { gap: 12 }]}>
             <View style={styles.modalHandle} />
@@ -671,7 +676,8 @@ function AddNeedleModal({
             </Pressable>
           </ScrollView>
         </View>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </View>
     </Modal>
   );
 }
@@ -724,7 +730,9 @@ function EditDetailsModal({
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalOverlay}>
+      <View style={styles.modalOverlay}>
+
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <View style={[styles.editModalSheet, { backgroundColor: colors.surface }]}>
           <ScrollView
             showsVerticalScrollIndicator={false}
@@ -764,7 +772,8 @@ function EditDetailsModal({
             </Pressable>
           </ScrollView>
         </View>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </View>
     </Modal>
   );
 }
@@ -1348,7 +1357,9 @@ function AddLogModal({ visible, onClose, onSave }: {
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalOverlay}>
+      <View style={styles.modalOverlay}>
+
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <View style={[styles.modalSheet, { backgroundColor: colors.surface }]}>
           <View style={styles.modalHandle} />
           <View style={styles.modalHeaderRow}>
@@ -1407,7 +1418,8 @@ function AddLogModal({ visible, onClose, onSave }: {
             <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>{t.common.save}</Text>
           </Pressable>
         </View>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </View>
     </Modal>
   );
 }

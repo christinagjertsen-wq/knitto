@@ -616,7 +616,9 @@ export default function InnstillingerScreen() {
       </ScrollView>
 
       <Modal visible={showEditName} transparent animationType="slide" onRequestClose={() => setShowEditName(false)}>
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalOverlay}>
+        <View style={styles.modalOverlay}>
+
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
           <View style={[styles.modalSheet, { backgroundColor: colors.surface }]}>
             <View style={styles.modalHandle} />
             <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.settings.yourName}</Text>
@@ -639,7 +641,8 @@ export default function InnstillingerScreen() {
               <Text style={{ color: colors.textSecondary, fontFamily: 'Inter_400Regular' }}>{t.common.cancel}</Text>
             </Pressable>
           </View>
-        </KeyboardAvoidingView>
+          </KeyboardAvoidingView>
+        </View>
       </Modal>
 
       <PremiumModal visible={showPremium} onClose={() => setShowPremium(false)} />

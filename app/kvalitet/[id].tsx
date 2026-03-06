@@ -176,7 +176,9 @@ function AddYarnModal({ qualityId, visible, onClose, onPaywall }: { qualityId: s
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalOverlay}>
+      <View style={styles.modalOverlay}>
+
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <ScrollView
           contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end' }}
           keyboardShouldPersistTaps="handled"
@@ -230,7 +232,8 @@ function AddYarnModal({ qualityId, visible, onClose, onPaywall }: { qualityId: s
             </Pressable>
           </View>
         </ScrollView>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </View>
     </Modal>
   );
 }
@@ -362,7 +365,9 @@ export default function KvalitetScreen() {
       <PremiumModal visible={showPremium} onClose={() => setShowPremium(false)} />
 
       <Modal visible={showFiberEdit} transparent animationType="slide" onRequestClose={() => setShowFiberEdit(false)}>
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalOverlay}>
+        <View style={styles.modalOverlay}>
+
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
           <View style={[styles.modalSheet, { backgroundColor: colors.surface, paddingBottom: Math.max(insets.bottom, 24) }]}>
             <View style={styles.modalHandle} />
             <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Fiberinnhold</Text>
@@ -399,7 +404,8 @@ export default function KvalitetScreen() {
               <Text style={[{ color: colors.textSecondary, fontSize: 15, fontFamily: 'Inter_400Regular' }]}>Avbryt</Text>
             </Pressable>
           </View>
-        </KeyboardAvoidingView>
+          </KeyboardAvoidingView>
+        </View>
       </Modal>
 
       <Pressable

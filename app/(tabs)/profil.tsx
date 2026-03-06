@@ -152,7 +152,9 @@ export default function ProfilScreen() {
       </ScrollView>
 
       <Modal visible={showEditName} transparent animationType="slide" onRequestClose={() => setShowEditName(false)}>
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalOverlay}>
+        <View style={styles.modalOverlay}>
+
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
           <View style={[styles.modalSheet, { backgroundColor: colors.surface }]}>
             <View style={styles.modalHandle} />
             <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Ditt navn</Text>
@@ -179,7 +181,8 @@ export default function ProfilScreen() {
               <Text style={[{ color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>Avbryt</Text>
             </Pressable>
           </View>
-        </KeyboardAvoidingView>
+          </KeyboardAvoidingView>
+        </View>
       </Modal>
     </View>
   );

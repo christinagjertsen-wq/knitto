@@ -93,7 +93,9 @@ function AddQualityModal({ brandId, visible, onClose }: { brandId: string; visib
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalOverlay}>
+      <View style={styles.modalOverlay}>
+
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <ScrollView
           contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end' }}
           keyboardShouldPersistTaps="handled"
@@ -155,7 +157,8 @@ function AddQualityModal({ brandId, visible, onClose }: { brandId: string; visib
             </Pressable>
           </View>
         </ScrollView>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </View>
     </Modal>
   );
 }
