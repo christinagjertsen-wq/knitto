@@ -24,6 +24,7 @@ import { PremiumModal } from '@/components/PremiumModal';
 import { useUser, getGreeting } from '@/context/UserContext';
 import { useColors, useIsDark } from '@/context/ThemeContext';
 import { useT } from '@/context/LanguageContext';
+import { useSubscription } from '@/lib/revenuecat';
 
 
 const STATUS_COLORS: Record<ProjectStatus, string> = {
@@ -402,6 +403,7 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const { yarnStock, needles, projects, getTotalStats } = useKnitting();
   const { firstName, setFirstName, isLoading } = useUser();
+  const { isSubscribed } = useSubscription();
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showAddProject, setShowAddProject] = useState(false);
   const [showPremium, setShowPremium] = useState(false);
@@ -449,8 +451,8 @@ export default function HomeScreen() {
               onPress={() => setShowPremium(true)}
               hitSlop={8}
             >
-              <Ionicons name="leaf-outline" size={12} color={colors.text} />
-              <Text style={[styles.basicBadgeText, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>Basic</Text>
+              <Ionicons name={isSubscribed ? 'diamond' : 'leaf-outline'} size={12} color={colors.text} />
+              <Text style={[styles.basicBadgeText, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>{isSubscribed ? 'Knitto+' : 'Basic'}</Text>
             </Pressable>
           </View>
 

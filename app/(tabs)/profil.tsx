@@ -97,11 +97,11 @@ export default function ProfilScreen() {
           ))}
         </View>
 
-        <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Premium</Text>
+        <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Knitto+</Text>
         <View style={[styles.premiumCard, { backgroundColor: '#2C3E6B' }]}>
           <View style={styles.premiumTop}>
             <View>
-              <Text style={[styles.premiumTitle, { fontFamily: 'Inter_700Bold' }]}>Prøv Premium gratis</Text>
+              <Text style={[styles.premiumTitle, { fontFamily: 'Inter_700Bold' }]}>Prøv Knitto+ gratis</Text>
               <Text style={[styles.premiumSub, { fontFamily: 'Inter_400Regular' }]}>14 dager, ingen binding</Text>
             </View>
             <View style={[styles.premiumBadge, { backgroundColor: 'rgba(255,255,255,0.15)' }]}>
