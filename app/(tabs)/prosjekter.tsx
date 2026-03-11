@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useCallback, useRef } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import {
   View,
   Text,
@@ -225,23 +226,26 @@ function AddProjectModal({ visible, onClose }: { visible: boolean; onClose: () =
   const t = useT();
   const [name, setName] = useState('');
   const [status, setStatus] = useState<ProjectStatus>('aktiv');
+  const [startDate, setStartDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const { addProject } = useKnitting();
 
   const handleAdd = useCallback(() => {
     if (!name.trim()) return;
-    addProject({ name: name.trim(), status, notes: '', progressPercent: 0, yarnAllocations: [], needleIds: [], startDate: new Date().toLocaleDateString('nb-NO') });
+    addProject({ name: name.trim(), status, notes: '', progressPercent: 0, yarnAllocations: [], needleIds: [], startDate: startDate.toLocaleDateString('nb-NO') });
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    setName(''); setStatus('aktiv');
+    setName(''); setStatus('aktiv'); setStartDate(new Date()); setShowDatePicker(false);
     onClose();
-  }, [name, status, addProject, onClose]);
+  }, [name, status, startDate, addProject, onClose]);
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.modalOverlay}>
 
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <View style={[styles.modalSheet, { backgroundColor: colors.surface }]}>
+        <View style={[styles.modalSheet, { backgroundColor: colors.surface, maxHeight: Dimensions.get('window').height * 0.9 }]}>
           <View style={styles.modalHandle} />
+          <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} bounces={false}>
           <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.projects.newTitle}</Text>
           <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.addProject.namePlaceholder}</Text>
           <TextInput
@@ -274,6 +278,46 @@ function AddProjectModal({ visible, onClose }: { visible: boolean; onClose: () =
               </Pressable>
             ))}
           </View>
+          <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Startet</Text>
+          {Platform.OS === 'web' ? (
+            <Pressable
+              style={[styles.datePill, { backgroundColor: colors.background, borderColor: colors.border }]}
+              onPress={() => setShowDatePicker(v => !v)}
+            >
+              <Ionicons name="calendar-outline" size={16} color={colors.textSecondary} />
+              <Text style={[styles.datePillText, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>
+                {startDate.toLocaleDateString('nb-NO')}
+              </Text>
+            </Pressable>
+          ) : (
+            <>
+              <Pressable
+                style={[styles.datePill, { backgroundColor: colors.background, borderColor: colors.border }]}
+                onPress={() => {
+                  setShowDatePicker(v => !v);
+                  Haptics.selectionAsync();
+                }}
+              >
+                <Ionicons name="calendar-outline" size={16} color={colors.textSecondary} />
+                <Text style={[styles.datePillText, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>
+                  {startDate.toLocaleDateString('nb-NO')}
+                </Text>
+              </Pressable>
+              {showDatePicker && (
+                <DateTimePicker
+                  value={startDate}
+                  mode="date"
+                  display={Platform.OS === 'ios' ? 'inline' : 'default'}
+                  onChange={(_, date) => {
+                    if (Platform.OS === 'android') setShowDatePicker(false);
+                    if (date) setStartDate(date);
+                  }}
+                  maximumDate={new Date()}
+                  locale="nb"
+                />
+              )}
+            </>
+          )}
           <Pressable
             style={({ pressed }) => [styles.modalBtn, { backgroundColor: name.trim() ? colors.primaryBtn : colors.border, opacity: pressed ? 0.85 : 1 }]}
             onPress={handleAdd}
@@ -284,6 +328,7 @@ function AddProjectModal({ visible, onClose }: { visible: boolean; onClose: () =
           <Pressable style={styles.cancelBtn} onPress={onClose}>
             <Text style={[styles.cancelBtnText, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>{t.common.cancel}</Text>
           </Pressable>
+          </ScrollView>
         </View>
         </KeyboardAvoidingView>
       </View>
@@ -553,7 +598,9 @@ const styles = StyleSheet.create({
   emptyBtn: { paddingHorizontal: 20, paddingVertical: 12, borderRadius: 12, marginTop: 4 },
   emptyBtnText: { color: '#fff', fontSize: 15 },
   modalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.4)' },
-  modalSheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40, gap: 10 },
+  modalSheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40 },
+  datePill: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 14, paddingVertical: 12, borderRadius: 12, borderWidth: 1, marginTop: 2 },
+  datePillText: { fontSize: 15 },
   modalHandle: { width: 36, height: 4, borderRadius: 2, backgroundColor: '#ccc', alignSelf: 'center', marginBottom: 8 },
   modalTitle: { fontSize: 22, marginBottom: 4 },
   fieldLabel: { fontSize: 13, marginBottom: 2, marginTop: 8 },

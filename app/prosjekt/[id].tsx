@@ -23,6 +23,7 @@ import { useColors } from '@/context/ThemeContext';
 import { useT, useLanguage } from '@/context/LanguageContext';
 import { useKnitting, ProjectStatus, YarnStock } from '@/context/KnittingContext';
 import { PremiumModal } from '@/components/PremiumModal';
+import { ColorPickerModal } from '@/components/ColorPickerModal';
 import { useSubscription } from '@/lib/revenuecat';
 
 function ProgressRingLarge({ percent, size, strokeWidth, color }: { percent: number; size: number; strokeWidth: number; color: string }) {
@@ -182,6 +183,7 @@ function AddYarnModal({
   const [newQualityId, setNewQualityId] = useState<string | null>(null);
   const [newColorName, setNewColorName] = useState('');
   const [selectedColorHex, setSelectedColorHex] = useState('#C0D4F4');
+  const [showColorPicker, setShowColorPicker] = useState(false);
 
   const [newSkeinsTotal, setNewSkeinsTotal] = useState(1);
   const [newSkeinsProject, setNewSkeinsProject] = useState(1);
@@ -506,6 +508,23 @@ function AddYarnModal({
                     </View>
                   ))}
                 </View>
+
+                <Pressable
+                  style={[styles.customColorBtn, { borderColor: colors.border, backgroundColor: colors.background }]}
+                  onPress={() => setShowColorPicker(true)}
+                >
+                  <Ionicons name="color-palette-outline" size={16} color={colors.textSecondary} />
+                  <Text style={[styles.customColorBtnText, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>
+                    Legg til spesiell farge
+                  </Text>
+                </Pressable>
+
+                <ColorPickerModal
+                  visible={showColorPicker}
+                  initialHex={selectedColorHex}
+                  onClose={() => setShowColorPicker(false)}
+                  onSelect={(hex) => setSelectedColorHex(hex)}
+                />
 
                 <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Kjøpte nøster totalt</Text>
                 <Counter value={newSkeinsTotal} onChange={v => { setNewSkeinsTotal(v); setNewSkeinsProject(Math.min(newSkeinsProject, v)); }} />
@@ -1634,6 +1653,8 @@ const styles = StyleSheet.create({
   colorGrid: { gap: 6 },
   colorRow: { flexDirection: 'row', justifyContent: 'space-between' },
   presetColor: { width: 27, height: 27, borderRadius: 14, borderWidth: 0.5, borderColor: 'rgba(0,0,0,0.1)' },
+  customColorBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 10, borderRadius: 12, borderWidth: 1, marginTop: 4 },
+  customColorBtnText: { fontSize: 14 },
   presetColorSelected: { borderWidth: 2.5, borderColor: Colors.palette.navy },
   counter: { flexDirection: 'row', alignItems: 'center', gap: 20, justifyContent: 'center' },
   counterBtn: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },

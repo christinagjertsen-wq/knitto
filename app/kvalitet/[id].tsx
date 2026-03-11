@@ -11,6 +11,8 @@ import {
   KeyboardAvoidingView,
   Alert,
 } from 'react-native';
+import { ColorPickerModal } from '@/components/ColorPickerModal';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -158,6 +160,7 @@ function AddYarnModal({ qualityId, visible, onClose, onPaywall }: { qualityId: s
   const [colorName, setColorName] = useState('');
   const [selectedHex, setSelectedHex] = useState('#C97B84');
   const [skeins, setSkeins] = useState(1);
+  const [showColorPicker, setShowColorPicker] = useState(false);
   const { addYarnStock, yarnStock } = useKnitting();
   const { isSubscribed } = useSubscription();
 
@@ -217,6 +220,23 @@ function AddYarnModal({ qualityId, visible, onClose, onPaywall }: { qualityId: s
                 </View>
               ))}
             </View>
+
+            <Pressable
+              style={[styles.customColorBtn, { borderColor: colors.border, backgroundColor: colors.background }]}
+              onPress={() => setShowColorPicker(true)}
+            >
+              <Ionicons name="color-palette-outline" size={16} color={colors.textSecondary} />
+              <Text style={[styles.customColorBtnText, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>
+                Legg til spesiell farge
+              </Text>
+            </Pressable>
+
+            <ColorPickerModal
+              visible={showColorPicker}
+              initialHex={selectedHex}
+              onClose={() => setShowColorPicker(false)}
+              onSelect={(hex) => { setSelectedHex(hex); }}
+            />
 
             <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.quality.skeinsLabel}</Text>
             <SkeinCounter value={skeins} onChange={setSkeins} />
@@ -504,6 +524,8 @@ const styles = StyleSheet.create({
   colorGrid: { gap: 6 },
   colorRow: { flexDirection: 'row', justifyContent: 'space-between' },
   presetColor: { width: 27, height: 27, borderRadius: 14, borderWidth: 0.5, borderColor: 'rgba(0,0,0,0.1)' },
+  customColorBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 10, borderRadius: 12, borderWidth: 1, marginTop: 4 },
+  customColorBtnText: { fontSize: 14 },
   presetColorSelected: { borderWidth: 2.5, borderColor: Colors.palette.navy },
   modalBtn: { padding: 16, borderRadius: 14, alignItems: 'center', marginTop: 8 },
   modalBtnText: { color: '#fff', fontSize: 16 },

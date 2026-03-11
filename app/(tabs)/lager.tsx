@@ -413,8 +413,8 @@ export default function LagerScreen() {
         ) : (
           <BlurView
             intensity={Platform.OS === 'ios' ? 60 : 0}
-            tint="light"
-            style={[styles.segment, { backgroundColor: Platform.OS === 'ios' ? 'rgba(255,255,255,0.45)' : '#E1E8F0' }]}
+            tint={isDark ? 'dark' : 'light'}
+            style={[styles.segment, { backgroundColor: isDark ? (Platform.OS === 'ios' ? 'rgba(0,0,0,0.25)' : '#1A2340') : (Platform.OS === 'ios' ? 'rgba(255,255,255,0.45)' : '#E1E8F0') }]}
           >
             {(['garn', 'pinner'] as Tab[]).map(tab => (
               <Pressable
@@ -422,7 +422,7 @@ export default function LagerScreen() {
                 style={[
                   styles.segmentTab,
                   activeTab === tab && {
-                    backgroundColor: '#fff',
+                    backgroundColor: isDark ? '#2A3A5A' : '#fff',
                     shadowColor: '#000',
                     shadowOffset: { width: 0, height: 2 },
                     shadowOpacity: 0.1,
