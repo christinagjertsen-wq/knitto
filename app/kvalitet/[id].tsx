@@ -155,70 +155,72 @@ function ColorDetailModal({
     <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
       <View style={styles.modalOverlay}>
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <View style={[styles.modalSheet, { backgroundColor: colors.surface, paddingBottom: 32, gap: 0 }]}>
-          <View style={styles.modalHandle} />
+          <ScrollView keyboardShouldPersistTaps="always" showsVerticalScrollIndicator={false}>
+            <View style={[styles.modalSheet, { backgroundColor: colors.surface, paddingBottom: 32, gap: 0 }]}>
+              <View style={styles.modalHandle} />
 
-          <View style={{ alignItems: 'center', marginBottom: 20 }}>
-            <View style={[styles.bigColorSwatch, { backgroundColor: yarn.colorHex, width: 56, height: 56, borderRadius: 28, marginBottom: 12 }, yarn.colorHex === '#FFFFFF' && { borderWidth: 1.5, borderColor: 'rgba(0,0,0,0.12)' }]} />
-            <Text style={[styles.colorName, { color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 20, textAlign: 'center' }]}>{yarn.colorName}</Text>
-            {gramsPerSkein > 0 && (
-              <Text style={{ color: colors.textTertiary, fontFamily: 'Inter_400Regular', fontSize: 13, marginTop: 4 }}>
-                {gramsPerSkein} g per nøste
+              <View style={{ alignItems: 'center', marginBottom: 20 }}>
+                <View style={[styles.bigColorSwatch, { backgroundColor: yarn.colorHex, width: 56, height: 56, borderRadius: 28, marginBottom: 12 }, yarn.colorHex === '#FFFFFF' && { borderWidth: 1.5, borderColor: 'rgba(0,0,0,0.12)' }]} />
+                <Text style={[styles.colorName, { color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 20, textAlign: 'center' }]}>{yarn.colorName}</Text>
+                {gramsPerSkein > 0 && (
+                  <Text style={{ color: colors.textTertiary, fontFamily: 'Inter_400Regular', fontSize: 13, marginTop: 4 }}>
+                    {gramsPerSkein} g per nøste
+                  </Text>
+                )}
+              </View>
+
+              <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium', marginBottom: 10 }]}>
+                Antall nøster
               </Text>
-            )}
-          </View>
+              <SkeinCounter value={skeinCount} onChange={setSkeinCount} />
 
-          <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium', marginBottom: 10 }]}>
-            Antall nøster
-          </Text>
-          <SkeinCounter value={skeinCount} onChange={setSkeinCount} />
+              <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium', marginBottom: 8, marginTop: 14 }]}>
+                Legg til gram (rest)
+              </Text>
+              <TextInput
+                style={[styles.modalInput, { color: colors.text, backgroundColor: colors.background, fontFamily: 'Inter_400Regular', textAlign: 'center', fontSize: 20 }]}
+                value={gramInput}
+                onChangeText={setGramInput}
+                keyboardType="decimal-pad"
+                placeholder="0"
+                placeholderTextColor={colors.textTertiary}
+                selectTextOnFocus
+              />
 
-          <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium', marginBottom: 8, marginTop: 14 }]}>
-            Legg til gram (rest)
-          </Text>
-          <TextInput
-            style={[styles.modalInput, { color: colors.text, backgroundColor: colors.background, fontFamily: 'Inter_400Regular', textAlign: 'center', fontSize: 20 }]}
-            value={gramInput}
-            onChangeText={setGramInput}
-            keyboardType="decimal-pad"
-            placeholder="0"
-            placeholderTextColor={colors.textTertiary}
-            selectTextOnFocus
-          />
+              <Pressable
+                style={({ pressed }) => [styles.modalBtn, { backgroundColor: totalToAdd > 0 ? colors.primaryBtn : colors.border, opacity: pressed ? 0.85 : 1, marginTop: 16 }]}
+                onPress={() => {
+                  if (totalToAdd <= 0) return;
+                  onAdd(totalToAdd);
+                  reset();
+                  onClose();
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                }}
+                disabled={totalToAdd <= 0}
+              >
+                <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>
+                  Legg til {totalToAdd > 0 ? `${Math.round(totalToAdd * 10) / 10} g` : ''}
+                </Text>
+              </Pressable>
 
-          <Pressable
-            style={({ pressed }) => [styles.modalBtn, { backgroundColor: totalToAdd > 0 ? colors.primaryBtn : colors.border, opacity: pressed ? 0.85 : 1, marginTop: 16 }]}
-            onPress={() => {
-              if (totalToAdd <= 0) return;
-              onAdd(totalToAdd);
-              reset();
-              onClose();
-              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-            }}
-            disabled={totalToAdd <= 0}
-          >
-            <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>
-              Legg til {totalToAdd > 0 ? `${Math.round(totalToAdd * 10) / 10} g` : ''}
-            </Text>
-          </Pressable>
+              <Pressable
+                style={({ pressed }) => [{ alignItems: 'center', paddingVertical: 12, marginTop: 4, opacity: pressed ? 0.7 : 1 }]}
+                onPress={() => {
+                  handleClose();
+                  Alert.alert('Slett farge', `Er du sikker på at du vil slette ${yarn.colorName}?`, [
+                    { text: t.common.cancel, style: 'cancel' },
+                    { text: t.common.delete, style: 'destructive', onPress: onDelete },
+                  ]);
+                }}
+              >
+                <Text style={{ color: '#C97B84', fontSize: 15, fontFamily: 'Inter_500Medium' }}>{t.common.delete}</Text>
+              </Pressable>
 
-          <Pressable
-            style={({ pressed }) => [{ alignItems: 'center', paddingVertical: 12, marginTop: 4, opacity: pressed ? 0.7 : 1 }]}
-            onPress={() => {
-              handleClose();
-              Alert.alert('Slett farge', `Er du sikker på at du vil slette ${yarn.colorName}?`, [
-                { text: t.common.cancel, style: 'cancel' },
-                { text: t.common.delete, style: 'destructive', onPress: onDelete },
-              ]);
-            }}
-          >
-            <Text style={{ color: '#C97B84', fontSize: 15, fontFamily: 'Inter_500Medium' }}>{t.common.delete}</Text>
-          </Pressable>
-
-          <Pressable style={styles.cancelBtn} onPress={handleClose}>
-            <Text style={[styles.cancelBtnText, { color: colors.textSecondary }]}>{t.common.cancel}</Text>
-          </Pressable>
-        </View>
+              <Pressable style={styles.cancelBtn} onPress={handleClose}>
+                <Text style={[styles.cancelBtnText, { color: colors.textSecondary }]}>{t.common.cancel}</Text>
+              </Pressable>
+            </View>
+          </ScrollView>
         </KeyboardAvoidingView>
       </View>
     </Modal>
