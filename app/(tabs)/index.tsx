@@ -490,10 +490,10 @@ export default function HomeScreen() {
             <View style={[styles.headerStatDivider, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(26,35,64,0.1)' }]} />
             <View style={styles.headerStat}>
               <Text style={[styles.headerStatNumber, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>
-                {stats.totalSkeins}
+                {Math.round(stats.totalGrams).toLocaleString('nb-NO')} g
               </Text>
               <Text style={[styles.headerStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                {t.home.statSkeins}
+                {t.home.statGrams}
               </Text>
             </View>
             <View style={[styles.headerStatDivider, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(26,35,64,0.1)' }]} />

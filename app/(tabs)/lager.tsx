@@ -33,7 +33,7 @@ function BrandCard({ brand }: { brand: Brand }) {
   const { getQualitiesForBrand, getYarnStockForQuality } = useKnitting();
   const qualities = getQualitiesForBrand(brand.id);
   const allYarn = qualities.flatMap(q => getYarnStockForQuality(q.id));
-  const totalSkeins = allYarn.reduce((sum, y) => sum + y.skeins, 0);
+  const totalGrams = Math.round(qualities.reduce((sum, q) => sum + getYarnStockForQuality(q.id).reduce((s, y) => s + y.skeins * (q.gramsPerSkein || 0), 0), 0));
   const sampleColors = allYarn.slice(0, 5).map(y => y.colorHex);
 
   return (
@@ -56,7 +56,7 @@ function BrandCard({ brand }: { brand: Brand }) {
           </Text>
           <Text style={[styles.brandMeta, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
             {qualities.length} {qualities.length === 1 ? t.brand.qualitySingular : t.brand.qualityPlural}
-            {totalSkeins > 0 ? ` · ${totalSkeins} ${t.quality.skeins}` : ''}
+            {totalGrams > 0 ? ` · ${totalGrams.toLocaleString('nb-NO')} g` : ''}
           </Text>
           {sampleColors.length > 0 && (
             <View style={styles.colorStrip}>
