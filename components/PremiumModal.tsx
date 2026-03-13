@@ -259,6 +259,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     padding: 14,
     gap: 4,
+    alignItems: 'center',
   },
   planCardActive: {
     borderWidth: 2,

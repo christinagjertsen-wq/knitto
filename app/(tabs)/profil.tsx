@@ -371,7 +371,7 @@ const styles = StyleSheet.create({
   barLabel: { fontSize: 11, minWidth: 60, textAlign: 'right' },
   premiumCard: { borderRadius: 20, padding: 20, gap: 12 },
   premiumPlanRow: { flexDirection: 'row', gap: 10 },
-  premiumPlanCard: { flex: 1, borderWidth: 1.5, borderRadius: 14, padding: 12, gap: 4 },
+  premiumPlanCard: { flex: 1, borderWidth: 1.5, borderRadius: 14, padding: 12, gap: 4, alignItems: 'center' },
   premiumTop: { flexDirection: 'column', alignItems: 'center', gap: 8 },
   premiumIconCircle: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.12)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' },
   premiumTitle: { fontSize: 18 },
