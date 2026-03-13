@@ -1671,7 +1671,7 @@ const styles = StyleSheet.create({
   modalHeaderRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
   modalTitle: { fontSize: 22, textAlign: 'center' },
   fieldLabel: { fontSize: 13, marginBottom: 4, marginTop: 8, textAlign: 'center' },
-  detailFieldLabel: { fontSize: 13, textAlign: 'center' },
+  detailFieldLabel: { fontSize: 13 },
   detailInput: {
     borderRadius: 12,
     padding: 12,
