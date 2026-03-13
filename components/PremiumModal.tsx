@@ -162,7 +162,7 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
                   Start gratis prøveperiode
                 </Text>
                 <Text style={[styles.btnSub, { fontFamily: 'Inter_400Regular' }]}>
-                  {`14 dager gratis, deretter ${selectedPlan === 'yearly' ? YEARLY_MONTHLY_PRICE : MONTHLY_PRICE} kr / mnd`}
+                  Prøv Knitto+ gratis i 14 dager
                 </Text>
               </>
             )}
