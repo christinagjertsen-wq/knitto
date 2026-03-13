@@ -101,7 +101,7 @@ const no = {
     needles: 'Pinner',
     searchPlaceholder: 'Søk...',
     newBrand: 'Nytt garnmerke',
-    brandNamePlaceholder: 'Istex, Filcolana, Sandnes Garn...',
+    brandNamePlaceholder: 'Istex, Filcolana, Sandnes Garn..',
     newNeedle: 'Ny pinne',
     sizeMm: 'Størrelse (mm)',
     sizePlaceholder: '3.5',
