@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -403,6 +403,43 @@ export default function KvalitetScreen() {
   const brand = quality ? getBrandById(quality.brandId) : undefined;
   const yarnStock = getYarnStockForQuality(id);
   const totalSkeins = yarnStock.reduce((s, y) => s + y.skeins, 0);
+
+  const promptedPairs = useRef<Set<string>>(new Set());
+  useEffect(() => {
+    const seen = new Map<string, typeof yarnStock[0]>();
+    for (const yarn of yarnStock) {
+      const key = yarn.colorName.trim().toLowerCase();
+      const existing = seen.get(key);
+      if (existing) {
+        const pairKey = [existing.id, yarn.id].sort().join('|');
+        if (!promptedPairs.current.has(pairKey)) {
+          promptedPairs.current.add(pairKey);
+          const gpsk = quality?.gramsPerSkein ?? 0;
+          const gA = Math.round(existing.skeins * gpsk);
+          const gB = Math.round(yarn.skeins * gpsk);
+          const gTotal = gA + gB;
+          Alert.alert(
+            'Duplikat oppdaget',
+            `Du har to oppføringer av farge «${yarn.colorName}»${gpsk > 0 ? ` (${gA} g + ${gB} g = ${gTotal} g)` : ''}. Vil du slå dem sammen?`,
+            [
+              { text: 'Avbryt', style: 'cancel' },
+              {
+                text: 'Slå sammen',
+                onPress: () => {
+                  updateYarnStock(existing.id, { skeins: existing.skeins + yarn.skeins });
+                  deleteYarnStock(yarn.id);
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                },
+              },
+            ]
+          );
+          break;
+        }
+      } else {
+        seen.set(key, yarn);
+      }
+    }
+  }, [yarnStock, quality, updateYarnStock, deleteYarnStock]);
   const totalGrams = quality ? totalSkeins * quality.gramsPerSkein : 0;
   const totalMeters = quality ? totalSkeins * quality.metersPerSkein : 0;
 
