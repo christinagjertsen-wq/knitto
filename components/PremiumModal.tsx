@@ -168,6 +168,7 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
             )}
           </Pressable>
 
+          <View style={[styles.footerDivider, { backgroundColor: colors.border }]} />
           <View style={styles.footerLinks}>
             <Pressable onPress={handleRestore} hitSlop={16} disabled={isPurchasing || isRestoring}>
               <Text style={[styles.footerLink, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
@@ -314,11 +315,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 12,
   },
+  footerDivider: {
+    height: 1,
+    marginTop: 4,
+  },
   footerLinks: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     gap: 10,
+    paddingTop: 20,
     paddingBottom: 20,
   },
   footerLink: {
