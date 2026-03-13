@@ -247,7 +247,7 @@ function AddProjectModal({ visible, onClose }: { visible: boolean; onClose: () =
           <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.addProject.namePlaceholder}</Text>
           <TextInput
             style={[styles.input, { color: colors.text, backgroundColor: colors.background, fontFamily: 'Inter_400Regular' }]}
-            placeholder={t.addProject.namePlaceholder}
+            placeholder={t.addProject.nameInputPlaceholder}
             placeholderTextColor={colors.textTertiary}
             value={name}
             onChangeText={setName}
