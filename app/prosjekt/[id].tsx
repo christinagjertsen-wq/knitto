@@ -1342,7 +1342,7 @@ export default function ProsjektScreen() {
                   }}
                   hitSlop={8}
                 >
-                  <Ionicons name="close-circle-outline" size={20} color={colors.textTertiary} />
+                  <Ionicons name="trash-outline" size={20} color="#C97B84" />
                 </Pressable>
               </View>
             ))
@@ -1394,7 +1394,7 @@ export default function ProsjektScreen() {
                       Haptics.selectionAsync();
                     }}
                   >
-                    <Ionicons name="close-circle-outline" size={20} color={colors.textTertiary} />
+                    <Ionicons name="trash-outline" size={20} color="#C97B84" />
                   </Pressable>
                 </View>
               );
