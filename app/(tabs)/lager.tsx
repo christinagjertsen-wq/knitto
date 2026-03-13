@@ -331,12 +331,13 @@ function AddNeedleModal({ visible, onClose }: { visible: boolean; onClose: () =>
             />
             <View style={styles.pillRow}>
               {NEEDLE_BRANDS.map(b => (
-                <OptionPill
-                  key={b}
-                  label={b}
-                  selected={brand === b}
-                  onPress={() => setBrand(brand === b ? '' : b)}
-                />
+                <Pressable key={b} onPress={() => setBrand(brand === b ? '' : b)}>
+                  <Text style={{
+                    fontSize: 14,
+                    fontFamily: brand === b ? 'Inter_600SemiBold' : 'Inter_400Regular',
+                    color: brand === b ? colors.primaryBtn : colors.textTertiary,
+                  }}>{b}</Text>
+                </Pressable>
               ))}
             </View>
 
