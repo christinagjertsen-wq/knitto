@@ -330,7 +330,7 @@ function AddYarnModal({
                           {getYarnLabel(yarn)}
                         </Text>
                         <Text style={[styles.yarnOptionSub, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                          {getAvailableSkeins(yarn.id)} {getAvailableSkeins(yarn.id) === 1 ? t.storage.skein : t.storage.skeins} tilgjengelig
+                          {`${getAvailableSkeins(yarn.id)} ${getAvailableSkeins(yarn.id) === 1 ? 'nøste' : 'nøster'} på lager`}
                         </Text>
                       </View>
                       {selected === yarn.id && <Ionicons name="checkmark-circle" size={20} color={colors.primaryBtn} />}
