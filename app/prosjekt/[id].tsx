@@ -965,7 +965,7 @@ export default function ProsjektScreen() {
           {project.name}
         </Text>
         <Pressable
-          style={{ padding: 4 }}
+          style={{ padding: 4, minWidth: 40, alignItems: 'flex-end' }}
           onPress={() => {
             Alert.alert(t.project.deleteProject, t.project.confirmDelete.replace('%s', project.name), [
               { text: t.common.cancel, style: 'cancel' },
@@ -1498,8 +1498,8 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     gap: 10,
   },
-  backBtn: { padding: 4 },
-  headerTitle: { flex: 1, fontSize: 22 },
+  backBtn: { padding: 4, minWidth: 40 },
+  headerTitle: { flex: 1, fontSize: 22, textAlign: 'center' },
   listContent: { padding: 16, gap: 12 },
   coverImageCard: {
     borderRadius: 18,

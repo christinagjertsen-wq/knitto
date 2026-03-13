@@ -447,9 +447,9 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     gap: 8,
   },
-  backBtn: { padding: 4 },
-  qualityTitle: { fontSize: 22 },
-  qualitySub: { fontSize: 13, marginTop: 2 },
+  backBtn: { padding: 4, minWidth: 40 },
+  qualityTitle: { fontSize: 22, textAlign: 'center' },
+  qualitySub: { fontSize: 13, marginTop: 2, textAlign: 'center' },
   fab: {
     position: 'absolute',
     right: 20,
@@ -464,7 +464,7 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 8,
   },
-  deleteBtn: { padding: 8 },
+  deleteBtn: { padding: 8, minWidth: 40, alignItems: 'flex-end' },
   listContent: { padding: 16, gap: 10 },
   qualityInfo: {
     borderRadius: 16,
