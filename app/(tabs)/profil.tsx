@@ -374,7 +374,7 @@ const styles = StyleSheet.create({
   premiumIconCircle: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.12)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' },
   premiumTitle: { fontSize: 18 },
   premiumSub: { fontSize: 13, marginTop: -4 },
-  premiumDivider: { height: 1, marginVertical: 2 },
+  premiumDivider: { height: 1, marginVertical: 8 },
   premiumFeatures: { gap: 10 },
   premiumFeatureRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12, width: '100%' },
   premiumFeatureIcon: { width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },

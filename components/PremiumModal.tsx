@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    marginVertical: 2,
+    marginVertical: 10,
   },
   planRow: {
     flexDirection: 'row',
