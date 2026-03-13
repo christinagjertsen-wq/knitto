@@ -575,7 +575,7 @@ const styles = StyleSheet.create({
   datePillText: { fontSize: 15 },
   modalHandle: { width: 36, height: 4, borderRadius: 2, backgroundColor: '#ccc', alignSelf: 'center', marginBottom: 8 },
   modalTitle: { fontSize: 22, marginBottom: 12, textAlign: 'center' },
-  fieldLabel: { fontSize: 13, marginBottom: 6 },
+  fieldLabel: { fontSize: 13, marginBottom: 6, marginTop: 10 },
   input: { borderRadius: 12, paddingHorizontal: 16, paddingVertical: 14, fontSize: 16 },
   pillRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 },
   optionPill: { paddingHorizontal: 18, paddingVertical: 10, borderRadius: 20, borderWidth: 1.5 },
