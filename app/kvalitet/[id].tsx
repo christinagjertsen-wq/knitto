@@ -10,6 +10,7 @@ import {
   Modal,
   KeyboardAvoidingView,
   Alert,
+  PanResponder,
 } from 'react-native';
 import { ColorPickerModal } from '@/components/ColorPickerModal';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -227,14 +228,67 @@ function ColorDetailModal({
   );
 }
 
-function YarnCard({ yarn, gramsPerSkein, onPress }: { yarn: YarnStock; gramsPerSkein: number; onPress: () => void }) {
+type YarnCardProps = {
+  yarn: YarnStock;
+  gramsPerSkein: number;
+  onPress: () => void;
+  isDragging: boolean;
+  isDropTarget: boolean;
+  isDimmed: boolean;
+  cardRef: (ref: View | null) => void;
+  onDragStart: (yarnId: string, pageY: number) => void;
+  onDragMove: (pageY: number) => void;
+  onDragEnd: (pageY: number) => void;
+};
+
+function YarnCard({ yarn, gramsPerSkein, onPress, isDragging, isDropTarget, isDimmed, cardRef, onDragStart, onDragMove, onDragEnd }: YarnCardProps) {
   const colors = useColors();
   const totalGrams = yarn.skeins * gramsPerSkein;
+  const isDraggingRef = useRef(false);
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const panResponder = useRef(PanResponder.create({
+    onStartShouldSetPanResponder: () => true,
+    onMoveShouldSetPanResponder: () => isDraggingRef.current,
+    onPanResponderGrant: (evt) => {
+      const pageY = evt.nativeEvent.pageY;
+      longPressTimer.current = setTimeout(() => {
+        isDraggingRef.current = true;
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+        onDragStart(yarn.id, pageY);
+      }, 420);
+    },
+    onPanResponderMove: (evt) => {
+      if (isDraggingRef.current) onDragMove(evt.nativeEvent.pageY);
+    },
+    onPanResponderRelease: (evt) => {
+      if (longPressTimer.current) clearTimeout(longPressTimer.current);
+      const wasDragging = isDraggingRef.current;
+      isDraggingRef.current = false;
+      if (wasDragging) {
+        onDragEnd(evt.nativeEvent.pageY);
+      } else {
+        onPress();
+      }
+    },
+    onPanResponderTerminate: () => {
+      if (longPressTimer.current) clearTimeout(longPressTimer.current);
+      isDraggingRef.current = false;
+      onDragEnd(-1);
+    },
+  })).current;
 
   return (
-    <Pressable
-      style={({ pressed }) => [styles.yarnCard, { backgroundColor: colors.surface, opacity: pressed ? 0.85 : 1 }]}
-      onPress={onPress}
+    <View
+      ref={cardRef}
+      style={[
+        styles.yarnCard,
+        { backgroundColor: colors.surface },
+        isDragging && { opacity: 0.25 },
+        isDropTarget && { borderColor: colors.primaryBtn, borderWidth: 2 },
+        isDimmed && !isDragging && !isDropTarget && { opacity: 0.45 },
+      ]}
+      {...panResponder.panHandlers}
     >
       <View style={[styles.colorSwatch, { backgroundColor: yarn.colorHex }]} />
       <View style={styles.yarnCardContent}>
@@ -243,13 +297,13 @@ function YarnCard({ yarn, gramsPerSkein, onPress }: { yarn: YarnStock; gramsPerS
         </Text>
       </View>
       <View style={styles.yarnCardRight}>
-        <View style={[styles.gramBadge, { backgroundColor: colors.badgeBg }]}>
-          <Text style={[styles.gramBadgeText, { color: colors.badgeText, fontFamily: 'Inter_600SemiBold' }]}>
+        <View style={[styles.gramBadge, { backgroundColor: isDropTarget ? colors.primaryBtn : colors.badgeBg }]}>
+          <Text style={[styles.gramBadgeText, { color: isDropTarget ? '#fff' : colors.badgeText, fontFamily: 'Inter_600SemiBold' }]}>
             {totalGrams > 0 ? `${totalGrams} g` : `${yarn.skeins} stk`}
           </Text>
         </View>
       </View>
-    </Pressable>
+    </View>
   );
 }
 
@@ -265,7 +319,7 @@ function AddYarnModal({ qualityId, visible, onClose, onPaywall }: { qualityId: s
 
   const handleAdd = useCallback(() => {
     if (!colorName.trim()) return;
-    if (!isSubscribed && yarnStock.length >= 50) {
+    if (!isSubscribed && yarnStock.length >= 5) {
       onClose();
       onPaywall();
       return;
@@ -402,11 +456,88 @@ export default function KvalitetScreen() {
   const [sortBy, setSortBy] = useState<'navn' | 'gram'>('navn');
   const [skeinEditField, setSkeinEditField] = useState<'grams' | 'meters' | null>(null);
   const [skeinEditInput, setSkeinEditInput] = useState('');
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [dragY, setDragY] = useState(0);
+  const [dropTargetId, setDropTargetId] = useState<string | null>(null);
+  const draggingIdRef = useRef<string | null>(null);
+  const dropTargetIdRef = useRef<string | null>(null);
+  const cardRefs = useRef<Map<string, View | null>>(new Map());
+  const cardMeasures = useRef<Map<string, { pageY: number; height: number }>>(new Map());
+  const containerRef = useRef<View | null>(null);
+  const containerPageY = useRef(0);
 
   const quality = getQualityById(id);
   const brand = quality ? getBrandById(quality.brandId) : undefined;
   const yarnStock = getYarnStockForQuality(id);
   const totalSkeins = yarnStock.reduce((s, y) => s + y.skeins, 0);
+
+  const handleDragStart = useCallback((yarnId: string, pageY: number) => {
+    draggingIdRef.current = yarnId;
+    dropTargetIdRef.current = null;
+    setDraggingId(yarnId);
+    setDragY(pageY);
+    setDropTargetId(null);
+    cardRefs.current.forEach((ref, id) => {
+      ref?.measure((_x, _y, _w, h, _px, py) => {
+        cardMeasures.current.set(id, { pageY: py, height: h });
+      });
+    });
+  }, []);
+
+  const handleDragMove = useCallback((pageY: number) => {
+    setDragY(pageY);
+    const dId = draggingIdRef.current;
+    if (!dId) return;
+    const draggingYarn = yarnStock.find(y => y.id === dId);
+    if (!draggingYarn) return;
+    let newTarget: string | null = null;
+    cardMeasures.current.forEach(({ pageY: cardTop, height }, id) => {
+      if (id !== dId && pageY >= cardTop && pageY <= cardTop + height) {
+        const hoveredYarn = yarnStock.find(y => y.id === id);
+        if (hoveredYarn && hoveredYarn.colorName.trim().toLowerCase() === draggingYarn.colorName.trim().toLowerCase()) {
+          newTarget = id;
+        }
+      }
+    });
+    if (newTarget !== dropTargetIdRef.current) {
+      dropTargetIdRef.current = newTarget;
+      setDropTargetId(newTarget);
+      if (newTarget) Haptics.selectionAsync();
+    }
+  }, [yarnStock]);
+
+  const handleDragEnd = useCallback((pageY: number) => {
+    const dId = draggingIdRef.current;
+    const tId = dropTargetIdRef.current;
+    draggingIdRef.current = null;
+    dropTargetIdRef.current = null;
+    setDraggingId(null);
+    setDropTargetId(null);
+    if (!dId || !tId || pageY < 0) return;
+    const draggingYarn = yarnStock.find(y => y.id === dId);
+    const targetYarn = yarnStock.find(y => y.id === tId);
+    if (!draggingYarn || !targetYarn) return;
+    const gpsk = quality?.gramsPerSkein ?? 0;
+    const gA = Math.round(draggingYarn.skeins * gpsk);
+    const gB = Math.round(targetYarn.skeins * gpsk);
+    Alert.alert(
+      'Slå sammen farger',
+      gpsk > 0
+        ? `Slå sammen «${targetYarn.colorName}»?\n${gA} g + ${gB} g = ${gA + gB} g`
+        : `Slå sammen «${targetYarn.colorName}»?\n${draggingYarn.skeins + targetYarn.skeins} nøster totalt`,
+      [
+        { text: 'Avbryt', style: 'cancel' },
+        {
+          text: 'Slå sammen',
+          onPress: () => {
+            updateYarnStock(targetYarn.id, { skeins: targetYarn.skeins + draggingYarn.skeins });
+            deleteYarnStock(draggingYarn.id);
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          },
+        },
+      ]
+    );
+  }, [yarnStock, quality, updateYarnStock, deleteYarnStock]);
 
   const promptedPairs = useRef<Set<string>>(new Set());
   useEffect(() => {
@@ -466,8 +597,16 @@ export default function KvalitetScreen() {
     );
   }
 
+  const draggingYarn = draggingId ? yarnStock.find(y => y.id === draggingId) : null;
+
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <View
+      ref={containerRef}
+      style={[styles.container, { backgroundColor: colors.background }]}
+      onLayout={() => {
+        containerRef.current?.measure((_x, _y, _w, _h, _px, py) => { containerPageY.current = py; });
+      }}
+    >
       <View style={[styles.header, { paddingTop: topInset + 20 }]}>
         <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)/lager')}>
           <Ionicons name="chevron-back" size={24} color={colors.text} />
@@ -498,6 +637,7 @@ export default function KvalitetScreen() {
         contentContainerStyle={[styles.listContent, { paddingBottom: Platform.OS === 'web' ? 34 : 20 }]}
         showsVerticalScrollIndicator={false}
         contentInsetAdjustmentBehavior="automatic"
+        scrollEnabled={!draggingId}
       >
         {(quality.gramsPerSkein || quality.metersPerSkein) ? (
           <View style={styles.miniStatsRow}>
@@ -574,6 +714,13 @@ export default function KvalitetScreen() {
               yarn={yarn}
               gramsPerSkein={quality.gramsPerSkein}
               onPress={() => { setSelectedYarn(yarn); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
+              isDragging={draggingId === yarn.id}
+              isDropTarget={dropTargetId === yarn.id}
+              isDimmed={!!draggingId && draggingId !== yarn.id && dropTargetId !== yarn.id}
+              cardRef={(ref) => { cardRefs.current.set(yarn.id, ref); }}
+              onDragStart={handleDragStart}
+              onDragMove={handleDragMove}
+              onDragEnd={handleDragEnd}
             />
           ))
         )}
@@ -683,6 +830,39 @@ export default function KvalitetScreen() {
           </KeyboardAvoidingView>
         </View>
       </Modal>
+
+      {draggingYarn && (
+        <View
+          style={[{
+            position: 'absolute',
+            left: 16,
+            right: 16,
+            top: dragY - containerPageY.current - 35,
+            zIndex: 999,
+            pointerEvents: 'none' as any,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 6 },
+            shadowOpacity: 0.18,
+            shadowRadius: 12,
+            elevation: 12,
+          }]}>
+          <View style={[styles.yarnCard, { backgroundColor: colors.surface }]}>
+            <View style={[styles.colorSwatch, { backgroundColor: draggingYarn.colorHex }]} />
+            <View style={styles.yarnCardContent}>
+              <Text style={[styles.colorName, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
+                {draggingYarn.colorName}
+              </Text>
+            </View>
+            <View style={styles.yarnCardRight}>
+              <View style={[styles.gramBadge, { backgroundColor: colors.badgeBg }]}>
+                <Text style={[styles.gramBadgeText, { color: colors.badgeText, fontFamily: 'Inter_600SemiBold' }]}>
+                  {quality.gramsPerSkein > 0 ? `${Math.round(draggingYarn.skeins * quality.gramsPerSkein)} g` : `${draggingYarn.skeins} stk`}
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      )}
 
       <Pressable
         style={[styles.fab, { backgroundColor: colors.primaryBtn, bottom: (Platform.OS === 'web' ? 34 : insets.bottom) + 24 }]}
