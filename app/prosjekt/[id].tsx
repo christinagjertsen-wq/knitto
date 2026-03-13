@@ -12,7 +12,9 @@ import {
   KeyboardAvoidingView,
   Alert,
   Image,
+  Dimensions,
 } from 'react-native';
+
 import Svg, { Circle } from 'react-native-svg';
 import * as ImagePicker from 'expo-image-picker';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -26,6 +28,8 @@ import { useKnitting, ProjectStatus, YarnStock } from '@/context/KnittingContext
 import { PremiumModal } from '@/components/PremiumModal';
 import { ColorPickerModal } from '@/components/ColorPickerModal';
 import { useSubscription } from '@/lib/revenuecat';
+
+const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 function ProgressRingLarge({ percent, size, strokeWidth, color }: { percent: number; size: number; strokeWidth: number; color: string }) {
   const colors = useColors();
@@ -1834,7 +1838,7 @@ const styles = StyleSheet.create({
   inlineBtnText: { color: '#fff', fontSize: 14 },
   modalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.4)' },
   modalSheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40, gap: 12 },
-  editModalSheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: '92%' },
+  editModalSheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: SCREEN_HEIGHT * 0.92 },
   editModalContent: { padding: 24, paddingBottom: 40, gap: 14 },
   modalHandle: { width: 36, height: 4, borderRadius: 2, backgroundColor: '#ccc', alignSelf: 'center', marginBottom: 8 },
   modalHeaderRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
