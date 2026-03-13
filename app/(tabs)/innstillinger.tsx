@@ -262,7 +262,7 @@ function Linjal() {
     default: 96 / 2.54,  // ≈ 37.8 web px per cm (96 dpi)
   })!;
   const MM_PER_UNIT = CM_PER_UNIT / 10;
-  const TOTAL_CM = 30;
+  const TOTAL_CM = 5;
   const TOTAL_MM = TOTAL_CM * 10;
   const RULER_H = 72;
   const END_PAD = 20;
@@ -287,7 +287,7 @@ function Linjal() {
 
   return (
     <View style={[styles.calcCard, { backgroundColor: colors.surface, padding: 0, overflow: 'hidden' }]}>
-      <View style={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 10 }}>
+      <View style={{ paddingHorizontal: 20, paddingTop: 12, paddingBottom: 8 }}>
         <Text style={[styles.calcTitle, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
           {t.tools.rulerTitle}
         </Text>
