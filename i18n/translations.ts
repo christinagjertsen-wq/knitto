@@ -42,7 +42,7 @@ const no = {
     night: 'God natt',
   },
   home: {
-    tagline: 'Strikke litt? Eller legge til garn og pinner?',
+    tagline: 'Strikke litt? Eller legge til garn?',
     statProjects: 'prosjekter',
     statSkeins: 'nøster',
     statNeedles: 'pinner',
@@ -391,7 +391,7 @@ const en: typeof no = {
     night: 'Good night',
   },
   home: {
-    tagline: 'Knit a little? Or add some yarn and needles?',
+    tagline: 'Knit a little? Or add some yarn?',
     statProjects: 'projects',
     statSkeins: 'skeins',
     statNeedles: 'needles',
