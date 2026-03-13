@@ -113,6 +113,7 @@ function AddQualityModal({ brandId, visible, onClose }: { brandId: string; visib
               autoFocus
             />
 
+            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Innhold</Text>
             <TextInput
               style={[styles.input, { color: colors.text, backgroundColor: colors.background }]}
               placeholder="100% Merinoull"
