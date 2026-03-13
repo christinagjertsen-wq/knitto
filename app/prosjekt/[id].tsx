@@ -786,7 +786,7 @@ function AddNeedleToProjectModal({
                         </View>
                         <View style={{ flex: 1 }}>
                           <Text style={[styles.needleLabel, { color: colors.text, fontFamily: isLinked ? 'Inter_500Medium' : 'Inter_400Regular' }]}>
-                            {TYPE_LABELS[needle.type] ?? needle.type}, {needle.lengthCm} cm
+                            {TYPE_LABELS[needle.type] ?? needle.type} · {needle.lengthCm} cm
                           </Text>
                           <Text style={{ fontSize: 12, color: colors.textTertiary, fontFamily: 'Inter_400Regular' }}>
                             {MAT_LABELS[needle.material] ?? needle.material}
@@ -1380,7 +1380,7 @@ export default function ProsjektScreen() {
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={[styles.needleLabel, { color: colors.text, fontFamily: 'Inter_500Medium' }]}>
-                      {TYPE_LABELS[needle.type] ?? needle.type}, {needle.lengthCm} cm
+                      {TYPE_LABELS[needle.type] ?? needle.type} · {needle.lengthCm} cm
                     </Text>
                     <Text style={{ fontSize: 12, color: colors.textTertiary, fontFamily: 'Inter_400Regular' }}>
                       {t.needleMaterials[needle.material as keyof typeof t.needleMaterials] ?? needle.material}
