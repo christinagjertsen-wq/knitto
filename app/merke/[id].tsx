@@ -49,7 +49,7 @@ function QualityCard({ quality, onPress, onDelete }: { quality: Quality; onPress
             {quality.fiberContent}
           </Text>
           <Text style={[styles.qualityMeta, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
-            {quality.gramsPerSkein}g / {quality.metersPerSkein}m per {t.quality.skein}
+            {quality.gramsPerSkein} g = {quality.metersPerSkein} m per nøste
           </Text>
         </View>
       </View>
