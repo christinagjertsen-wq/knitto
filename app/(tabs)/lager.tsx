@@ -329,7 +329,7 @@ function AddNeedleModal({ visible, onClose }: { visible: boolean; onClose: () =>
               onChangeText={setBrand}
               autoCorrect={false}
             />
-            <View style={[styles.pillRow, { marginTop: -4, marginBottom: 12 }]}>
+            <View style={styles.pillRow}>
               {NEEDLE_BRANDS.map(b => (
                 <OptionPill
                   key={b}
@@ -820,15 +820,15 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 24,
     padding: 24,
     paddingBottom: 40,
-    gap: 12,
+    gap: 6,
   },
   modalHandle: { width: 36, height: 4, borderRadius: 2, backgroundColor: '#ccc', alignSelf: 'center', marginBottom: 8 },
   modalTitle: { fontSize: 22, marginBottom: 4, textAlign: 'center' },
-  fieldLabel: { fontSize: 13, marginBottom: 6 },
+  fieldLabel: { fontSize: 13, marginTop: 6 },
   input: {
     borderRadius: 12,
     paddingHorizontal: 18,
-    paddingVertical: 14,
+    paddingVertical: 11,
     fontSize: 16,
     textAlign: 'center',
   },
