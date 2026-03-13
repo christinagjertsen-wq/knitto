@@ -77,7 +77,7 @@ const no = {
   addProject: {
     title: 'Nytt prosjekt',
     namePlaceholder: 'Prosjektnavn',
-    nameInputPlaceholder: 'Riddari Genser.',
+    nameInputPlaceholder: 'Riddari Genser',
     status: 'Status',
     create: 'Legg til',
   },
@@ -421,7 +421,7 @@ const en: typeof no = {
   addProject: {
     title: 'New project',
     namePlaceholder: 'Project name',
-    nameInputPlaceholder: 'Riddari Genser.',
+    nameInputPlaceholder: 'Riddari Genser',
     status: 'Status',
     create: 'Add',
   },
