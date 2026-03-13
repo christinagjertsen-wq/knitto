@@ -1306,11 +1306,19 @@ export default function ProsjektScreen() {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                   }}
                 >
-                  <Ionicons
-                    name={project.primaryYarnStockId === alloc.yarnStockId ? 'pin' : 'pin-outline'}
-                    size={18}
-                    color={project.primaryYarnStockId === alloc.yarnStockId ? colors.primaryBtn : colors.textTertiary}
-                  />
+                  <View style={{
+                    width: 22, height: 22, borderRadius: 11,
+                    borderWidth: 1.5,
+                    borderColor: project.primaryYarnStockId === alloc.yarnStockId ? colors.primaryBtn : colors.textTertiary,
+                    backgroundColor: project.primaryYarnStockId === alloc.yarnStockId ? colors.primaryBtn + '18' : 'transparent',
+                    alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <Ionicons
+                      name={project.primaryYarnStockId === alloc.yarnStockId ? 'pin' : 'pin-outline'}
+                      size={13}
+                      color={project.primaryYarnStockId === alloc.yarnStockId ? colors.primaryBtn : colors.textTertiary}
+                    />
+                  </View>
                 </Pressable>
                 <Pressable
                   onPress={() => {
