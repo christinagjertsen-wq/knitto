@@ -50,7 +50,7 @@ const no = {
     statMeters: 'meter',
     statActiveProjects: 'Aktive prosjekter',
     statFinishedProjects: 'Ferdige prosjekter',
-    statTotalSkeins: 'Totalt nøster på lager',
+    statTotalSkeins: 'Totalt antall nøster på lager',
     statSkeinsUsed: 'Nøster brukt fra lager',
     statNeedlesRegistered: 'Pinner registrert',
     sectionProjects: 'Prosjekter',
