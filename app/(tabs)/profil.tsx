@@ -197,8 +197,8 @@ export default function InnstillingerScreen() {
 
           <View style={styles.premiumFeatures}>
             <View style={styles.premiumFeatureRow}>
-              <View style={[styles.premiumFeatureIcon, { backgroundColor: 'rgba(91,127,191,0.12)' }]}>
-                <Ionicons name="leaf-outline" size={14} color="#5B7FBF" style={{ alignSelf: 'center' }} />
+              <View style={[styles.premiumFeatureIcon, { backgroundColor: '#E8F5E9' }]}>
+                <Ionicons name="leaf-outline" size={14} color="#4CAF50" style={{ alignSelf: 'center' }} />
               </View>
               <Text style={[styles.premiumFeatureText, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>
                 {FREE_FEATURES.join('  ·  ')}
@@ -207,8 +207,8 @@ export default function InnstillingerScreen() {
             <View style={[styles.premiumDivider, { backgroundColor: colors.border }]} />
             {LOCKED_FEATURES.map((label, i) => (
               <View key={`locked-${i}`} style={styles.premiumFeatureRow}>
-                <View style={[styles.premiumFeatureIcon, { backgroundColor: '#E8F5E9' }]}>
-                  <Ionicons name="add" size={18} color="#4CAF50" style={{ alignSelf: 'center' }} />
+                <View style={[styles.premiumFeatureIcon, { backgroundColor: 'rgba(91,127,191,0.12)' }]}>
+                  <Ionicons name="add" size={18} color="#5B7FBF" style={{ alignSelf: 'center' }} />
                 </View>
                 <Text style={[styles.premiumFeatureText, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>{label}</Text>
               </View>
