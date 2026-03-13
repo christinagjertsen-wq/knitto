@@ -828,10 +828,9 @@ const styles = StyleSheet.create({
   fieldLabel: { fontSize: 13, marginTop: 6 },
   input: {
     borderRadius: 12,
-    paddingHorizontal: 18,
+    paddingHorizontal: 16,
     paddingVertical: 11,
     fontSize: 16,
-    textAlign: 'center',
   },
   pillRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   optionPill: {
