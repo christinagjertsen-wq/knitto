@@ -611,14 +611,17 @@ const styles = StyleSheet.create({
   greetingLarge: {
     fontSize: 32,
     lineHeight: 38,
+    textAlign: 'center',
   },
   greetingMedium: {
     fontSize: 22,
     lineHeight: 28,
+    textAlign: 'center',
   },
   greetingTagline: {
     fontSize: 14,
     marginTop: 4,
+    textAlign: 'center',
   },
   headerStats: {
     flexDirection: 'row',

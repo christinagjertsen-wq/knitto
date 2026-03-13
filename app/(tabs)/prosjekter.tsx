@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useCallback, useRef } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import {
   View,
   Text,
@@ -226,17 +225,15 @@ function AddProjectModal({ visible, onClose }: { visible: boolean; onClose: () =
   const t = useT();
   const [name, setName] = useState('');
   const [status, setStatus] = useState<ProjectStatus>('aktiv');
-  const [startDate, setStartDate] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false);
   const { addProject } = useKnitting();
 
   const handleAdd = useCallback(() => {
     if (!name.trim()) return;
-    addProject({ name: name.trim(), status, notes: '', progressPercent: 0, yarnAllocations: [], needleIds: [], startDate: startDate.toLocaleDateString('nb-NO') });
+    addProject({ name: name.trim(), status, notes: '', progressPercent: 0, yarnAllocations: [], needleIds: [], startDate: new Date().toLocaleDateString('nb-NO') });
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    setName(''); setStatus('aktiv'); setStartDate(new Date()); setShowDatePicker(false);
+    setName(''); setStatus('aktiv');
     onClose();
-  }, [name, status, startDate, addProject, onClose]);
+  }, [name, status, addProject, onClose]);
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
@@ -278,46 +275,6 @@ function AddProjectModal({ visible, onClose }: { visible: boolean; onClose: () =
               </Pressable>
             ))}
           </View>
-          <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Startet</Text>
-          {Platform.OS === 'web' ? (
-            <Pressable
-              style={[styles.datePill, { backgroundColor: colors.background, borderColor: colors.border }]}
-              onPress={() => setShowDatePicker(v => !v)}
-            >
-              <Ionicons name="calendar-outline" size={16} color={colors.textSecondary} />
-              <Text style={[styles.datePillText, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>
-                {startDate.toLocaleDateString('nb-NO')}
-              </Text>
-            </Pressable>
-          ) : (
-            <>
-              <Pressable
-                style={[styles.datePill, { backgroundColor: colors.background, borderColor: colors.border }]}
-                onPress={() => {
-                  setShowDatePicker(v => !v);
-                  Haptics.selectionAsync();
-                }}
-              >
-                <Ionicons name="calendar-outline" size={16} color={colors.textSecondary} />
-                <Text style={[styles.datePillText, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>
-                  {startDate.toLocaleDateString('nb-NO')}
-                </Text>
-              </Pressable>
-              {showDatePicker && (
-                <DateTimePicker
-                  value={startDate}
-                  mode="date"
-                  display={Platform.OS === 'ios' ? 'inline' : 'default'}
-                  onChange={(_, date) => {
-                    if (Platform.OS === 'android') setShowDatePicker(false);
-                    if (date) setStartDate(date);
-                  }}
-                  maximumDate={new Date()}
-                  locale="nb"
-                />
-              )}
-            </>
-          )}
           <Pressable
             style={({ pressed }) => [styles.modalBtn, { backgroundColor: name.trim() ? colors.primaryBtn : colors.border, opacity: pressed ? 0.85 : 1 }]}
             onPress={handleAdd}
