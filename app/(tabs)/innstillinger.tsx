@@ -265,7 +265,7 @@ function Linjal() {
   const TOTAL_CM = 5;
   const TOTAL_MM = TOTAL_CM * 10;
   const RULER_H = 72;
-  const END_PAD = 20;
+  const LABEL_PAD = 20;
 
   const ticks = useMemo(() => {
     const arr: { mm: number; x: number; isCm: boolean; is5mm: boolean; tickH: number }[] = [];
@@ -283,28 +283,24 @@ function Linjal() {
     return arr;
   }, [MM_PER_UNIT]);
 
-  const totalWidth = TOTAL_MM * MM_PER_UNIT + END_PAD;
+  const baselineWidth = TOTAL_MM * MM_PER_UNIT;
+  const totalWidth = baselineWidth + LABEL_PAD;
 
   return (
     <View style={[styles.calcCard, { backgroundColor: colors.surface, padding: 0, overflow: 'hidden' }]}>
-      <View style={{ paddingHorizontal: 20, paddingTop: 12, paddingBottom: 8 }}>
+      <View style={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 4 }}>
         <Text style={[styles.calcTitle, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
           {t.tools.rulerTitle}
         </Text>
-        <Text style={[styles.calcSubtitle, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
+        <Text style={[styles.calcSubtitle, { color: colors.textTertiary, fontFamily: 'Inter_400Regular', marginTop: 8 }]}>
           {t.tools.rulerSubtitle}
         </Text>
       </View>
 
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        scrollEventThrottle={16}
-        contentContainerStyle={{ paddingLeft: 20, paddingBottom: 20 }}
-      >
+      <View style={{ alignItems: 'center', paddingVertical: 20 }}>
         <View style={{ width: totalWidth, height: RULER_H, position: 'relative' }}>
-          {/* Baseline */}
-          <View style={{ position: 'absolute', top: 0, left: 0, width: totalWidth, height: 2, backgroundColor: colors.text, borderRadius: 1 }} />
+          {/* Baseline — stops exactly at 5 cm */}
+          <View style={{ position: 'absolute', top: 0, left: 0, width: baselineWidth + 1, height: 2, backgroundColor: colors.text, borderRadius: 1 }} />
           {/* Ticks */}
           {ticks.map(({ mm, x, tickH }) => (
             <View
@@ -337,7 +333,7 @@ function Linjal() {
             </Text>
           ))}
         </View>
-      </ScrollView>
+      </View>
 
       {Platform.OS === 'web' && (
         <Text style={{ fontSize: 11, color: colors.textTertiary, fontFamily: 'Inter_400Regular', paddingHorizontal: 20, paddingBottom: 16, marginTop: -8 }}>
