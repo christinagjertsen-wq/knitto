@@ -60,7 +60,7 @@ function QualityCard({ quality, onPress, onDelete }: { quality: Quality; onPress
           ))}
         </View>
         <Text style={[styles.skeinCount, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-          {totalSkeins} {t.quality.skeins}
+          {Math.round(totalSkeins)} {t.quality.skeins}
         </Text>
         <Ionicons name="chevron-forward" size={16} color={colors.textTertiary} />
       </View>

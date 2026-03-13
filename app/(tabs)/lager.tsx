@@ -577,7 +577,7 @@ export default function LagerScreen() {
           <>
             <View style={styles.miniStatsRow}>
               <View style={[styles.miniStat, { backgroundColor: colors.surface }]}>
-                <Text style={[styles.miniStatNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{stats.totalSkeins.toLocaleString('nb-NO').replace(',', '.')}</Text>
+                <Text style={[styles.miniStatNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{Math.round(stats.totalSkeins).toLocaleString('nb-NO').replace(',', '.')}</Text>
                 <Text style={[styles.miniStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{t.home.statSkeins}</Text>
               </View>
               <View style={[styles.miniStat, { backgroundColor: colors.surface }]}>

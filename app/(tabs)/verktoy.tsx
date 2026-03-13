@@ -245,7 +245,7 @@ function YarnStats() {
                     <View style={[styles.barFill, { backgroundColor: colors.primaryBtn, width: `${Math.round(item.pct * 100)}%` as any }]} />
                   </View>
                   <Text style={[styles.barLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                    {item.allocated}/{item.total} {t.quality.skeins}
+                    {Math.round(item.allocated)}/{Math.round(item.total)} {t.quality.skeins}
                   </Text>
                 </View>
               </View>

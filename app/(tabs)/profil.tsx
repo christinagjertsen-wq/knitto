@@ -54,7 +54,7 @@ function YarnStats() {
       .slice(0, 10);
   }, [yarnStock, projects, qualities, brands]);
 
-  const totalAllocated = usedYarn.reduce((s, x) => s + x.allocated, 0);
+  const totalAllocated = Math.round(usedYarn.reduce((s, x) => s + x.allocated, 0));
 
   if (usedYarn.length === 0) {
     return (
@@ -95,7 +95,7 @@ function YarnStats() {
                     <View style={[styles.barFill, { backgroundColor: colors.primaryBtn, width: `${Math.round(item.pct * 100)}%` as any }]} />
                   </View>
                   <Text style={[styles.barLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                    {item.allocated}/{item.total} {t.quality.skeins}
+                    {Math.round(item.allocated)}/{Math.round(item.total)} {t.quality.skeins}
                   </Text>
                 </View>
               </View>
@@ -133,8 +133,8 @@ export default function InnstillingerScreen() {
   const statRows = [
     { label: t.home.statActiveProjects, value: String(activeProjects), icon: 'play-circle-outline' as const },
     { label: t.home.statFinishedProjects, value: String(finishedProjects), icon: 'checkmark-circle-outline' as const },
-    { label: t.home.statTotalSkeins, value: String(totalSkeins), icon: 'cube-outline' as const },
-    { label: t.home.statSkeinsUsed, value: String(skeinsUsed), icon: 'git-merge-outline' as const },
+    { label: t.home.statTotalSkeins, value: String(Math.round(totalSkeins)), icon: 'cube-outline' as const },
+    { label: t.home.statSkeinsUsed, value: String(Math.round(skeinsUsed)), icon: 'git-merge-outline' as const },
     { label: t.home.statNeedlesRegistered, value: String(needles.length), icon: 'construct-outline' as const },
   ];
 
