@@ -414,7 +414,6 @@ function AddYarnModal({ qualityId, visible, onClose, onPaywall }: { qualityId: s
                 style={[styles.customColorBtn, { borderColor: colors.border, backgroundColor: colors.background }]}
                 onPress={() => setShowColorPicker(true)}
               >
-                <Ionicons name="color-palette-outline" size={16} color={colors.textSecondary} />
                 <Text style={[styles.customColorBtnText, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>
                   Legg til spesiell farge
                 </Text>
