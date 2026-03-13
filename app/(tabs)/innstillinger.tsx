@@ -204,9 +204,9 @@ function OkeFelleKalkulator() {
 
   return (
     <View style={[styles.calcCard, { backgroundColor: colors.surface }]}>
-      <Text style={[styles.calcTitle, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>{t.tools.increaseDecrease}</Text>
+      <Text style={[styles.calcTitle, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>{t.tools.increaseDecreaseTitle}</Text>
       <Text style={[styles.calcSubtitle, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-        {t.tools.increaseDecreaseSubtitle}
+        {t.tools.incDecSubtitle}
       </Text>
       <View style={styles.inputRow}>
         <View style={{ flex: 1 }}>
@@ -221,7 +221,7 @@ function OkeFelleKalkulator() {
           />
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={[styles.inputLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.tools.targetStitches}</Text>
+          <Text style={[styles.inputLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.tools.desiredStitches}</Text>
           <TextInput
             style={[styles.calcInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border }]}
             value={ønsket}
@@ -238,11 +238,11 @@ function OkeFelleKalkulator() {
             {result.isØke ? t.tools.increase : t.tools.decrease} {result.changes}×
           </Text>
           <Text style={[styles.resultSub, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
-            {t.tools.everyNStitches.replace('{n}', String(result.spacing))}
+            {t.tools.incOneStitch.replace('%s', String(result.spacing))}
           </Text>
           {result.extra > 0 && (
             <Text style={[styles.resultSub, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-              {t.tools.extraStitches.replace('{n}', String(result.extra))}
+              {t.tools.xStitchesTotal.replace('%s', String(result.extra))}
             </Text>
           )}
         </View>
