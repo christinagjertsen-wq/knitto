@@ -458,20 +458,20 @@ export default function HomeScreen() {
 
           <View style={styles.headerTopRow}>
             <Text
-              style={[styles.greetingMedium, { color: colors.text, fontFamily: 'Inter_700Bold' }]}
-              numberOfLines={1}
-              adjustsFontSizeToFit
-              minimumFontScale={0.65}
-            >
-              {greetingBase}
-            </Text>
-            <Text
               style={[styles.greetingLarge, { color: colors.text, fontFamily: 'Inter_700Bold' }]}
               numberOfLines={1}
               adjustsFontSizeToFit
               minimumFontScale={0.65}
             >
               {firstName || ''}
+            </Text>
+            <Text
+              style={[styles.greetingMedium, { color: colors.text, fontFamily: 'Inter_700Bold' }]}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.65}
+            >
+              {greetingBase}
             </Text>
             <Text style={[styles.greetingTagline, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
               {t.home.tagline}
