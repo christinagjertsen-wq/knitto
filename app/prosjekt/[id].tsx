@@ -1300,12 +1300,29 @@ export default function ProsjektScreen() {
                   </Text>
                 </View>
                 <Pressable
+                  hitSlop={8}
+                  onPress={() => {
+                    const isPinned = project.primaryYarnStockId === alloc.yarnStockId;
+                    updateProject(id, { primaryYarnStockId: isPinned ? undefined : alloc.yarnStockId });
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  }}
+                >
+                  <Ionicons
+                    name={project.primaryYarnStockId === alloc.yarnStockId ? 'pin' : 'pin-outline'}
+                    size={18}
+                    color={project.primaryYarnStockId === alloc.yarnStockId ? colors.primaryBtn : colors.textTertiary}
+                  />
+                </Pressable>
+                <Pressable
                   onPress={() => {
                     Alert.alert(t.project.removeYarn, t.project.returnToStorage, [
                       { text: t.common.cancel, style: 'cancel' },
                       {
                         text: t.project.remove, style: 'destructive', onPress: () => {
                           removeYarnFromProject(id, alloc.yarnStockId);
+                          if (project.primaryYarnStockId === alloc.yarnStockId) {
+                            updateProject(id, { primaryYarnStockId: undefined });
+                          }
                           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
                         }
                       },

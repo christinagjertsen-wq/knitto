@@ -103,6 +103,14 @@ function SwipeableProjectCard({
       return { hex: yarn?.colorHex ?? '#ccc', name: yarn?.colorName ?? '' };
     }), [project.yarnAllocations, yarnStock]);
 
+  const primaryColor = useMemo(() => {
+    if (project.primaryYarnStockId) {
+      const yarn = yarnStock.find(y => y.id === project.primaryYarnStockId);
+      if (yarn) return yarn.colorHex;
+    }
+    return yarnColors[0]?.hex ?? null;
+  }, [project.primaryYarnStockId, yarnColors, yarnStock]);
+
   const projectNeedles = useMemo(() =>
     project.needleIds.map(id => needles.find(n => n.id === id)).filter(Boolean),
     [project.needleIds, needles]);
@@ -196,7 +204,7 @@ function SwipeableProjectCard({
             />
           )}
           <View style={styles.cardBody}>
-            <View style={[styles.colorCircle, { backgroundColor: yarnColors[0]?.hex ?? colors.border }]} />
+            <View style={[styles.colorCircle, { backgroundColor: primaryColor ?? colors.border }]} />
             <View style={styles.cardLeft}>
               <Text style={[styles.projectName, { color: colors.text, fontFamily: 'Inter_700Bold' }]} numberOfLines={1}>
                 {project.name}

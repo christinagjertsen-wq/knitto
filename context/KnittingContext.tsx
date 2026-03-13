@@ -57,6 +57,7 @@ export interface Project {
   progressPercent: number;
   yarnAllocations: YarnAllocation[];
   needleIds: string[];
+  primaryYarnStockId?: string;
 }
 
 export interface LogEntry {
