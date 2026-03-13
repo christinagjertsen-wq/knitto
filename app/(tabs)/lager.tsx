@@ -323,23 +323,12 @@ function AddNeedleModal({ visible, onClose }: { visible: boolean; onClose: () =>
             <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Merke (valgfritt)</Text>
             <TextInput
               style={[styles.input, { color: colors.text, backgroundColor: colors.background, fontFamily: 'Inter_400Regular' }]}
-              placeholder="F.eks. Addi, KnitPro..."
+              placeholder="ChiaoGoo, KnitPro, Addi..."
               placeholderTextColor={colors.textTertiary}
               value={brand}
               onChangeText={setBrand}
               autoCorrect={false}
             />
-            <View style={styles.pillRow}>
-              {NEEDLE_BRANDS.map(b => (
-                <Pressable key={b} onPress={() => setBrand(brand === b ? '' : b)}>
-                  <Text style={{
-                    fontSize: 14,
-                    fontFamily: brand === b ? 'Inter_600SemiBold' : 'Inter_400Regular',
-                    color: brand === b ? colors.primaryBtn : colors.textTertiary,
-                  }}>{b}</Text>
-                </Pressable>
-              ))}
-            </View>
 
             <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.storage.quantity}</Text>
             <TextInput
