@@ -73,7 +73,7 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
   };
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <Pressable style={styles.overlay} onPress={onClose}>
         <Pressable
           style={[styles.sheet, { backgroundColor: colors.surface, paddingBottom: Math.max(insets.bottom + 16, 32) }]}
@@ -90,7 +90,7 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
             {FREE_FEATURES.map((label, i) => (
               <View key={`free-${i}`} style={styles.featureRow}>
                 <View style={[styles.iconCircle, { backgroundColor: '#E8F5E9' }]}>
-                  <Ionicons name="checkmark" size={15} color="#4CAF50" />
+                  <Ionicons name="checkmark" size={15} color="#4CAF50" style={{ alignSelf: 'center' }} />
                 </View>
                 <Text style={[styles.featureText, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>{label}</Text>
               </View>
@@ -101,7 +101,7 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
             {LOCKED_FEATURES.map((label, i) => (
               <View key={`locked-${i}`} style={styles.featureRow}>
                 <View style={[styles.iconCircle, { backgroundColor: colors.background }]}>
-                  <Ionicons name="close" size={15} color={colors.textTertiary} />
+                  <Ionicons name="close" size={15} color={colors.textTertiary} style={{ alignSelf: 'center' }} />
                 </View>
                 <Text style={[styles.featureTextLocked, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{label}</Text>
               </View>
@@ -124,7 +124,7 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
                 </View>
               </View>
               <Text style={[styles.planPrice, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
-                12 × {YEARLY_MONTHLY_PRICE} kr/mnd
+                {YEARLY_MONTHLY_PRICE} kr / mnd
               </Text>
             </Pressable>
 
@@ -138,7 +138,7 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
             >
               <Text style={[styles.planTitle, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>Månedlig</Text>
               <Text style={[styles.planPrice, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
-                {MONTHLY_PRICE} kr/mnd
+                {MONTHLY_PRICE} kr / mnd
               </Text>
             </Pressable>
           </View>
@@ -157,7 +157,7 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
             ) : (
               <>
                 <Text style={[styles.btnText, { fontFamily: 'Inter_700Bold' }]}>
-                  Prøv Knitto+ gratis
+                  14 dager gratis, så prøv Knitto+
                 </Text>
                 <Text style={[styles.btnSub, { fontFamily: 'Inter_400Regular' }]}>
                   {selectedPlan === 'yearly'
