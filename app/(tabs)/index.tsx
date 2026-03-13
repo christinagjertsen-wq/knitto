@@ -490,7 +490,7 @@ export default function HomeScreen() {
             <View style={[styles.headerStatDivider, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(26,35,64,0.1)' }]} />
             <View style={styles.headerStat}>
               <Text style={[styles.headerStatNumber, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>
-                {Math.round(stats.totalGrams).toLocaleString('nb-NO')} g
+                {Math.round(stats.totalGrams).toLocaleString('nb-NO')}
               </Text>
               <Text style={[styles.headerStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
                 {t.home.statGrams}
