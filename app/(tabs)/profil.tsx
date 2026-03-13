@@ -302,8 +302,6 @@ export default function InnstillingerScreen() {
             </View>
           ))}
         </View>
-
-        <Text style={[styles.byline, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{t.settings.byline}</Text>
       </ScrollView>
 
       <Modal visible={showEditName} transparent animationType="fade" onRequestClose={() => setShowEditName(false)}>
