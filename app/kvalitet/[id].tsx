@@ -212,9 +212,6 @@ function YarnCard({ yarn, gramsPerSkein, onPress }: { yarn: YarnStock; gramsPerS
         <Text style={[styles.colorName, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
           {yarn.colorName}
         </Text>
-        <Text style={{ fontSize: 12, color: colors.textTertiary, fontFamily: 'Inter_400Regular', marginTop: 2 }}>
-          {yarn.skeins} {yarn.skeins === 1 ? 'nøste' : 'nøster'}
-        </Text>
       </View>
       <View style={styles.yarnCardRight}>
         <View style={[styles.gramBadge, { backgroundColor: colors.badgeBg }]}>
@@ -373,6 +370,7 @@ export default function KvalitetScreen() {
   const [showFiberEdit, setShowFiberEdit] = useState(false);
   const [fiberInput, setFiberInput] = useState('');
   const [selectedYarn, setSelectedYarn] = useState<YarnStock | null>(null);
+  const [sortBy, setSortBy] = useState<'navn' | 'gram'>('navn');
 
   const quality = getQualityById(id);
   const brand = quality ? getBrandById(quality.brandId) : undefined;
@@ -380,6 +378,15 @@ export default function KvalitetScreen() {
   const totalSkeins = yarnStock.reduce((s, y) => s + y.skeins, 0);
   const totalGrams = quality ? totalSkeins * quality.gramsPerSkein : 0;
   const totalMeters = quality ? totalSkeins * quality.metersPerSkein : 0;
+
+  const sortedYarnStock = useMemo(() => {
+    const gpsk = quality?.gramsPerSkein ?? 0;
+    return [...yarnStock].sort((a, b) =>
+      sortBy === 'navn'
+        ? a.colorName.localeCompare(b.colorName, 'nb')
+        : b.skeins * gpsk - a.skeins * gpsk
+    );
+  }, [yarnStock, sortBy, quality]);
 
   const topInset = Platform.OS === 'web' ? 67 : insets.top;
 
@@ -460,9 +467,26 @@ export default function KvalitetScreen() {
           </View>
         </View>
 
-        <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_600SemiBold', textAlign: 'center' }]}>
-          {yarnStock.length} {yarnStock.length === 1 ? t.project.colorSingular : t.project.colorPlural}
-        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 4, marginBottom: 4 }}>
+          <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_600SemiBold', marginTop: 0, marginBottom: 0 }]}>
+            {yarnStock.length} {yarnStock.length === 1 ? t.project.colorSingular : t.project.colorPlural}
+          </Text>
+          {yarnStock.length > 1 && (
+            <View style={{ flexDirection: 'row', gap: 6 }}>
+              {(['navn', 'gram'] as const).map(s => (
+                <Pressable
+                  key={s}
+                  onPress={() => { setSortBy(s); Haptics.selectionAsync(); }}
+                  style={[styles.sortPill, { backgroundColor: sortBy === s ? colors.primaryBtn : colors.surface, borderColor: sortBy === s ? colors.primaryBtn : colors.border }]}
+                >
+                  <Text style={{ fontSize: 12, color: sortBy === s ? '#fff' : colors.textSecondary, fontFamily: sortBy === s ? 'Inter_600SemiBold' : 'Inter_400Regular' }}>
+                    {s === 'navn' ? 'A–Z' : 'g ↓'}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          )}
+        </View>
 
         {yarnStock.length === 0 ? (
           <View style={styles.emptyState}>
@@ -472,7 +496,7 @@ export default function KvalitetScreen() {
             </Text>
           </View>
         ) : (
-          yarnStock.map(yarn => (
+          sortedYarnStock.map(yarn => (
             <YarnCard
               key={yarn.id}
               yarn={yarn}
@@ -602,6 +626,7 @@ const styles = StyleSheet.create({
   miniStatNum: { fontSize: 18 },
   miniStatLabel: { fontSize: 11, marginTop: 3 },
   sectionTitle: { fontSize: 16, marginTop: 4, marginBottom: 4 },
+  sortPill: { paddingHorizontal: 10, paddingVertical: 5, borderRadius: 20, borderWidth: 1 },
   yarnCard: {
     flexDirection: 'row',
     alignItems: 'center',
