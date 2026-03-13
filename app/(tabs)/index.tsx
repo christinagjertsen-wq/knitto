@@ -83,7 +83,7 @@ function AnimatedStatCard({ label, target }: { label: string; target: number }) 
 
 function AnimatedHeaderStat({ label, target }: { label: string; target: number }) {
   const colors = useColors();
-  const { value, start } = useCountUp(target, 700);
+  const { value, start } = useCountUp(target, 1400);
 
   useFocusEffect(
     React.useCallback(() => {
