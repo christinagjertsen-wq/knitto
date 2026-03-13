@@ -666,15 +666,15 @@ export default function KvalitetScreen() {
 
         <View style={styles.miniStatsRow}>
           <View style={[styles.miniStatCard, { backgroundColor: colors.surface }]}>
-            <Text style={[styles.miniStatNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{totalSkeins.toLocaleString('nb-NO')}</Text>
+            <Text style={[styles.miniStatNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{totalSkeins.toLocaleString('nb-NO').replace(',', '.')}</Text>
             <Text style={[styles.miniStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{t.quality.skeins}</Text>
           </View>
           <View style={[styles.miniStatCard, { backgroundColor: colors.surface }]}>
-            <Text style={[styles.miniStatNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{totalGrams.toLocaleString('nb-NO')}</Text>
+            <Text style={[styles.miniStatNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{totalGrams.toLocaleString('nb-NO').replace(',', '.')}</Text>
             <Text style={[styles.miniStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{t.home.statGrams}</Text>
           </View>
           <View style={[styles.miniStatCard, { backgroundColor: colors.surface }]}>
-            <Text style={[styles.miniStatNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{totalMeters.toLocaleString('nb-NO')}</Text>
+            <Text style={[styles.miniStatNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{totalMeters.toLocaleString('nb-NO').replace(',', '.')}</Text>
             <Text style={[styles.miniStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{t.home.statMeters}</Text>
           </View>
         </View>
