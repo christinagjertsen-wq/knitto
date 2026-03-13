@@ -1139,6 +1139,7 @@ export default function ProsjektScreen() {
         style={{ flex: 1 }}
         contentContainerStyle={[styles.listContent, { paddingBottom: Platform.OS === 'web' ? 34 : 20 }]}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
         <Pressable
           style={[styles.coverImageCard, { backgroundColor: colors.surface }]}
