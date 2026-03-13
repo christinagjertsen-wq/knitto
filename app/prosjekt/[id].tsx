@@ -964,10 +964,7 @@ function EditDetailsModal({
           >
             <View style={styles.modalHandle} />
             <View style={[styles.modalHeaderRow, { marginBottom: 16, justifyContent: 'center' }]}>
-              <Pressable onPress={onClose} hitSlop={8} style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}>
-                <Ionicons name="chevron-back" size={22} color={colors.text} />
-                <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.project.details}</Text>
-              </Pressable>
+              <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.project.details}</Text>
             </View>
             <Field label={t.project.to} value={recipient} onChangeText={setRecipient} placeholder={t.project.toPlaceholder} />
             <Field label={t.project.size} value={size} onChangeText={setSize} placeholder={t.project.sizePlaceholder} />
