@@ -232,6 +232,7 @@ type YarnCardProps = {
   yarn: YarnStock;
   gramsPerSkein: number;
   onPress: () => void;
+  onRename: () => void;
   isDragging: boolean;
   isDropTarget: boolean;
   isDimmed: boolean;
@@ -241,7 +242,7 @@ type YarnCardProps = {
   onDragEnd: (pageY: number) => void;
 };
 
-function YarnCard({ yarn, gramsPerSkein, onPress, isDragging, isDropTarget, isDimmed, cardRef, onDragStart, onDragMove, onDragEnd }: YarnCardProps) {
+function YarnCard({ yarn, gramsPerSkein, onPress, onRename, isDragging, isDropTarget, isDimmed, cardRef, onDragStart, onDragMove, onDragEnd }: YarnCardProps) {
   const colors = useColors();
   const totalGrams = yarn.skeins * gramsPerSkein;
   const isDraggingRef = useRef(false);
@@ -291,11 +292,15 @@ function YarnCard({ yarn, gramsPerSkein, onPress, isDragging, isDropTarget, isDi
       {...panResponder.panHandlers}
     >
       <View style={[styles.colorSwatch, { backgroundColor: yarn.colorHex }]} />
-      <View style={styles.yarnCardContent}>
+      <Pressable
+        style={styles.yarnCardContent}
+        onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); onRename(); }}
+        hitSlop={4}
+      >
         <Text style={[styles.colorName, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
           {yarn.colorName}
         </Text>
-      </View>
+      </Pressable>
       <View style={styles.yarnCardRight}>
         <View style={[styles.gramBadge, { backgroundColor: isDropTarget ? colors.primaryBtn : colors.badgeBg }]}>
           <Text style={[styles.gramBadgeText, { color: isDropTarget ? '#fff' : colors.badgeText, fontFamily: 'Inter_600SemiBold' }]}>
@@ -453,6 +458,8 @@ export default function KvalitetScreen() {
   const [showFiberEdit, setShowFiberEdit] = useState(false);
   const [fiberInput, setFiberInput] = useState('');
   const [selectedYarn, setSelectedYarn] = useState<YarnStock | null>(null);
+  const [renameYarn, setRenameYarn] = useState<YarnStock | null>(null);
+  const [renameInput, setRenameInput] = useState('');
   const [sortBy, setSortBy] = useState<'navn' | 'gram'>('navn');
   const [skeinEditField, setSkeinEditField] = useState<'grams' | 'meters' | null>(null);
   const [skeinEditInput, setSkeinEditInput] = useState('');
@@ -718,6 +725,7 @@ export default function KvalitetScreen() {
               yarn={yarn}
               gramsPerSkein={quality.gramsPerSkein}
               onPress={() => { setSelectedYarn(yarn); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
+              onRename={() => { setRenameYarn(yarn); setRenameInput(yarn.colorName); }}
               isDragging={draggingId === yarn.id}
               isDropTarget={dropTargetId === yarn.id}
               isDimmed={!!draggingId && draggingId !== yarn.id && dropTargetId !== yarn.id}
@@ -742,6 +750,51 @@ export default function KvalitetScreen() {
           onDelete={() => { deleteYarnStock(selectedYarn.id); setSelectedYarn(null); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); }}
         />
       )}
+
+      <Modal visible={!!renameYarn} transparent animationType="fade" onRequestClose={() => setRenameYarn(null)}>
+        <View style={styles.modalOverlay}>
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+            <View style={[styles.modalSheet, { backgroundColor: colors.surface, paddingBottom: Math.max(insets.bottom, 24) }]}>
+              <View style={styles.modalHandle} />
+              <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Endre navn på farge</Text>
+              <TextInput
+                style={[styles.modalInput, { color: colors.text, backgroundColor: colors.background, fontFamily: 'Inter_400Regular' }]}
+                placeholder="Fargenavn"
+                placeholderTextColor={colors.textTertiary}
+                value={renameInput}
+                onChangeText={setRenameInput}
+                autoFocus
+                autoCapitalize="words"
+                returnKeyType="done"
+                selectTextOnFocus
+                onSubmitEditing={() => {
+                  if (renameInput.trim() && renameYarn) {
+                    updateYarnStock(renameYarn.id, { colorName: renameInput.trim() });
+                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                  }
+                  setRenameYarn(null);
+                }}
+              />
+              <Pressable
+                style={[styles.modalBtn, { backgroundColor: colors.primaryBtn, opacity: renameInput.trim() ? 1 : 0.5 }]}
+                onPress={() => {
+                  if (renameInput.trim() && renameYarn) {
+                    updateYarnStock(renameYarn.id, { colorName: renameInput.trim() });
+                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                  }
+                  setRenameYarn(null);
+                }}
+                disabled={!renameInput.trim()}
+              >
+                <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Lagre</Text>
+              </Pressable>
+              <Pressable style={styles.cancelBtn} onPress={() => setRenameYarn(null)}>
+                <Text style={[styles.cancelBtnText, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>Avbryt</Text>
+              </Pressable>
+            </View>
+          </KeyboardAvoidingView>
+        </View>
+      </Modal>
 
       <Modal visible={showFiberEdit} transparent animationType="fade" onRequestClose={() => setShowFiberEdit(false)}>
         <View style={styles.modalOverlay}>
