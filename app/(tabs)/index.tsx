@@ -72,7 +72,7 @@ function AnimatedStatCard({ label, target }: { label: string; target: number }) 
   return (
     <View style={[styles.statCard, { backgroundColor: colors.surface }]}>
       <Text style={[styles.statValue, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>
-        {value.toLocaleString('nb-NO').replace(',', '.')}
+        {Math.round(value).toLocaleString('nb-NO').replace(',', '.')}
       </Text>
       <Text style={[styles.statLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
         {label}
