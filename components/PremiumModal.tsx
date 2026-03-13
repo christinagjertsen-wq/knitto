@@ -81,7 +81,7 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
         >
           <View style={[styles.handle, { backgroundColor: colors.border }]} />
 
-          <Text style={[styles.title, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Knitto+</Text>
+          <Text style={[styles.title, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Prøv Knitto+ gratis</Text>
           <Text style={[styles.sub, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
             Lås opp alt og strikk uten grenser
           </Text>
