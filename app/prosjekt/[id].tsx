@@ -311,7 +311,7 @@ function AddYarnModal({
                   </Text>
                 </View>
               ) : (
-                <>
+                <><View style={{ gap: 6 }}>
                   {availableYarn.map(yarn => (
                     <Pressable
                       key={yarn.id}
@@ -336,6 +336,7 @@ function AddYarnModal({
                       {selected === yarn.id && <Ionicons name="checkmark-circle" size={20} color={colors.primaryBtn} />}
                     </Pressable>
                   ))}
+                  </View>
                   {selected && (
                     <View>
                       <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>
@@ -1857,7 +1858,6 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 12,
     borderWidth: 1.5,
-    marginBottom: 8,
   },
   yarnOptionDot: { width: 32, height: 32, borderRadius: 16 },
   yarnOptionName: { fontSize: 14 },
