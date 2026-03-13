@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
   View,
@@ -11,8 +11,6 @@ import {
   Modal,
   KeyboardAvoidingView,
   Alert,
-  Animated,
-  PanResponder,
 } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { GlassView, isLiquidGlassAvailable } from 'expo-glass-effect';
@@ -72,104 +70,177 @@ function BrandCard({ brand }: { brand: Brand }) {
   );
 }
 
-const SWIPE_THRESHOLD = 80;
-
-function NeedleCard({ needle, onDelete, onQuantityChange }: { needle: Needle; onDelete: () => void; onQuantityChange: (q: number) => void }) {
+function NeedleCard({ needle, onDelete, onEdit }: { needle: Needle; onDelete: () => void; onEdit: () => void }) {
   const colors = useColors();
   const t = useT();
-  const translateX = useRef(new Animated.Value(0)).current;
-  const swiping = useRef(false);
-  const [editing, setEditing] = useState(false);
-  const [qInput, setQInput] = useState(String(needle.quantity));
 
-  const snapBack = () => {
-    Animated.spring(translateX, { toValue: 0, useNativeDriver: true, tension: 120, friction: 10 }).start();
-  };
-
-  const panResponder = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dx) > 10 && Math.abs(g.dy) < 15,
-      onPanResponderGrant: () => { swiping.current = true; },
-      onPanResponderMove: (_, g) => {
-        translateX.setValue(Math.min(0, g.dx));
-      },
-      onPanResponderRelease: (_, g) => {
-        swiping.current = false;
-        if (g.dx < -SWIPE_THRESHOLD) {
-          Animated.timing(translateX, { toValue: -400, duration: 200, useNativeDriver: true }).start(() => {
-            translateX.setValue(0);
-            onDelete();
-          });
-        } else {
-          snapBack();
-        }
-      },
-      onPanResponderTerminate: () => { swiping.current = false; snapBack(); },
-    })
-  ).current;
-
-  const commitEdit = () => {
-    const v = parseInt(qInput, 10);
-    if (!isNaN(v) && v >= 0) {
-      if (v === 0) {
-        Alert.alert(t.alerts.deleteNeedle, 'Sett antall til 0 sletter pinnen. Fortsette?', [
-          { text: t.common.cancel, style: 'cancel', onPress: () => { setQInput(String(needle.quantity)); setEditing(false); } },
-          { text: t.common.delete, style: 'destructive', onPress: () => { setEditing(false); onDelete(); } },
-        ]);
-      } else {
-        onQuantityChange(v);
-        setEditing(false);
-      }
-    } else {
-      setQInput(String(needle.quantity));
-      setEditing(false);
-    }
+  const confirmDelete = () => {
+    Alert.alert(t.alerts.deleteNeedle, t.alerts.deleteNeedleConfirm ?? 'Vil du slette denne pinnen?', [
+      { text: t.common.cancel, style: 'cancel' },
+      { text: t.common.delete, style: 'destructive', onPress: () => { onDelete(); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); } },
+    ]);
   };
 
   return (
-    <View style={styles.swipeNeedleContainer}>
-      <View style={[styles.needleDeleteBg, { backgroundColor: '#C97B84' }]}>
-        <Ionicons name="trash-outline" size={22} color="#fff" />
+    <View style={[styles.needleCard, { backgroundColor: colors.surface }]}>
+      <View style={[styles.needleSize, { backgroundColor: colors.badgeBg }]}>
+        <Text style={[styles.needleSizeText, { color: colors.badgeText, fontFamily: 'Inter_700Bold' }]}>{needle.size.replace(',', '.')}</Text>
+        <Text style={[styles.needleSizeUnit, { color: colors.badgeText, fontFamily: 'Inter_400Regular' }]}>mm</Text>
       </View>
-      <Animated.View style={{ transform: [{ translateX }] }} {...panResponder.panHandlers}>
-        <View style={[styles.needleCard, { backgroundColor: colors.surface }]}>
-          <View style={[styles.needleSize, { backgroundColor: colors.badgeBg }]}>
-            <Text style={[styles.needleSizeText, { color: colors.badgeText, fontFamily: 'Inter_700Bold' }]}>{needle.size.replace(',', '.')}</Text>
-            <Text style={[styles.needleSizeUnit, { color: colors.badgeText, fontFamily: 'Inter_400Regular' }]}>mm</Text>
-          </View>
-          <View style={styles.needleInfo}>
-            <Text style={[styles.needleType, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
-              {t.needleTypes[needle.type]}
-            </Text>
-            <Text style={[styles.needleMeta, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-              {[needle.brand, `${needle.lengthCm} cm`, t.needleMaterials[needle.material]].filter(Boolean).join(' · ')}
-            </Text>
-          </View>
-          <Pressable
-            style={[styles.quantityBadge, { backgroundColor: colors.surface }]}
-            onPress={() => { setQInput(String(needle.quantity)); setEditing(true); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
-          >
-            {editing ? (
-              <TextInput
-                style={[styles.quantityInput, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}
-                value={qInput}
-                onChangeText={setQInput}
-                keyboardType="number-pad"
-                autoFocus
-                selectTextOnFocus
-                onBlur={commitEdit}
-                onSubmitEditing={commitEdit}
-                returnKeyType="done"
-              />
-            ) : (
-              <Text style={[styles.quantityText, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
-                {needle.quantity}
-              </Text>
-            )}
-          </Pressable>
-        </View>
-      </Animated.View>
+      <View style={styles.needleInfo}>
+        <Text style={[styles.needleType, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
+          {t.needleTypes[needle.type]}
+        </Text>
+        <Text style={[styles.needleMeta, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
+          {[needle.brand, `${needle.lengthCm} cm`, t.needleMaterials[needle.material]].filter(Boolean).join(' · ')}
+        </Text>
+      </View>
+      <View style={styles.needleQtyBadge}>
+        <Text style={[styles.quantityText, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>{needle.quantity}</Text>
+      </View>
+      <Pressable
+        onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); onEdit(); }}
+        hitSlop={8}
+        style={styles.needleIconBtn}
+      >
+        <Ionicons name="pencil-outline" size={18} color={colors.textSecondary} />
+      </Pressable>
+      <Pressable
+        onPress={confirmDelete}
+        hitSlop={8}
+        style={styles.needleIconBtn}
+      >
+        <Ionicons name="trash-outline" size={18} color="#C97B84" />
+      </Pressable>
     </View>
+  );
+}
+
+function EditNeedleModal({ needle, visible, onClose }: { needle: Needle | null; visible: boolean; onClose: () => void }) {
+  const colors = useColors();
+  const t = useT();
+  const [size, setSize] = useState('');
+  const [type, setType] = useState<NeedleType>('rundpinne');
+  const [length, setLength] = useState('');
+  const [material, setMaterial] = useState<NeedleMaterial>('metall');
+  const [quantity, setQuantity] = useState('1');
+  const [brand, setBrand] = useState('');
+  const { updateNeedle } = useKnitting();
+
+  React.useEffect(() => {
+    if (needle) {
+      setSize(needle.size);
+      setType(needle.type);
+      setLength(String(needle.lengthCm));
+      setMaterial(needle.material);
+      setQuantity(String(needle.quantity));
+      setBrand(needle.brand ?? '');
+    }
+  }, [needle]);
+
+  const handleSave = useCallback(() => {
+    if (!needle || !size.trim() || !length.trim()) return;
+    updateNeedle(needle.id, {
+      size: size.trim().replace(',', '.'),
+      type,
+      lengthCm: parseFloat(length) || 60,
+      material,
+      quantity: parseInt(quantity) || 1,
+      brand: brand.trim() || undefined,
+    });
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    onClose();
+  }, [needle, size, type, length, material, quantity, brand, updateNeedle, onClose]);
+
+  const OptionPill = ({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }) => (
+    <Pressable
+      onPress={onPress}
+      style={[styles.optionPill, { backgroundColor: selected ? colors.primaryBtn : colors.background, borderColor: selected ? colors.primaryBtn : colors.border }]}
+    >
+      <Text style={[styles.optionPillText, { color: selected ? '#fff' : colors.textSecondary, fontFamily: selected ? 'Inter_600SemiBold' : 'Inter_400Regular' }]}>
+        {label}
+      </Text>
+    </Pressable>
+  );
+
+  return (
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+      <View style={styles.modalOverlay}>
+        <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+          <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end' }} keyboardShouldPersistTaps="handled">
+            <View style={[styles.modalSheet, { backgroundColor: colors.surface }]}>
+              <View style={styles.modalHandle} />
+              <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.storage.editNeedle ?? 'Rediger pinne'}</Text>
+
+              <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.storage.sizeMm}</Text>
+              <TextInput
+                style={[styles.input, { color: colors.text, backgroundColor: colors.background, fontFamily: 'Inter_400Regular' }]}
+                placeholder={t.storage.sizePlaceholder}
+                placeholderTextColor={colors.textTertiary}
+                value={size}
+                onChangeText={setSize}
+                keyboardType="decimal-pad"
+              />
+
+              <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.storage.type}</Text>
+              <View style={styles.pillRow}>
+                {(['rundpinne', 'strømpepinner', 'utskiftbar'] as NeedleType[]).map(ntype => (
+                  <OptionPill key={ntype} label={t.needleTypes[ntype]} selected={type === ntype} onPress={() => setType(ntype)} />
+                ))}
+              </View>
+
+              <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.storage.lengthCm}</Text>
+              <TextInput
+                style={[styles.input, { color: colors.text, backgroundColor: colors.background, fontFamily: 'Inter_400Regular' }]}
+                placeholder={t.storage.lengthPlaceholder}
+                placeholderTextColor={colors.textTertiary}
+                value={length}
+                onChangeText={setLength}
+                keyboardType="numeric"
+              />
+
+              <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.storage.material}</Text>
+              <View style={styles.pillRow}>
+                {(['metall', 'tre', 'plast', 'bambus'] as NeedleMaterial[]).map(nmat => (
+                  <OptionPill key={nmat} label={t.needleMaterials[nmat]} selected={material === nmat} onPress={() => setMaterial(nmat)} />
+                ))}
+              </View>
+
+              <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Merke (valgfritt)</Text>
+              <TextInput
+                style={[styles.input, { color: colors.text, backgroundColor: colors.background, fontFamily: 'Inter_400Regular' }]}
+                placeholder="ChiaoGoo, KnitPro, Addi..."
+                placeholderTextColor={colors.textTertiary}
+                value={brand}
+                onChangeText={setBrand}
+                autoCorrect={false}
+              />
+
+              <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.storage.quantity}</Text>
+              <TextInput
+                style={[styles.input, { color: colors.text, backgroundColor: colors.background, fontFamily: 'Inter_400Regular' }]}
+                placeholder="1"
+                placeholderTextColor={colors.textTertiary}
+                value={quantity}
+                onChangeText={setQuantity}
+                keyboardType="numeric"
+              />
+
+              <Pressable
+                style={({ pressed }) => [styles.modalBtn, { backgroundColor: colors.primaryBtn, opacity: pressed ? 0.85 : 1 }]}
+                onPress={handleSave}
+              >
+                <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>{t.common.save}</Text>
+              </Pressable>
+              <Pressable style={styles.cancelBtn} onPress={onClose}>
+                <Text style={[styles.cancelBtnText, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>{t.common.cancel}</Text>
+              </Pressable>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </View>
+    </Modal>
   );
 }
 
@@ -366,6 +437,7 @@ export default function LagerScreen() {
   const [search, setSearch] = useState('');
   const [showAddBrand, setShowAddBrand] = useState(false);
   const [showAddNeedle, setShowAddNeedle] = useState(false);
+  const [editingNeedle, setEditingNeedle] = useState<Needle | null>(null);
   const { brands, needles, deleteNeedle, updateNeedle, getQualitiesForBrand, getYarnStockForQuality, getTotalStats, yarnStock, qualities, deleteYarnStock } = useKnitting();
 
   const stats = getTotalStats();
@@ -611,14 +683,8 @@ export default function LagerScreen() {
                     <NeedleCard
                       key={needle.id}
                       needle={needle}
-                      onDelete={() => {
-                        deleteNeedle(needle.id);
-                        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                      }}
-                      onQuantityChange={(q) => {
-                        updateNeedle(needle.id, { quantity: q });
-                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                      }}
+                      onDelete={() => deleteNeedle(needle.id)}
+                      onEdit={() => setEditingNeedle(needle)}
                     />
                   ))}
                 </View>
@@ -630,6 +696,7 @@ export default function LagerScreen() {
 
       <AddBrandModal visible={showAddBrand} onClose={() => setShowAddBrand(false)} />
       <AddNeedleModal visible={showAddNeedle} onClose={() => setShowAddNeedle(false)} />
+      <EditNeedleModal needle={editingNeedle} visible={editingNeedle !== null} onClose={() => setEditingNeedle(null)} />
 
       <Pressable
         style={[styles.fab, { backgroundColor: colors.primaryBtn, bottom: bottomInset + 66 }]}
@@ -775,31 +842,17 @@ const styles = StyleSheet.create({
   needleInfo: { flex: 1 },
   needleType: { fontSize: 15, marginBottom: 3 },
   needleMeta: { fontSize: 13 },
-  needleRight: { alignItems: 'center', gap: 8 },
-  swipeNeedleContainer: {
-    borderRadius: 16,
-    overflow: 'hidden',
-    position: 'relative',
-  },
-  needleDeleteBg: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    right: 0,
-    width: 80,
-    borderRadius: 16,
+  needleQtyBadge: {
+    minWidth: 28,
     alignItems: 'center',
-    justifyContent: 'center',
-  },
-  quantityBadge: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   quantityText: { fontSize: 16 },
-  quantityInput: { fontSize: 16, textAlign: 'center', minWidth: 30 },
+  needleIconBtn: {
+    width: 32,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   emptyState: { alignItems: 'center', paddingVertical: 60, gap: 12 },
   emptyText: { fontSize: 16 },
   emptyBtn: { paddingHorizontal: 20, paddingVertical: 12, borderRadius: 12, marginTop: 4 },
