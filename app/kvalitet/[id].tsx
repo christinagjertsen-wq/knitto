@@ -144,8 +144,22 @@ function ColorDetailModal({
 }) {
   const colors = useColors();
   const t = useT();
-  const [skeinCount, setSkeinCount] = useState(1);
+  const [skeinCount, setSkeinCount] = useState(0);
   const [gramInput, setGramInput] = useState('');
+
+  useEffect(() => {
+    if (visible) {
+      if (gramsPerSkein > 0) {
+        const whole = Math.floor(yarn.skeins);
+        const remainder = Math.round((yarn.skeins - whole) * gramsPerSkein);
+        setSkeinCount(whole);
+        setGramInput(remainder > 0 ? String(remainder) : '');
+      } else {
+        setSkeinCount(Math.round(yarn.skeins));
+        setGramInput('');
+      }
+    }
+  }, [visible, yarn]);
 
   const reset = () => { setSkeinCount(1); setGramInput(''); };
   const handleClose = () => { reset(); onClose(); };
@@ -177,7 +191,7 @@ function ColorDetailModal({
               <SkeinCounter value={skeinCount} onChange={setSkeinCount} />
 
               <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium', marginBottom: 8, marginTop: 14 }]}>
-                Legg til gram (rest)
+                Gram (rest)
               </Text>
               <TextInput
                 style={[styles.modalInput, { color: colors.text, backgroundColor: colors.background, fontFamily: 'Inter_400Regular', textAlign: 'center', fontSize: 20 }]}
@@ -201,7 +215,7 @@ function ColorDetailModal({
                 disabled={totalToAdd <= 0}
               >
                 <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>
-                  Legg til {totalToAdd > 0 ? `${Math.round(totalToAdd * 10) / 10} g` : ''}
+                  Lagre {totalToAdd > 0 ? `${Math.round(totalToAdd * 10) / 10} g` : ''}
                 </Text>
               </Pressable>
 
@@ -787,7 +801,7 @@ export default function KvalitetScreen() {
           gramsPerSkein={quality.gramsPerSkein}
           visible={!!selectedYarn}
           onClose={() => setSelectedYarn(null)}
-          onAdd={(grams) => updateYarnStock(selectedYarn.id, { skeins: selectedYarn.skeins + (quality.gramsPerSkein > 0 ? grams / quality.gramsPerSkein : 0) })}
+          onAdd={(grams) => updateYarnStock(selectedYarn.id, { skeins: quality.gramsPerSkein > 0 ? grams / quality.gramsPerSkein : grams })}
           onDelete={() => { deleteYarnStock(selectedYarn.id); setSelectedYarn(null); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); }}
         />
       )}
