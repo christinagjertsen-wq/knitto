@@ -33,6 +33,7 @@ export interface Needle {
   lengthCm: number;
   material: NeedleMaterial;
   quantity: number;
+  brand?: string;
 }
 
 export interface YarnAllocation {

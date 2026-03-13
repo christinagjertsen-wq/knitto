@@ -142,7 +142,7 @@ function NeedleCard({ needle, onDelete, onQuantityChange }: { needle: Needle; on
               {t.needleTypes[needle.type]}
             </Text>
             <Text style={[styles.needleMeta, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-              {needle.lengthCm} cm · {t.needleMaterials[needle.material]}
+              {[needle.brand, `${needle.lengthCm} cm`, t.needleMaterials[needle.material]].filter(Boolean).join(' · ')}
             </Text>
           </View>
           <Pressable
@@ -231,7 +231,10 @@ function AddNeedleModal({ visible, onClose }: { visible: boolean; onClose: () =>
   const [length, setLength] = useState('');
   const [material, setMaterial] = useState<NeedleMaterial>('metall');
   const [quantity, setQuantity] = useState('1');
+  const [brand, setBrand] = useState('');
   const { addNeedle } = useKnitting();
+
+  const NEEDLE_BRANDS = ['Addi', 'KnitPro', 'Chiaogoo', 'Drops', 'Pony'];
 
   const handleAdd = useCallback(() => {
     if (!size.trim() || !length.trim()) return;
@@ -241,11 +244,12 @@ function AddNeedleModal({ visible, onClose }: { visible: boolean; onClose: () =>
       lengthCm: parseFloat(length) || 60,
       material,
       quantity: parseInt(quantity) || 1,
+      brand: brand.trim() || undefined,
     });
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    setSize(''); setLength(''); setQuantity('1');
+    setSize(''); setLength(''); setQuantity('1'); setBrand('');
     onClose();
-  }, [size, type, length, material, quantity, addNeedle, onClose]);
+  }, [size, type, length, material, quantity, brand, addNeedle, onClose]);
 
   const OptionPill = ({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }) => (
     <Pressable
@@ -316,6 +320,26 @@ function AddNeedleModal({ visible, onClose }: { visible: boolean; onClose: () =>
               ))}
             </View>
 
+            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>Merke (valgfritt)</Text>
+            <TextInput
+              style={[styles.input, { color: colors.text, backgroundColor: colors.background, fontFamily: 'Inter_400Regular' }]}
+              placeholder="F.eks. Addi, KnitPro..."
+              placeholderTextColor={colors.textTertiary}
+              value={brand}
+              onChangeText={setBrand}
+              autoCorrect={false}
+            />
+            <View style={[styles.pillRow, { marginTop: -4, marginBottom: 12 }]}>
+              {NEEDLE_BRANDS.map(b => (
+                <OptionPill
+                  key={b}
+                  label={b}
+                  selected={brand === b}
+                  onPress={() => setBrand(brand === b ? '' : b)}
+                />
+              ))}
+            </View>
+
             <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.storage.quantity}</Text>
             <TextInput
               style={[styles.input, { color: colors.text, backgroundColor: colors.background, fontFamily: 'Inter_400Regular' }]}
@@ -363,12 +387,24 @@ export default function LagerScreen() {
     [brands, search]
   );
 
-  const sortedNeedles = useMemo(() => {
+  const groupedNeedles = useMemo(() => {
     const q = search.toLowerCase();
-    return [...needles]
-      .sort((a, b) => parseFloat(a.size) - parseFloat(b.size))
-      .filter(n => !q || n.size.includes(q) || t.needleTypes[n.type].toLowerCase().includes(q) || t.needleMaterials[n.material].toLowerCase().includes(q));
-  }, [needles, search]);
+    const filtered = [...needles]
+      .filter(n => !q || n.size.includes(q) || t.needleTypes[n.type].toLowerCase().includes(q) || t.needleMaterials[n.material].toLowerCase().includes(q) || (n.brand ?? '').toLowerCase().includes(q))
+      .sort((a, b) => parseFloat(a.size) - parseFloat(b.size));
+    const brandMap = new Map<string, Needle[]>();
+    for (const needle of filtered) {
+      const key = needle.brand?.trim() || '';
+      if (!brandMap.has(key)) brandMap.set(key, []);
+      brandMap.get(key)!.push(needle);
+    }
+    const sortedKeys = [...brandMap.keys()].sort((a, b) => {
+      if (!a) return 1;
+      if (!b) return -1;
+      return a.localeCompare(b, 'nb');
+    });
+    return sortedKeys.map(brand => ({ brand, items: brandMap.get(brand)! }));
+  }, [needles, search, t]);
 
   const orphanedYarn = useMemo(() => {
     const qualityIds = new Set(qualities.map(q => q.id));
@@ -560,7 +596,7 @@ export default function LagerScreen() {
 
         {activeTab === 'pinner' && (
           <>
-            {sortedNeedles.length === 0 ? (
+            {groupedNeedles.length === 0 ? (
               <View style={styles.emptyState}>
                 <Ionicons name="construct-outline" size={40} color={colors.textTertiary} />
                 <Text style={[styles.emptyText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
@@ -576,19 +612,26 @@ export default function LagerScreen() {
                 )}
               </View>
             ) : (
-              sortedNeedles.map(needle => (
-                <NeedleCard
-                  key={needle.id}
-                  needle={needle}
-                  onDelete={() => {
-                    deleteNeedle(needle.id);
-                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                  }}
-                  onQuantityChange={(q) => {
-                    updateNeedle(needle.id, { quantity: q });
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  }}
-                />
+              groupedNeedles.map(({ brand, items }) => (
+                <View key={brand || '__ingen__'}>
+                  <Text style={[styles.sectionHeader, { color: colors.textTertiary, fontFamily: 'Inter_600SemiBold' }]}>
+                    {brand || 'Uten merke'}
+                  </Text>
+                  {items.map(needle => (
+                    <NeedleCard
+                      key={needle.id}
+                      needle={needle}
+                      onDelete={() => {
+                        deleteNeedle(needle.id);
+                        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                      }}
+                      onQuantityChange={(q) => {
+                        updateNeedle(needle.id, { quantity: q });
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      }}
+                    />
+                  ))}
+                </View>
               ))
             )}
           </>
@@ -710,6 +753,14 @@ const styles = StyleSheet.create({
   brandMeta: { fontSize: 13, marginBottom: 4 },
   colorStrip: { flexDirection: 'row' },
   colorDot: { width: 14, height: 14, borderRadius: 7, borderWidth: 1, borderColor: 'rgba(255,255,255,0.6)' },
+  sectionHeader: {
+    fontSize: 11,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
+    marginTop: 16,
+    marginBottom: 6,
+    marginHorizontal: 4,
+  },
   needleCard: {
     flexDirection: 'row',
     alignItems: 'center',
