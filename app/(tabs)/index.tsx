@@ -124,13 +124,17 @@ function ProjectRow({ project }: { project: Project }) {
   const t = useT();
   const { yarnStock } = useKnitting();
 
-  const yarnColors = useMemo(() =>
-    project.yarnAllocations.slice(0, 3).map(alloc => {
+  const yarnColors = useMemo(() => {
+    const sorted = [...project.yarnAllocations].sort((a, b) => {
+      if (a.yarnStockId === project.primaryYarnStockId) return -1;
+      if (b.yarnStockId === project.primaryYarnStockId) return 1;
+      return 0;
+    });
+    return sorted.slice(0, 3).map(alloc => {
       const yarn = yarnStock.find(y => y.id === alloc.yarnStockId);
       return yarn?.colorHex ?? '#ccc';
-    }),
-    [project.yarnAllocations, yarnStock]
-  );
+    });
+  }, [project.yarnAllocations, project.primaryYarnStockId, yarnStock]);
 
   return (
     <Pressable
