@@ -187,9 +187,6 @@ export default function InnstillingerScreen() {
           ))}
         </View>
 
-        <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.tools.yarnUsed}</Text>
-        <YarnStats />
-
         <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.premium.sectionTitle}</Text>
         <View style={[styles.premiumCard, { backgroundColor: colors.surface }]}>
           <Text style={[styles.premiumTitle, { color: colors.text, fontFamily: 'Inter_700Bold', textAlign: 'center' }]}>Prøv Knitto+ gratis</Text>
