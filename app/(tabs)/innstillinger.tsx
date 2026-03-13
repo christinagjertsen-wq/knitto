@@ -235,7 +235,7 @@ function OkeFelleKalkulator() {
       {result && (
         <View style={[styles.resultBox, { backgroundColor: (result.isØke ? colors.primaryBtn : '#C97B84') + '18' }]}>
           <Text style={[styles.resultLine, { color: result.isØke ? colors.primaryBtn : '#C97B84', fontFamily: 'Inter_700Bold' }]}>
-            {result.isØke ? t.tools.increase : t.tools.decrease} {result.changes} masker
+            {result.isØke ? t.tools.increase : t.tools.decrease} {result.changes} {t.tools.stitchesLabel}
           </Text>
           <Text style={[styles.resultSub, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
             {t.tools.incOneStitch.replace('%s', String(result.spacing))}
