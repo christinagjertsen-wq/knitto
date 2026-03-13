@@ -103,7 +103,9 @@ function NeedleCard({ needle, onDelete, onEdit }: { needle: Needle; onDelete: ()
         hitSlop={8}
         style={styles.needleIconBtn}
       >
-        <Ionicons name="pencil-outline" size={18} color={colors.textSecondary} />
+        <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: colors.border, alignItems: 'center', justifyContent: 'center' }}>
+          <Ionicons name="pencil" size={11} color={colors.textTertiary} />
+        </View>
       </Pressable>
       <Pressable
         onPress={confirmDelete}
