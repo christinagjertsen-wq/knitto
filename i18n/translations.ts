@@ -5,7 +5,7 @@ const no = {
     home: 'Hjem',
     projects: 'Prosjekter',
     storage: 'Lager',
-    settings: 'Innstillinger',
+    settings: 'Verktøy',
   },
   status: {
     planlagt: 'Planlagt',
@@ -349,7 +349,7 @@ const en: typeof no = {
     home: 'Home',
     projects: 'Projects',
     storage: 'Stash',
-    settings: 'Settings',
+    settings: 'Tools',
   },
   status: {
     planlagt: 'Planned',

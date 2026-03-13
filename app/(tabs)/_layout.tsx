@@ -97,7 +97,7 @@ function ClassicTabLayout() {
         name="innstillinger"
         options={{
           title: t.nav.settings,
-          tabBarIcon: ({ color, size }) => <Ionicons name="person-circle-outline" size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => <Ionicons name="construct-outline" size={size} color={color} />,
         }}
       />
       <Tabs.Screen name="profil" options={{ href: null }} />
