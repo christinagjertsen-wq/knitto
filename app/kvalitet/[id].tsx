@@ -949,7 +949,7 @@ const styles = StyleSheet.create({
   yarnCardRight: { paddingRight: 14, alignItems: 'center' },
   gramBadge: { paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10 },
   gramBadgeText: { fontSize: 14 },
-  counter: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  counter: { flexDirection: 'row', alignItems: 'center', gap: 12, justifyContent: 'center' },
   counterBtn: { width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
   counterValue: { fontSize: 18, minWidth: 28, textAlign: 'center' },
   emptyState: { alignItems: 'center', paddingVertical: 60, gap: 12 },
