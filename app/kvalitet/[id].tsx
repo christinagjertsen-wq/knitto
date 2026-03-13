@@ -319,14 +319,14 @@ function AddYarnModal({ qualityId, visible, onClose, onPaywall }: { qualityId: s
 
   const handleAdd = useCallback(() => {
     if (!colorName.trim()) return;
-    if (!isSubscribed && yarnStock.length >= 5) {
+    const duplicate = yarnStock.find(
+      y => y.qualityId === qualityId && y.colorName.trim().toLowerCase() === colorName.trim().toLowerCase()
+    );
+    if (!duplicate && !isSubscribed && yarnStock.length >= 5) {
       onClose();
       onPaywall();
       return;
     }
-    const duplicate = yarnStock.find(
-      y => y.qualityId === qualityId && y.colorName.trim().toLowerCase() === colorName.trim().toLowerCase()
-    );
     if (duplicate) {
       Alert.alert(
         'Fargen finnes allerede',
