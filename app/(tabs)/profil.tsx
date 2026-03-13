@@ -207,15 +207,27 @@ export default function InnstillingerScreen() {
             <View style={[styles.premiumDivider, { backgroundColor: colors.border }]} />
             {LOCKED_FEATURES.map((label, i) => (
               <View key={`locked-${i}`} style={styles.premiumFeatureRow}>
-                <View style={[styles.premiumFeatureIcon, { backgroundColor: colors.background }]}>
-                  <Ionicons name="close" size={15} color={colors.textTertiary} style={{ alignSelf: 'center' }} />
+                <View style={[styles.premiumFeatureIcon, { backgroundColor: selectedPlan === 'yearly' ? '#E8F5E9' : colors.background }]}>
+                  <Ionicons
+                    name={selectedPlan === 'yearly' ? 'checkmark' : 'close'}
+                    size={15}
+                    color={selectedPlan === 'yearly' ? '#4CAF50' : colors.textTertiary}
+                    style={{ alignSelf: 'center' }}
+                  />
                 </View>
-                <Text style={[styles.premiumFeatureText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{label}</Text>
+                <Text style={[styles.premiumFeatureText, { color: selectedPlan === 'yearly' ? colors.text : colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{label}</Text>
               </View>
             ))}
           </View>
 
           <View style={styles.premiumPlanRow}>
+            <Pressable
+              style={[styles.premiumPlanCard, { borderColor: selectedPlan === 'monthly' ? '#5B7FBF' : colors.border, backgroundColor: colors.background }, selectedPlan === 'monthly' && { borderWidth: 2 }]}
+              onPress={() => { setSelectedPlan('monthly'); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
+            >
+              <Text style={[{ fontSize: 14, color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>Månedlig</Text>
+              <Text style={{ fontSize: 12, color: colors.textTertiary, fontFamily: 'Inter_400Regular' }}>{MONTHLY_PRICE} kr / mnd</Text>
+            </Pressable>
             <Pressable
               style={[styles.premiumPlanCard, { borderColor: selectedPlan === 'yearly' ? '#5B7FBF' : colors.border, backgroundColor: colors.background }, selectedPlan === 'yearly' && { borderWidth: 2 }]}
               onPress={() => { setSelectedPlan('yearly'); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
@@ -227,13 +239,6 @@ export default function InnstillingerScreen() {
                 </View>
               </View>
               <Text style={{ fontSize: 12, color: colors.textTertiary, fontFamily: 'Inter_400Regular' }}>{YEARLY_MONTHLY_PRICE} kr / mnd</Text>
-            </Pressable>
-            <Pressable
-              style={[styles.premiumPlanCard, { borderColor: selectedPlan === 'monthly' ? '#5B7FBF' : colors.border, backgroundColor: colors.background }, selectedPlan === 'monthly' && { borderWidth: 2 }]}
-              onPress={() => { setSelectedPlan('monthly'); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
-            >
-              <Text style={[{ fontSize: 14, color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>Månedlig</Text>
-              <Text style={{ fontSize: 12, color: colors.textTertiary, fontFamily: 'Inter_400Regular' }}>{MONTHLY_PRICE} kr / mnd</Text>
             </Pressable>
           </View>
 

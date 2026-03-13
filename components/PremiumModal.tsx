@@ -100,15 +100,34 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
 
             {LOCKED_FEATURES.map((label, i) => (
               <View key={`locked-${i}`} style={styles.featureRow}>
-                <View style={[styles.iconCircle, { backgroundColor: colors.background }]}>
-                  <Ionicons name="close" size={15} color={colors.textTertiary} style={{ alignSelf: 'center' }} />
+                <View style={[styles.iconCircle, { backgroundColor: selectedPlan === 'yearly' ? '#E8F5E9' : colors.background }]}>
+                  <Ionicons
+                    name={selectedPlan === 'yearly' ? 'checkmark' : 'close'}
+                    size={15}
+                    color={selectedPlan === 'yearly' ? '#4CAF50' : colors.textTertiary}
+                    style={{ alignSelf: 'center' }}
+                  />
                 </View>
-                <Text style={[styles.featureTextLocked, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{label}</Text>
+                <Text style={[styles.featureTextLocked, { color: selectedPlan === 'yearly' ? colors.text : colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{label}</Text>
               </View>
             ))}
           </View>
 
           <View style={styles.planRow}>
+            <Pressable
+              style={[
+                styles.planCard,
+                { borderColor: selectedPlan === 'monthly' ? '#5B7FBF' : colors.border, backgroundColor: colors.background },
+                selectedPlan === 'monthly' && styles.planCardActive,
+              ]}
+              onPress={() => setSelectedPlan('monthly')}
+            >
+              <Text style={[styles.planTitle, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>Månedlig</Text>
+              <Text style={[styles.planPrice, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
+                {MONTHLY_PRICE} kr / mnd
+              </Text>
+            </Pressable>
+
             <Pressable
               style={[
                 styles.planCard,
@@ -125,20 +144,6 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
               </View>
               <Text style={[styles.planPrice, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
                 {YEARLY_MONTHLY_PRICE} kr / mnd
-              </Text>
-            </Pressable>
-
-            <Pressable
-              style={[
-                styles.planCard,
-                { borderColor: selectedPlan === 'monthly' ? '#5B7FBF' : colors.border, backgroundColor: colors.background },
-                selectedPlan === 'monthly' && styles.planCardActive,
-              ]}
-              onPress={() => setSelectedPlan('monthly')}
-            >
-              <Text style={[styles.planTitle, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>Månedlig</Text>
-              <Text style={[styles.planPrice, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
-                {MONTHLY_PRICE} kr / mnd
               </Text>
             </Pressable>
           </View>
