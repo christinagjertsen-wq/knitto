@@ -215,6 +215,8 @@ export default function InnstillingerScreen() {
             ))}
           </View>
 
+          <View style={[styles.premiumDivider, { backgroundColor: colors.border }]} />
+
           <View style={styles.premiumPlanRow}>
             <Pressable
               style={[styles.premiumPlanCard, { borderColor: selectedPlan === 'monthly' ? '#5B7FBF' : colors.border, backgroundColor: colors.background }, selectedPlan === 'monthly' && { borderWidth: 2 }]}

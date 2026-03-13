@@ -108,6 +108,8 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
             ))}
           </View>
 
+          <View style={[styles.divider, { backgroundColor: colors.border }]} />
+
           <View style={styles.planRow}>
             <Pressable
               style={[
