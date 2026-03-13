@@ -958,7 +958,7 @@ export default function ProsjektScreen() {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { paddingTop: topInset + 4 }]}>
-        <Pressable style={styles.backBtn} onPress={() => router.back()}>
+        <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)/prosjekter')}>
           <Ionicons name="chevron-back" size={24} color={colors.text} />
         </Pressable>
         <Text style={[styles.headerTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]} numberOfLines={1}>
