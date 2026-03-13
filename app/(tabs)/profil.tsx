@@ -17,7 +17,7 @@ import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
 import { useKnitting } from '@/context/KnittingContext';
 import { useUser, getGreeting } from '@/context/UserContext';
-import { PremiumModal, FREE_FEATURES, LOCKED_FEATURES } from '@/components/PremiumModal';
+import { PremiumModal, FREE_FEATURES, LOCKED_FEATURES, MONTHLY_PRICE, YEARLY_MONTHLY_PRICE, YEARLY_SAVINGS } from '@/components/PremiumModal';
 import { useColors, useIsDark, useTheme } from '@/context/ThemeContext';
 import { useLanguage, useT } from '@/context/LanguageContext';
 import { useSubscription } from '@/lib/revenuecat';
@@ -122,6 +122,7 @@ export default function InnstillingerScreen() {
   const [showEditName, setShowEditName] = useState(false);
   const [nameInput, setNameInput] = useState('');
   const [showPremium, setShowPremium] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<'yearly' | 'monthly'>('yearly');
 
   const greeting = getGreeting(firstName, t);
 
@@ -192,8 +193,8 @@ export default function InnstillingerScreen() {
 
         <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.premium.sectionTitle}</Text>
         <View style={[styles.premiumCard, { backgroundColor: colors.surface }]}>
-          <Text style={[styles.premiumTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Prøv Knitto+ gratis</Text>
-          <Text style={[styles.premiumSub, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>Lås opp alt og strikk uten grenser</Text>
+          <Text style={[styles.premiumTitle, { color: colors.text, fontFamily: 'Inter_700Bold', textAlign: 'center' }]}>Prøv Knitto+ gratis</Text>
+          <Text style={[styles.premiumSub, { color: colors.textTertiary, fontFamily: 'Inter_400Regular', textAlign: 'center' }]}>Lås opp alt og strikk uten grenser</Text>
 
           <View style={styles.premiumFeatures}>
             {FREE_FEATURES.map((label, i) => (
@@ -215,12 +216,36 @@ export default function InnstillingerScreen() {
             ))}
           </View>
 
+          <View style={styles.premiumPlanRow}>
+            <Pressable
+              style={[styles.premiumPlanCard, { borderColor: selectedPlan === 'yearly' ? '#5B7FBF' : colors.border, backgroundColor: colors.background }, selectedPlan === 'yearly' && { borderWidth: 2 }]}
+              onPress={() => { setSelectedPlan('yearly'); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                <Text style={[{ fontSize: 14, color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>Årlig</Text>
+                <View style={{ backgroundColor: '#5B7FBF', borderRadius: 5, paddingHorizontal: 6, paddingVertical: 2 }}>
+                  <Text style={{ color: '#fff', fontSize: 10, fontFamily: 'Inter_600SemiBold' }}>Spar {YEARLY_SAVINGS} kr</Text>
+                </View>
+              </View>
+              <Text style={{ fontSize: 12, color: colors.textTertiary, fontFamily: 'Inter_400Regular' }}>{YEARLY_MONTHLY_PRICE} kr / mnd</Text>
+            </Pressable>
+            <Pressable
+              style={[styles.premiumPlanCard, { borderColor: selectedPlan === 'monthly' ? '#5B7FBF' : colors.border, backgroundColor: colors.background }, selectedPlan === 'monthly' && { borderWidth: 2 }]}
+              onPress={() => { setSelectedPlan('monthly'); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
+            >
+              <Text style={[{ fontSize: 14, color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>Månedlig</Text>
+              <Text style={{ fontSize: 12, color: colors.textTertiary, fontFamily: 'Inter_400Regular' }}>{MONTHLY_PRICE} kr / mnd</Text>
+            </Pressable>
+          </View>
+
           <Pressable
             style={({ pressed }) => [styles.premiumBtn, { backgroundColor: '#5B7FBF', opacity: pressed ? 0.88 : 1 }]}
             onPress={() => setShowPremium(true)}
           >
             <Text style={[styles.premiumBtnText, { color: '#fff', fontFamily: 'Inter_700Bold' }]}>Start gratis prøveperiode</Text>
-            <Text style={[styles.premiumBtnSub, { color: 'rgba(255,255,255,0.65)', fontFamily: 'Inter_400Regular' }]}>14 dager gratis, deretter 69 kr / mnd</Text>
+            <Text style={[styles.premiumBtnSub, { color: 'rgba(255,255,255,0.65)', fontFamily: 'Inter_400Regular' }]}>
+              14 dager gratis, deretter {selectedPlan === 'yearly' ? YEARLY_MONTHLY_PRICE : MONTHLY_PRICE} kr / mnd
+            </Text>
           </Pressable>
         </View>
 
@@ -344,6 +369,8 @@ const styles = StyleSheet.create({
   barFill: { height: 6, borderRadius: 3 },
   barLabel: { fontSize: 11, minWidth: 60, textAlign: 'right' },
   premiumCard: { borderRadius: 20, padding: 20, gap: 12 },
+  premiumPlanRow: { flexDirection: 'row', gap: 10 },
+  premiumPlanCard: { flex: 1, borderWidth: 1.5, borderRadius: 14, padding: 12, gap: 4 },
   premiumTop: { flexDirection: 'column', alignItems: 'center', gap: 8 },
   premiumIconCircle: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.12)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' },
   premiumTitle: { fontSize: 18 },

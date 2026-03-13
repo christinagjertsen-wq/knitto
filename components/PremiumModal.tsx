@@ -30,10 +30,10 @@ export const LOCKED_FEATURES = [
   'Ubegrenset garnlager',
 ];
 
-const MONTHLY_PRICE = 69;
-const YEARLY_MONTHLY_PRICE = 59;
+export const MONTHLY_PRICE = 69;
+export const YEARLY_MONTHLY_PRICE = 59;
 const YEARLY_TOTAL = YEARLY_MONTHLY_PRICE * 12;
-const YEARLY_SAVINGS = MONTHLY_PRICE * 12 - YEARLY_TOTAL;
+export const YEARLY_SAVINGS = MONTHLY_PRICE * 12 - YEARLY_TOTAL;
 
 type Plan = 'yearly' | 'monthly';
 
