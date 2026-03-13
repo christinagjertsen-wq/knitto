@@ -1332,7 +1332,7 @@ export default function ProsjektScreen() {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         }}
         onAddNew={(qualityId, colorName, colorHex, skeinsTotal, skeinsForProject) => {
-          if (!isSubscribed && yarnStock.length >= 5) {
+          if (!isSubscribed && yarnStock.length >= 50) {
             setShowAddYarn(false);
             setShowPremium(true);
             return;

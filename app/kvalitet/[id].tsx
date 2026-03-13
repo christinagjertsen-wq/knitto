@@ -166,7 +166,7 @@ function AddYarnModal({ qualityId, visible, onClose, onPaywall }: { qualityId: s
 
   const handleAdd = useCallback(() => {
     if (!colorName.trim()) return;
-    if (!isSubscribed && yarnStock.length >= 5) {
+    if (!isSubscribed && yarnStock.length >= 50) {
       onClose();
       onPaywall();
       return;
