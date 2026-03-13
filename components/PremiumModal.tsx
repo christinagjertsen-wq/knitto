@@ -19,13 +19,13 @@ export const PREMIUM_FEATURES = [
   { icon: 'cube-outline' as const, label: 'Ubegrenset garnlager' },
 ];
 
-const FREE_FEATURES = [
+export const FREE_FEATURES = [
   '5 prosjekter',
   '50 nøster',
   'Verktøy',
 ];
 
-const LOCKED_FEATURES = [
+export const LOCKED_FEATURES = [
   'Ubegrenset antall prosjekter',
   'Ubegrenset garnlager',
 ];
