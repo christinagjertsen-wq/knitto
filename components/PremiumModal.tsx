@@ -94,8 +94,6 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
               ))}
             </View>
 
-            <View style={styles.divider} />
-
             {errorMsg && (
               <Text style={[styles.errorText, { fontFamily: 'Inter_400Regular' }]}>{errorMsg}</Text>
             )}
