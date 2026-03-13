@@ -330,7 +330,7 @@ function AddYarnModal({
                           {getYarnLabel(yarn)}
                         </Text>
                         <Text style={[styles.yarnOptionSub, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                          {getAvailableSkeins(yarn.id)} nøster tilgjengelig
+                          {getAvailableSkeins(yarn.id)} {getAvailableSkeins(yarn.id) === 1 ? t.storage.skein : t.storage.skeins} tilgjengelig
                         </Text>
                       </View>
                       {selected === yarn.id && <Ionicons name="checkmark-circle" size={20} color={colors.primaryBtn} />}
@@ -772,7 +772,7 @@ function AddNeedleToProjectModal({
                   return (
                     <Pressable
                       key={needle.id}
-                      style={[styles.needleRow, { borderBottomColor: colors.border }]}
+                      style={styles.needleRow}
                       onPress={() => { onToggle(needle.id); Haptics.selectionAsync(); }}
                     >
                       <View style={[styles.needleSize, { backgroundColor: isLinked ? colors.primaryBtn + '22' : colors.badgeBg }]}>
@@ -1280,14 +1280,14 @@ export default function ProsjektScreen() {
             </Pressable>
           ) : (
             allocatedYarn.map(({ alloc, yarn, quality, brand }) => (
-              <View key={alloc.yarnStockId} style={[styles.allocRow, { borderBottomColor: colors.border }]}>
+              <View key={alloc.yarnStockId} style={styles.allocRow}>
                 <View style={[styles.allocDot, { backgroundColor: yarn?.colorHex ?? '#ccc' }]} />
                 <View style={{ flex: 1 }}>
                   <Text style={[styles.allocName, { color: colors.text, fontFamily: 'Inter_500Medium' }]} numberOfLines={1}>
                     {yarn?.colorName ?? t.project.unknown}
                   </Text>
                   <Text style={[styles.allocSub, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                    {brand?.name} {quality?.name} · {alloc.skeinsAllocated} {t.home.statSkeins}
+                    {brand?.name} {quality?.name} · {alloc.skeinsAllocated} {alloc.skeinsAllocated === 1 ? t.storage.skein : t.storage.skeins}
                   </Text>
                 </View>
                 <Pressable
@@ -1338,7 +1338,7 @@ export default function ProsjektScreen() {
               if (!needle) return null;
               const TYPE_LABELS: Record<string, string> = { rundpinne: t.needleTypes.rundpinne, strømpepinner: t.needleTypes.strømpepinner, rett: t.needleTypes.rett, utskiftbar: t.needleTypes.utskiftbar };
               return (
-                <View key={needle.id} style={[styles.needleRow, { borderBottomColor: colors.border }]}>
+                <View key={needle.id} style={styles.needleRow}>
                   <View style={[styles.needleSize, { backgroundColor: colors.primaryBtn + '22' }]}>
                     <Text style={[styles.needleSizeText, { color: colors.primaryBtn, fontFamily: 'Inter_700Bold' }]}>{needle.size.replace(',', '.')}</Text>
                   </View>
@@ -1749,7 +1749,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
     paddingVertical: 10,
-    borderBottomWidth: StyleSheet.hairlineWidth,
   },
   allocDot: { width: 32, height: 32, borderRadius: 16 },
   allocName: { fontSize: 14 },
@@ -1759,7 +1758,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
     paddingVertical: 10,
-    borderBottomWidth: StyleSheet.hairlineWidth,
   },
   needleSize: {
     width: 36,
