@@ -92,7 +92,7 @@ function NeedleCard({ needle, onDelete, onEdit }: { needle: Needle; onDelete: ()
           {t.needleTypes[needle.type]}
         </Text>
         <Text style={[styles.needleMeta, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-          {[needle.brand, `${needle.lengthCm} cm`, t.needleMaterials[needle.material]].filter(Boolean).join(' · ')}
+          {[`${needle.lengthCm} cm`, t.needleMaterials[needle.material]].filter(Boolean).join(' · ')}
         </Text>
       </View>
       <View style={styles.needleQtyBadge}>
