@@ -93,7 +93,7 @@ function SwipeableProjectCard({
 }) {
   const colors = useColors();
   const t = useT();
-  const { yarnStock, needles } = useKnitting();
+  const { yarnStock, needles, qualities, brands } = useKnitting();
   const translateX = useRef(new Animated.Value(0)).current;
   const swiping = useRef(false);
 
@@ -108,16 +108,26 @@ function SwipeableProjectCard({
     [project.needleIds, needles]);
 
   const yarnSummary = useMemo(() => {
-    const allocatedYarns = project.yarnAllocations
-      .map(a => yarnStock.find(y => y.id === a.yarnStockId))
-      .filter(Boolean);
-    const colorCount = allocatedYarns.length;
-    const qualityCount = new Set(allocatedYarns.map(y => y!.qualityId)).size;
+    const colorCount = project.yarnAllocations.length;
     if (colorCount === 0) return null;
-    const kvalitet = qualityCount === 1 ? t.projects.qualitySingular : t.projects.qualityPlural.replace('%d', String(qualityCount));
-    const farge = colorCount === 1 ? t.projects.colorSingular : t.projects.colorPlural.replace('%d', String(colorCount));
-    return `${kvalitet} · ${farge}`;
-  }, [project.yarnAllocations, yarnStock]);
+    const parts: string[] = [];
+
+    // Brand name from first allocated yarn
+    const firstYarn = yarnStock.find(y => y.id === project.yarnAllocations[0]?.yarnStockId);
+    const quality = firstYarn ? qualities.find(q => q.id === firstYarn.qualityId) : null;
+    const brand = quality ? brands.find(b => b.id === quality.brandId) : null;
+    if (brand) parts.push(brand.name);
+
+    // Needle size (first unique)
+    if (projectNeedles.length > 0) {
+      parts.push(`${projectNeedles[0]!.size.replace(',', '.')} mm`);
+    }
+
+    // Color count
+    parts.push(colorCount === 1 ? '1 farge' : `${colorCount} farger`);
+
+    return parts.join(' · ');
+  }, [project.yarnAllocations, project.needleIds, yarnStock, qualities, brands, projectNeedles]);
 
 
   const nextStatus: ProjectStatus | null =
@@ -198,10 +208,7 @@ function SwipeableProjectCard({
                   </Text>
                 </View>
                 <Text style={[styles.footerText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                  {[
-                    yarnSummary,
-                    projectNeedles.length > 0 ? projectNeedles.map(n => `${n!.size.replace(',', '.')} mm`).join(', ') : null,
-                  ].filter(Boolean).join(' · ')}
+                  {yarnSummary ?? ''}
                 </Text>
               </View>
             </View>
