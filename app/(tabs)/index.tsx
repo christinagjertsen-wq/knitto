@@ -742,7 +742,7 @@ const styles = StyleSheet.create({
   premiumBtnText: { color: '#2C3E6B', fontSize: 15 },
   premiumBtnSub: { color: 'rgba(44,62,107,0.6)', fontSize: 12 },
   premiumDismiss: { textAlign: 'center', fontSize: 14, paddingVertical: 4, color: 'rgba(255,255,255,0.5)' },
-  fieldLabel: { fontSize: 13, marginBottom: 4 },
+  fieldLabel: { fontSize: 13, marginBottom: 4, textAlign: 'center' },
   input: { borderRadius: 14, padding: 16, fontSize: 16 },
   primaryBtn: { borderRadius: 14, padding: 16, alignItems: 'center', marginTop: 4 },
   primaryBtnText: { color: '#fff', fontSize: 16 },

@@ -253,6 +253,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     marginBottom: 16,
+    textAlign: 'center',
   },
   previewRow: {
     flexDirection: 'row',
