@@ -550,60 +550,48 @@ export default function InnstillingerScreen() {
         </View>
 
         <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.settings.language}</Text>
-        <View style={[styles.card, { backgroundColor: colors.surface }]}>
-          <View style={[styles.row, { paddingVertical: 12, gap: 0 }]}>
-            {([['no', t.settings.languageNorwegian], ['en', t.settings.languageEnglish]] as [Language, string][]).map(([code, label], i, arr) => (
-              <Pressable
-                key={code}
-                onPress={() => { setLanguage(code); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
-                style={[
-                  styles.segPill,
-                  language === code && { backgroundColor: colors.primaryBtn },
-                  i === 0 && styles.segPillFirst,
-                  i === arr.length - 1 && styles.segPillLast,
-                  { borderColor: colors.border },
-                ]}
-              >
-                <Text style={[styles.segPillText, {
-                  color: language === code ? '#fff' : colors.textSecondary,
-                  fontFamily: language === code ? 'Inter_600SemiBold' : 'Inter_400Regular',
-                }]}>
-                  {label}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
+        <View style={[styles.segContainer, { backgroundColor: isDark ? Colors.dark.surface : '#E5EBF5' }]}>
+          {([['no', t.settings.languageNorwegian], ['en', t.settings.languageEnglish]] as [Language, string][]).map(([code, label]) => (
+            <Pressable
+              key={code}
+              onPress={() => { setLanguage(code); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
+              style={[styles.segPill, language === code && { backgroundColor: isDark ? colors.primaryBtn : Colors.palette.navy }]}
+            >
+              <Text style={[styles.segPillText, {
+                color: language === code ? '#fff' : colors.textSecondary,
+                fontFamily: language === code ? 'Inter_600SemiBold' : 'Inter_400Regular',
+              }]}>
+                {label}
+              </Text>
+            </Pressable>
+          ))}
         </View>
 
         <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.settings.theme}</Text>
-        <View style={[styles.card, { backgroundColor: colors.surface }]}>
-          <View style={[styles.row, { paddingVertical: 12, gap: 0 }]}>
-            {([['light', t.settings.themeLight], ['dark', t.settings.themeDark], ['system', t.settings.themeSystem]] as [ThemePreference, string][]).map(([pref, label], i, arr) => (
-              <Pressable
-                key={pref}
-                onPress={() => { setThemePreference(pref); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
-                style={[
-                  styles.segPill,
-                  themePreference === pref && { backgroundColor: colors.primaryBtn },
-                  i === 0 && styles.segPillFirst,
-                  i === arr.length - 1 && styles.segPillLast,
-                  { borderColor: colors.border },
-                ]}
-              >
-                <Text style={[styles.segPillText, {
-                  color: themePreference === pref ? '#fff' : colors.textSecondary,
-                  fontFamily: themePreference === pref ? 'Inter_600SemiBold' : 'Inter_400Regular',
-                }]}>
-                  {label}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
+        <View style={[styles.segContainer, { backgroundColor: isDark ? Colors.dark.surface : '#E5EBF5' }]}>
+          {([['light', t.settings.themeLight], ['dark', t.settings.themeDark], ['system', t.settings.themeSystem]] as [ThemePreference, string][]).map(([pref, label]) => (
+            <Pressable
+              key={pref}
+              onPress={() => { setThemePreference(pref); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
+              style={[styles.segPill, themePreference === pref && { backgroundColor: isDark ? colors.primaryBtn : Colors.palette.navy }]}
+            >
+              <Text style={[styles.segPillText, {
+                color: themePreference === pref ? '#fff' : colors.textSecondary,
+                fontFamily: themePreference === pref ? 'Inter_600SemiBold' : 'Inter_400Regular',
+              }]}>
+                {label}
+              </Text>
+            </Pressable>
+          ))}
         </View>
 
         <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.settings.about}</Text>
         <View style={[styles.card, { backgroundColor: colors.surface }]}>
-          {[{ label: t.settings.aboutApp, value: 'Knitto' }, { label: t.settings.aboutVersion, value: '1.0.0' }].map((row, i, arr) => (
+          {[
+            { label: t.settings.aboutApp, value: 'Knitto' },
+            { label: t.settings.aboutVersion, value: '1.0.0' },
+            { label: t.settings.aboutDeveloper, value: 'Sisu Knitwear AS' },
+          ].map((row, i, arr) => (
             <View key={row.label}>
               <View style={styles.row}>
                 <Text style={[styles.rowLabel, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>{row.label}</Text>
@@ -737,13 +725,18 @@ const styles = StyleSheet.create({
   saveBtn: { borderRadius: 14, padding: 16, alignItems: 'center', marginTop: 4 },
   saveBtnText: { color: '#fff', fontSize: 16 },
   cancelBtn: { alignItems: 'center', paddingVertical: 8 },
+  segContainer: {
+    flexDirection: 'row',
+    borderRadius: 14,
+    padding: 4,
+    gap: 4,
+    marginBottom: 4,
+  },
   segPill: {
     flex: 1,
-    paddingVertical: 10,
+    paddingVertical: 11,
     alignItems: 'center',
-    borderWidth: 1,
+    borderRadius: 10,
   },
-  segPillFirst: { borderRadius: 0, borderTopLeftRadius: 12, borderBottomLeftRadius: 12 },
-  segPillLast: { borderRadius: 0, borderTopRightRadius: 12, borderBottomRightRadius: 12 },
   segPillText: { fontSize: 14 },
 });
