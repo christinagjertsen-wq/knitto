@@ -458,25 +458,21 @@ export default function KvalitetScreen() {
         showsVerticalScrollIndicator={false}
         contentInsetAdjustmentBehavior="automatic"
       >
-        {quality.fiberContent ? (
-          <Text style={[styles.fiberLine, { color: colors.textSecondary, fontFamily: 'Inter_400Regular', textAlign: 'center' }]}>
-            {quality.fiberContent}
-          </Text>
-        ) : (
-          <Pressable
-            style={({ pressed }) => [styles.fiberAddBtn, { opacity: pressed ? 0.7 : 1 }]}
-            onPress={() => { setFiberInput(''); setShowFiberEdit(true); }}
-          >
-            <Ionicons name="add-circle-outline" size={15} color={colors.primaryBtn} />
-            <Text style={[styles.fiberAddBtnText, { color: colors.primaryBtn, fontFamily: 'Inter_500Medium' }]}>
-              {t.quality.addFiber}
-            </Text>
-          </Pressable>
-        )}
-        {quality.gramsPerSkein ? (
-          <Text style={[styles.fiberLineSub, { color: colors.textTertiary, fontFamily: 'Inter_400Regular', textAlign: 'center' }]}>
-            {quality.gramsPerSkein}g · {quality.metersPerSkein}m {t.quality.skein}
-          </Text>
+        {(quality.gramsPerSkein || quality.metersPerSkein) ? (
+          <View style={[styles.miniStatsRow, { marginBottom: 8 }]}>
+            {quality.gramsPerSkein ? (
+              <View style={[styles.miniStatCard, { backgroundColor: colors.surface }]}>
+                <Text style={[styles.miniStatNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{quality.gramsPerSkein} g</Text>
+                <Text style={[styles.miniStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>per nøste</Text>
+              </View>
+            ) : null}
+            {quality.metersPerSkein ? (
+              <View style={[styles.miniStatCard, { backgroundColor: colors.surface }]}>
+                <Text style={[styles.miniStatNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{quality.metersPerSkein} m</Text>
+                <Text style={[styles.miniStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>per nøste</Text>
+              </View>
+            ) : null}
+          </View>
         ) : null}
 
         <View style={styles.miniStatsRow}>
