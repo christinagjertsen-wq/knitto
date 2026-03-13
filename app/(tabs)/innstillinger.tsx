@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
   View,
@@ -13,6 +13,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Colors from '@/constants/colors';
 import { useColors, useIsDark } from '@/context/ThemeContext';
 import { useT } from '@/context/LanguageContext';
@@ -40,11 +41,19 @@ const NEEDLE_SIZES = [
   { metric: '15.0', us: '19', uk: '–' },
 ];
 
-function Counter({ label, color }: { label: string; color: string }) {
+function Counter({ label, color, storageKey }: { label: string; color: string; storageKey: string }) {
   const colors = useColors();
   const t = useT();
   const [count, setCount] = useState(0);
   const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    AsyncStorage.getItem(storageKey).then(val => {
+      if (val !== null) setCount(parseInt(val, 10) || 0);
+    });
+  }, [storageKey]);
+
+  const save = (val: number) => AsyncStorage.setItem(storageKey, String(val));
 
   const animatePop = () => {
     Animated.sequence([
@@ -53,9 +62,9 @@ function Counter({ label, color }: { label: string; color: string }) {
     ]).start();
   };
 
-  const increment = () => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); animatePop(); setCount(c => c + 1); };
-  const decrement = () => { if (count === 0) return; Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setCount(c => c - 1); };
-  const reset = () => { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning); setCount(0); };
+  const increment = () => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); animatePop(); setCount(c => { save(c + 1); return c + 1; }); };
+  const decrement = () => { if (count === 0) return; Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setCount(c => { save(c - 1); return c - 1; }); };
+  const reset = () => { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning); save(0); setCount(0); };
 
   return (
     <View style={[styles.counterCard, { backgroundColor: colors.surface }]}>
@@ -264,8 +273,8 @@ export default function VerktoyScreen() {
         </LinearGradient>
 
         <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.tools.counters}</Text>
-        <Counter label={t.tools.rowCounter} color={colors.primaryBtn} />
-        <Counter label={t.tools.stitchCounter} color="#6A8EC8" />
+        <Counter label={t.tools.rowCounter} color={colors.primaryBtn} storageKey="counter_rows" />
+        <Counter label={t.tools.stitchCounter} color="#6A8EC8" storageKey="counter_stitches" />
 
         <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.tools.calculator}</Text>
         <YarnCalculator />
