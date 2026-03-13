@@ -501,7 +501,7 @@ export default function KvalitetScreen() {
                   style={[styles.sortPill, { backgroundColor: sortBy === s ? colors.primaryBtn : colors.surface, borderColor: sortBy === s ? colors.primaryBtn : colors.border }]}
                 >
                   <Text style={{ fontSize: 12, color: sortBy === s ? '#fff' : colors.textSecondary, fontFamily: sortBy === s ? 'Inter_600SemiBold' : 'Inter_400Regular' }}>
-                    {s === 'navn' ? 'A–Z' : 'g ↓'}
+                    {s === 'navn' ? 'A - Z' : 'gram'}
                   </Text>
                 </Pressable>
               ))}
