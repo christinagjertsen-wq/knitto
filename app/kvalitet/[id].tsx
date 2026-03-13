@@ -310,76 +310,76 @@ function AddYarnModal({ qualityId, visible, onClose, onPaywall }: { qualityId: s
       <View style={styles.modalOverlay}>
 
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <ScrollView
-          contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end' }}
-          keyboardShouldPersistTaps="handled"
-        >
-          <View style={[styles.modalSheet, { backgroundColor: colors.surface }]}>
-            <View style={styles.modalHandle} />
-            <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.quality.newColor}</Text>
+          <ScrollView
+            keyboardShouldPersistTaps="always"
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={[styles.modalSheet, { backgroundColor: colors.surface }]}>
+              <View style={styles.modalHandle} />
+              <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.quality.newColor}</Text>
 
-            <View style={styles.colorPreviewRow}>
-              <View style={[styles.bigColorSwatch, { backgroundColor: selectedHex }, selectedHex === '#FFFFFF' && { borderWidth: 1.5, borderColor: 'rgba(0,0,0,0.15)' }]} />
-              <TextInput
-                style={[styles.input, { flex: 1, color: colors.text, backgroundColor: colors.background }]}
-                placeholder={t.quality.colorNamePlaceholder}
-                placeholderTextColor={colors.textTertiary}
-                value={colorName}
-                onChangeText={setColorName}
-                autoFocus
+              <View style={styles.colorPreviewRow}>
+                <View style={[styles.bigColorSwatch, { backgroundColor: selectedHex }, selectedHex === '#FFFFFF' && { borderWidth: 1.5, borderColor: 'rgba(0,0,0,0.15)' }]} />
+                <TextInput
+                  style={[styles.input, { flex: 1, color: colors.text, backgroundColor: colors.background }]}
+                  placeholder={t.quality.colorNamePlaceholder}
+                  placeholderTextColor={colors.textTertiary}
+                  value={colorName}
+                  onChangeText={setColorName}
+                  autoFocus
+                />
+              </View>
+
+              <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.quality.chooseColor}</Text>
+              <View style={styles.colorGrid}>
+                {Array.from({ length: 6 }, (_, rowIndex) => (
+                  <View key={rowIndex} style={styles.colorRow}>
+                    {PRESET_COLORS.slice(rowIndex * 10, rowIndex * 10 + 10).map(c => (
+                      <Pressable
+                        key={c.hex}
+                        onPress={() => { setSelectedHex(c.hex); Haptics.selectionAsync(); }}
+                        style={[
+                          styles.presetColor,
+                          { backgroundColor: c.hex },
+                          selectedHex === c.hex && styles.presetColorSelected,
+                        ]}
+                      />
+                    ))}
+                  </View>
+                ))}
+              </View>
+
+              <Pressable
+                style={[styles.customColorBtn, { borderColor: colors.border, backgroundColor: colors.background }]}
+                onPress={() => setShowColorPicker(true)}
+              >
+                <Ionicons name="color-palette-outline" size={16} color={colors.textSecondary} />
+                <Text style={[styles.customColorBtnText, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>
+                  Legg til spesiell farge
+                </Text>
+              </Pressable>
+
+              <ColorPickerModal
+                visible={showColorPicker}
+                initialHex={selectedHex}
+                onClose={() => setShowColorPicker(false)}
+                onSelect={(hex) => { setSelectedHex(hex); }}
               />
+
+              <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.quality.skeinsLabel}</Text>
+              <SkeinCounter value={skeins} onChange={setSkeins} />
+
+              <Pressable
+                style={({ pressed }) => [styles.modalBtn, { backgroundColor: colors.primaryBtn, opacity: pressed ? 0.85 : 1 }]}
+                onPress={handleAdd}
+              >
+                <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>{t.common.add}</Text>
+              </Pressable>
+              <Pressable style={styles.cancelBtn} onPress={onClose}>
+                <Text style={[styles.cancelBtnText, { color: colors.textSecondary }]}>{t.common.cancel}</Text>
+              </Pressable>
             </View>
-
-            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.quality.chooseColor}</Text>
-            <View style={styles.colorGrid}>
-              {Array.from({ length: 6 }, (_, rowIndex) => (
-                <View key={rowIndex} style={styles.colorRow}>
-                  {PRESET_COLORS.slice(rowIndex * 10, rowIndex * 10 + 10).map(c => (
-                    <Pressable
-                      key={c.hex}
-                      onPress={() => { setSelectedHex(c.hex); Haptics.selectionAsync(); }}
-                      style={[
-                        styles.presetColor,
-                        { backgroundColor: c.hex },
-                        selectedHex === c.hex && styles.presetColorSelected,
-                      ]}
-                    />
-                  ))}
-                </View>
-              ))}
-            </View>
-
-            <Pressable
-              style={[styles.customColorBtn, { borderColor: colors.border, backgroundColor: colors.background }]}
-              onPress={() => setShowColorPicker(true)}
-            >
-              <Ionicons name="color-palette-outline" size={16} color={colors.textSecondary} />
-              <Text style={[styles.customColorBtnText, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>
-                Legg til spesiell farge
-              </Text>
-            </Pressable>
-
-            <ColorPickerModal
-              visible={showColorPicker}
-              initialHex={selectedHex}
-              onClose={() => setShowColorPicker(false)}
-              onSelect={(hex) => { setSelectedHex(hex); }}
-            />
-
-            <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.quality.skeinsLabel}</Text>
-            <SkeinCounter value={skeins} onChange={setSkeins} />
-
-            <Pressable
-              style={({ pressed }) => [styles.modalBtn, { backgroundColor: colors.primaryBtn, opacity: pressed ? 0.85 : 1 }]}
-              onPress={handleAdd}
-            >
-              <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>{t.common.add}</Text>
-            </Pressable>
-            <Pressable style={styles.cancelBtn} onPress={onClose}>
-              <Text style={[styles.cancelBtnText, { color: colors.textSecondary }]}>{t.common.cancel}</Text>
-            </Pressable>
-          </View>
-        </ScrollView>
+          </ScrollView>
         </KeyboardAvoidingView>
       </View>
     </Modal>
