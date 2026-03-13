@@ -125,32 +125,105 @@ function SkeinCounter({ value, onChange }: { value: number; onChange: (v: number
   );
 }
 
-function YarnCard({ yarn, onDelete, onSkeinChange }: { yarn: YarnStock; onDelete: () => void; onSkeinChange: (v: number) => void }) {
+function ColorDetailModal({
+  yarn,
+  gramsPerSkein,
+  visible,
+  onClose,
+  onAdd,
+  onDelete,
+}: {
+  yarn: YarnStock;
+  gramsPerSkein: number;
+  visible: boolean;
+  onClose: () => void;
+  onAdd: (extra: number) => void;
+  onDelete: () => void;
+}) {
   const colors = useColors();
+  const t = useT();
+  const [extra, setExtra] = useState(1);
 
-  const handleSkeinChange = (v: number) => {
-    if (v <= 0) {
-      Alert.alert('Slett farge', `Er du sikker på at du vil slette ${yarn.colorName}?`, [
-        { text: 'Avbryt', style: 'cancel' },
-        { text: 'Slett', style: 'destructive', onPress: onDelete },
-      ]);
-    } else {
-      onSkeinChange(v);
-    }
-  };
+  const reset = () => setExtra(1);
+  const handleClose = () => { reset(); onClose(); };
 
   return (
-    <View style={[styles.yarnCard, { backgroundColor: colors.surface }]}>
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
+      <View style={styles.modalOverlay}>
+        <View style={[styles.modalSheet, { backgroundColor: colors.surface, paddingBottom: 32, gap: 0 }]}>
+          <View style={styles.modalHandle} />
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 20 }}>
+            <View style={[styles.bigColorSwatch, { backgroundColor: yarn.colorHex, width: 48, height: 48, borderRadius: 24 }, yarn.colorHex === '#FFFFFF' && { borderWidth: 1.5, borderColor: 'rgba(0,0,0,0.12)' }]} />
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.colorName, { color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 18 }]}>{yarn.colorName}</Text>
+              <Text style={{ color: colors.textTertiary, fontFamily: 'Inter_400Regular', fontSize: 13, marginTop: 2 }}>
+                {yarn.skeins} {yarn.skeins === 1 ? t.storage.skein : t.storage.skeins} · {yarn.skeins * gramsPerSkein} g
+              </Text>
+            </View>
+          </View>
+
+          <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium', marginBottom: 10 }]}>
+            Legg til flere nøster
+          </Text>
+          <SkeinCounter value={extra} onChange={setExtra} />
+
+          <Pressable
+            style={({ pressed }) => [styles.modalBtn, { backgroundColor: colors.primaryBtn, opacity: pressed ? 0.85 : 1, marginTop: 20 }]}
+            onPress={() => { onAdd(extra); reset(); onClose(); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); }}
+          >
+            <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>
+              Legg til {extra} {extra === 1 ? t.storage.skein : t.storage.skeins}
+            </Text>
+          </Pressable>
+
+          <Pressable
+            style={({ pressed }) => [{ alignItems: 'center', paddingVertical: 12, marginTop: 4, opacity: pressed ? 0.7 : 1 }]}
+            onPress={() => {
+              handleClose();
+              Alert.alert('Slett farge', `Er du sikker på at du vil slette ${yarn.colorName}?`, [
+                { text: t.common.cancel, style: 'cancel' },
+                { text: t.common.delete, style: 'destructive', onPress: onDelete },
+              ]);
+            }}
+          >
+            <Text style={{ color: '#C97B84', fontSize: 15, fontFamily: 'Inter_500Medium' }}>{t.common.delete}</Text>
+          </Pressable>
+
+          <Pressable style={styles.cancelBtn} onPress={handleClose}>
+            <Text style={[styles.cancelBtnText, { color: colors.textSecondary }]}>{t.common.cancel}</Text>
+          </Pressable>
+        </View>
+      </View>
+    </Modal>
+  );
+}
+
+function YarnCard({ yarn, gramsPerSkein, onPress }: { yarn: YarnStock; gramsPerSkein: number; onPress: () => void }) {
+  const colors = useColors();
+  const totalGrams = yarn.skeins * gramsPerSkein;
+
+  return (
+    <Pressable
+      style={({ pressed }) => [styles.yarnCard, { backgroundColor: colors.surface, opacity: pressed ? 0.85 : 1 }]}
+      onPress={onPress}
+    >
       <View style={[styles.colorSwatch, { backgroundColor: yarn.colorHex }]} />
       <View style={styles.yarnCardContent}>
         <Text style={[styles.colorName, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
           {yarn.colorName}
         </Text>
+        <Text style={{ fontSize: 12, color: colors.textTertiary, fontFamily: 'Inter_400Regular', marginTop: 2 }}>
+          {yarn.skeins} {yarn.skeins === 1 ? 'nøste' : 'nøster'}
+        </Text>
       </View>
       <View style={styles.yarnCardRight}>
-        <SkeinCounter value={yarn.skeins} onChange={handleSkeinChange} />
+        <View style={[styles.gramBadge, { backgroundColor: colors.badgeBg }]}>
+          <Text style={[styles.gramBadgeText, { color: colors.badgeText, fontFamily: 'Inter_600SemiBold' }]}>
+            {totalGrams > 0 ? `${totalGrams} g` : `${yarn.skeins} stk`}
+          </Text>
+        </View>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
@@ -161,7 +234,7 @@ function AddYarnModal({ qualityId, visible, onClose, onPaywall }: { qualityId: s
   const [selectedHex, setSelectedHex] = useState('#C97B84');
   const [skeins, setSkeins] = useState(1);
   const [showColorPicker, setShowColorPicker] = useState(false);
-  const { addYarnStock, yarnStock } = useKnitting();
+  const { addYarnStock, yarnStock, updateYarnStock } = useKnitting();
   const { isSubscribed } = useSubscription();
 
   const handleAdd = useCallback(() => {
@@ -171,11 +244,42 @@ function AddYarnModal({ qualityId, visible, onClose, onPaywall }: { qualityId: s
       onPaywall();
       return;
     }
+    const duplicate = yarnStock.find(
+      y => y.qualityId === qualityId && y.colorName.trim().toLowerCase() === colorName.trim().toLowerCase()
+    );
+    if (duplicate) {
+      Alert.alert(
+        'Fargen finnes allerede',
+        `«${duplicate.colorName}» er allerede lagt til. Vil du legge til ${skeins} ${skeins === 1 ? 'nøste' : 'nøster'} på den?`,
+        [
+          { text: 'Avbryt', style: 'cancel' },
+          {
+            text: 'Slå sammen',
+            onPress: () => {
+              updateYarnStock(duplicate.id, { skeins: duplicate.skeins + skeins });
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+              setColorName(''); setSkeins(1); setSelectedHex('#C97B84');
+              onClose();
+            },
+          },
+          {
+            text: 'Legg til separat',
+            onPress: () => {
+              addYarnStock({ qualityId, colorName: colorName.trim(), colorHex: selectedHex, skeins });
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+              setColorName(''); setSkeins(1); setSelectedHex('#C97B84');
+              onClose();
+            },
+          },
+        ]
+      );
+      return;
+    }
     addYarnStock({ qualityId, colorName: colorName.trim(), colorHex: selectedHex, skeins });
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setColorName(''); setSkeins(1); setSelectedHex('#C97B84');
     onClose();
-  }, [colorName, selectedHex, skeins, qualityId, addYarnStock, onClose, onPaywall, yarnStock, isSubscribed]);
+  }, [colorName, selectedHex, skeins, qualityId, addYarnStock, updateYarnStock, onClose, onPaywall, yarnStock, isSubscribed]);
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
@@ -268,6 +372,7 @@ export default function KvalitetScreen() {
   const [showPremium, setShowPremium] = useState(false);
   const [showFiberEdit, setShowFiberEdit] = useState(false);
   const [fiberInput, setFiberInput] = useState('');
+  const [selectedYarn, setSelectedYarn] = useState<YarnStock | null>(null);
 
   const quality = getQualityById(id);
   const brand = quality ? getBrandById(quality.brandId) : undefined;
@@ -371,11 +476,8 @@ export default function KvalitetScreen() {
             <YarnCard
               key={yarn.id}
               yarn={yarn}
-              onDelete={() => {
-                deleteYarnStock(yarn.id);
-                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-              }}
-              onSkeinChange={(v) => updateYarnStock(yarn.id, { skeins: v })}
+              gramsPerSkein={quality.gramsPerSkein}
+              onPress={() => { setSelectedYarn(yarn); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
             />
           ))
         )}
@@ -383,6 +485,16 @@ export default function KvalitetScreen() {
 
       <AddYarnModal qualityId={id} visible={showAdd} onClose={() => setShowAdd(false)} onPaywall={() => setShowPremium(true)} />
       <PremiumModal visible={showPremium} onClose={() => setShowPremium(false)} />
+      {selectedYarn && (
+        <ColorDetailModal
+          yarn={selectedYarn}
+          gramsPerSkein={quality.gramsPerSkein}
+          visible={!!selectedYarn}
+          onClose={() => setSelectedYarn(null)}
+          onAdd={(extra) => updateYarnStock(selectedYarn.id, { skeins: selectedYarn.skeins + extra })}
+          onDelete={() => { deleteYarnStock(selectedYarn.id); setSelectedYarn(null); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); }}
+        />
+      )}
 
       <Modal visible={showFiberEdit} transparent animationType="fade" onRequestClose={() => setShowFiberEdit(false)}>
         <View style={styles.modalOverlay}>
@@ -505,7 +617,9 @@ const styles = StyleSheet.create({
   yarnCardContent: { flex: 1, padding: 14, justifyContent: 'center' },
   colorName: { fontSize: 15 },
   hexCode: { fontSize: 12 },
-  yarnCardRight: { paddingRight: 14, alignItems: 'center', gap: 10 },
+  yarnCardRight: { paddingRight: 14, alignItems: 'center' },
+  gramBadge: { paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10 },
+  gramBadgeText: { fontSize: 14 },
   counter: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   counterBtn: { width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
   counterValue: { fontSize: 18, minWidth: 28, textAlign: 'center' },
