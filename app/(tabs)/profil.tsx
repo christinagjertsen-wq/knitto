@@ -200,7 +200,7 @@ export default function InnstillingerScreen() {
             {FREE_FEATURES.map((label, i) => (
               <View key={`free-${i}`} style={styles.premiumFeatureRow}>
                 <View style={[styles.premiumFeatureIcon, { backgroundColor: '#E8F5E9' }]}>
-                  <Ionicons name="checkmark" size={14} color="#4CAF50" />
+                  <Ionicons name="checkmark" size={15} color="#4CAF50" style={{ alignSelf: 'center' }} />
                 </View>
                 <Text style={[styles.premiumFeatureText, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>{label}</Text>
               </View>
@@ -209,7 +209,7 @@ export default function InnstillingerScreen() {
             {LOCKED_FEATURES.map((label, i) => (
               <View key={`locked-${i}`} style={styles.premiumFeatureRow}>
                 <View style={[styles.premiumFeatureIcon, { backgroundColor: colors.background }]}>
-                  <Ionicons name="close" size={14} color={colors.textTertiary} />
+                  <Ionicons name="close" size={15} color={colors.textTertiary} style={{ alignSelf: 'center' }} />
                 </View>
                 <Text style={[styles.premiumFeatureText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{label}</Text>
               </View>
