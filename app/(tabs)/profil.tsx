@@ -196,19 +196,19 @@ export default function InnstillingerScreen() {
           <Text style={[styles.premiumSub, { color: colors.textTertiary, fontFamily: 'Inter_400Regular', textAlign: 'center' }]}>Lås opp alt og strikk uten grenser</Text>
 
           <View style={styles.premiumFeatures}>
-            {FREE_FEATURES.map((label, i) => (
-              <View key={`free-${i}`} style={styles.premiumFeatureRow}>
-                <View style={[styles.premiumFeatureIcon, { backgroundColor: '#E8F5E9' }]}>
-                  <FeatherIcon name="feather" size={13} color="#4CAF50" style={{ alignSelf: 'center' }} />
-                </View>
-                <Text style={[styles.premiumFeatureText, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>{label}</Text>
+            <View style={styles.premiumFeatureRow}>
+              <View style={[styles.premiumFeatureIcon, { backgroundColor: '#E8F5E9' }]}>
+                <FeatherIcon name="feather" size={13} color="#4CAF50" style={{ alignSelf: 'center' }} />
               </View>
-            ))}
+              <Text style={[styles.premiumFeatureText, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>
+                {FREE_FEATURES.join('  ·  ')}
+              </Text>
+            </View>
             <View style={[styles.premiumDivider, { backgroundColor: colors.border }]} />
             {LOCKED_FEATURES.map((label, i) => (
               <View key={`locked-${i}`} style={styles.premiumFeatureRow}>
                 <View style={[styles.premiumFeatureIcon, { backgroundColor: '#E8F5E9' }]}>
-                  <Ionicons name="checkmark" size={15} color="#4CAF50" style={{ alignSelf: 'center' }} />
+                  <Ionicons name="add" size={18} color="#4CAF50" style={{ alignSelf: 'center' }} />
                 </View>
                 <Text style={[styles.premiumFeatureText, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>{label}</Text>
               </View>

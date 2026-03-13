@@ -87,21 +87,21 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
           </Text>
 
           <View style={styles.featureList}>
-            {FREE_FEATURES.map((label, i) => (
-              <View key={`free-${i}`} style={styles.featureRow}>
-                <View style={[styles.iconCircle, { backgroundColor: '#E8F5E9' }]}>
-                  <FeatherIcon name="feather" size={13} color="#4CAF50" style={{ alignSelf: 'center' }} />
-                </View>
-                <Text style={[styles.featureText, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>{label}</Text>
+            <View style={styles.featureRow}>
+              <View style={[styles.iconCircle, { backgroundColor: '#E8F5E9' }]}>
+                <FeatherIcon name="feather" size={13} color="#4CAF50" style={{ alignSelf: 'center' }} />
               </View>
-            ))}
+              <Text style={[styles.featureText, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>
+                {FREE_FEATURES.join('  ·  ')}
+              </Text>
+            </View>
 
             <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
             {LOCKED_FEATURES.map((label, i) => (
               <View key={`locked-${i}`} style={styles.featureRow}>
                 <View style={[styles.iconCircle, { backgroundColor: '#E8F5E9' }]}>
-                  <Ionicons name="checkmark" size={15} color="#4CAF50" style={{ alignSelf: 'center' }} />
+                  <Ionicons name="add" size={18} color="#4CAF50" style={{ alignSelf: 'center' }} />
                 </View>
                 <Text style={[styles.featureTextLocked, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>{label}</Text>
               </View>
