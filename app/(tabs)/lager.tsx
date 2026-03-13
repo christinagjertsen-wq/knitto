@@ -98,22 +98,24 @@ function NeedleCard({ needle, onDelete, onEdit }: { needle: Needle; onDelete: ()
       <View style={styles.needleQtyBadge}>
         <Text style={[styles.quantityText, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>{needle.quantity}</Text>
       </View>
-      <Pressable
-        onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); onEdit(); }}
-        hitSlop={8}
-        style={styles.needleIconBtn}
-      >
-        <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: colors.border, alignItems: 'center', justifyContent: 'center' }}>
-          <Ionicons name="pencil" size={11} color={colors.textTertiary} />
-        </View>
-      </Pressable>
-      <Pressable
-        onPress={confirmDelete}
-        hitSlop={8}
-        style={styles.needleIconBtn}
-      >
-        <Ionicons name="trash-outline" size={18} color="#C97B84" />
-      </Pressable>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+        <Pressable
+          onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); onEdit(); }}
+          hitSlop={8}
+          style={styles.needleIconBtn}
+        >
+          <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: colors.border, alignItems: 'center', justifyContent: 'center' }}>
+            <Ionicons name="pencil" size={11} color={colors.textTertiary} />
+          </View>
+        </Pressable>
+        <Pressable
+          onPress={confirmDelete}
+          hitSlop={8}
+          style={styles.needleIconBtn}
+        >
+          <Ionicons name="trash-outline" size={18} color="#C97B84" />
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -773,7 +775,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   searchInput: { flex: 1, fontSize: 15 },
-  listContent: { padding: 20, paddingTop: 0, gap: 10 },
+  listContent: { padding: 20, paddingTop: 0, gap: 16 },
   miniStatsRow: { flexDirection: 'row', gap: 10, marginBottom: 4 },
   miniStat: {
     flex: 1,
