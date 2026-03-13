@@ -519,7 +519,7 @@ const styles = StyleSheet.create({
   modalTitle: { fontSize: 22, marginBottom: 4, textAlign: 'center' },
   colorPreviewRow: { flexDirection: 'row', gap: 12, alignItems: 'center' },
   bigColorSwatch: { width: 64, height: 64, borderRadius: 32 },
-  fieldLabel: { fontSize: 13, marginBottom: 4, marginTop: 8, textAlign: 'center' },
+  fieldLabel: { fontSize: 13, marginBottom: 4, marginTop: 8 },
   input: { borderRadius: 12, padding: 12, fontSize: 15 },
   colorGrid: { gap: 6 },
   colorRow: { flexDirection: 'row', justifyContent: 'space-between' },

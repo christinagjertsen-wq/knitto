@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
   modalSheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40, gap: 10 },
   modalHandle: { width: 36, height: 4, borderRadius: 2, backgroundColor: '#ccc', alignSelf: 'center', marginBottom: 8 },
   modalTitle: { fontSize: 22, marginBottom: 4, textAlign: 'center' },
-  fieldLabel: { fontSize: 13, marginBottom: 2, marginTop: 6, textAlign: 'center' },
+  fieldLabel: { fontSize: 13, marginBottom: 2, marginTop: 6 },
   input: { borderRadius: 12, padding: 14, fontSize: 16 },
   row: { flexDirection: 'row', gap: 10 },
   optionPill: { paddingHorizontal: 12, paddingVertical: 8, borderRadius: 20, borderWidth: 1.5 },

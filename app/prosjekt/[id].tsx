@@ -1670,7 +1670,7 @@ const styles = StyleSheet.create({
   modalHandle: { width: 36, height: 4, borderRadius: 2, backgroundColor: '#ccc', alignSelf: 'center', marginBottom: 8 },
   modalHeaderRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
   modalTitle: { fontSize: 22, textAlign: 'center' },
-  fieldLabel: { fontSize: 13, marginBottom: 4, marginTop: 8, textAlign: 'center' },
+  fieldLabel: { fontSize: 13, marginBottom: 4, marginTop: 8 },
   detailFieldLabel: { fontSize: 13 },
   detailInput: {
     borderRadius: 12,
