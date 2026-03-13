@@ -73,7 +73,7 @@ function AddQualityModal({ brandId, visible, onClose }: { brandId: string; visib
   const t = useT();
   const [name, setName] = useState('');
   const [fiber, setFiber] = useState('');
-  const [grams, setGrams] = useState('50');
+  const [grams, setGrams] = useState('');
   const [meters, setMeters] = useState('');
   const { addQuality } = useKnitting();
 
@@ -87,7 +87,7 @@ function AddQualityModal({ brandId, visible, onClose }: { brandId: string; visib
       metersPerSkein: parseFloat(meters) || 100,
     });
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    setName(''); setFiber(''); setGrams('50'); setMeters('');
+    setName(''); setFiber(''); setGrams(''); setMeters('');
     onClose();
   }, [name, fiber, grams, meters, brandId, addQuality, onClose]);
 
