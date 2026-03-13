@@ -168,7 +168,6 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
             )}
           </Pressable>
 
-          <View style={[styles.footerDivider, { backgroundColor: colors.border }]} />
           <View style={styles.footerLinks}>
             <Pressable onPress={handleRestore} hitSlop={16} disabled={isPurchasing || isRestoring}>
               <Text style={[styles.footerLink, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
