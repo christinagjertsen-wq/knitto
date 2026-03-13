@@ -315,7 +315,8 @@ function AddYarnModal({
                   </Text>
                 </View>
               ) : (
-                <><View style={{ gap: 6 }}>
+                <View style={{ gap: 12 }}>
+                <View style={{ gap: 6 }}>
                   {availableYarn.map(yarn => (
                     <Pressable
                       key={yarn.id}
@@ -340,27 +341,27 @@ function AddYarnModal({
                       {selected === yarn.id && <Ionicons name="checkmark-circle" size={20} color={colors.primaryBtn} />}
                     </Pressable>
                   ))}
+                </View>
+                {selected && (
+                  <View>
+                    <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>
+                      Antall nøster til prosjektet
+                    </Text>
+                    <Counter
+                      value={skeins}
+                      onChange={setSkeins}
+                      max={selected ? getAvailableSkeins(selected) : undefined}
+                    />
                   </View>
-                  {selected && (
-                    <View>
-                      <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>
-                        Antall nøster til prosjektet
-                      </Text>
-                      <Counter
-                        value={skeins}
-                        onChange={setSkeins}
-                        max={selected ? getAvailableSkeins(selected) : undefined}
-                      />
-                    </View>
-                  )}
-                  <Pressable
-                    style={({ pressed }) => [styles.modalBtn, { backgroundColor: selected ? colors.primaryBtn : colors.border, opacity: pressed ? 0.85 : 1 }]}
-                    onPress={handleAddFromStock}
-                    disabled={!selected}
-                  >
-                    <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Legg til</Text>
-                  </Pressable>
-                </>
+                )}
+                <Pressable
+                  style={({ pressed }) => [styles.modalBtn, { backgroundColor: selected ? colors.primaryBtn : colors.border, opacity: pressed ? 0.85 : 1 }]}
+                  onPress={handleAddFromStock}
+                  disabled={!selected}
+                >
+                  <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Legg til</Text>
+                </Pressable>
+              </View>
               )
             ) : (
               <>
