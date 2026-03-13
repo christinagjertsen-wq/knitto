@@ -43,7 +43,7 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
   const colors = useColors();
   const { offerings, purchase, isPurchasing, restore, isRestoring } = useSubscription();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [selectedPlan, setSelectedPlan] = useState<Plan>('yearly');
+  const [selectedPlan, setSelectedPlan] = useState<Plan>('monthly');
 
   const monthlyPackage = offerings?.current?.monthly ?? offerings?.current?.availablePackages?.[0];
   const yearlyPackage = offerings?.current?.annual ?? offerings?.current?.availablePackages?.[0];
@@ -162,12 +162,10 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
             ) : (
               <>
                 <Text style={[styles.btnText, { fontFamily: 'Inter_700Bold' }]}>
-                  14 dager gratis, så prøv Knitto+
+                  Start gratis prøveperiode
                 </Text>
                 <Text style={[styles.btnSub, { fontFamily: 'Inter_400Regular' }]}>
-                  {selectedPlan === 'yearly'
-                    ? `${YEARLY_TOTAL} kr / år etter prøveperioden`
-                    : `${MONTHLY_PRICE} kr / mnd etter prøveperioden`}
+                  {`14 dager gratis, deretter ${selectedPlan === 'yearly' ? YEARLY_MONTHLY_PRICE : MONTHLY_PRICE} kr / mnd`}
                 </Text>
               </>
             )}
