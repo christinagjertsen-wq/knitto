@@ -17,7 +17,7 @@ import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
 import { useKnitting } from '@/context/KnittingContext';
 import { useUser, getGreeting } from '@/context/UserContext';
-import { PremiumModal, getPremiumFeatures } from '@/components/PremiumModal';
+import { PremiumModal, FREE_FEATURES, LOCKED_FEATURES } from '@/components/PremiumModal';
 import { useColors, useIsDark, useTheme } from '@/context/ThemeContext';
 import { useLanguage, useT } from '@/context/LanguageContext';
 import { useSubscription } from '@/lib/revenuecat';
@@ -191,33 +191,36 @@ export default function InnstillingerScreen() {
         <YarnStats />
 
         <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.premium.sectionTitle}</Text>
-        <View style={[styles.premiumCard, { backgroundColor: '#1A2340' }]}>
-          <View style={styles.premiumTop}>
-            <View style={styles.premiumIconCircle}>
-              <Ionicons name="diamond-outline" size={20} color="#fff" />
-            </View>
-            <Text style={[styles.premiumTitle, { fontFamily: 'Inter_700Bold', textAlign: 'center' }]}>{t.premium.cardTitle}</Text>
-            <Text style={[styles.premiumSub, { fontFamily: 'Inter_400Regular', textAlign: 'center' }]}>{t.premium.cardSub}</Text>
-          </View>
-          <View style={styles.premiumDivider} />
+        <View style={[styles.premiumCard, { backgroundColor: colors.surface }]}>
+          <Text style={[styles.premiumTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Prøv Knitto+ gratis</Text>
+          <Text style={[styles.premiumSub, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>Lås opp alt og strikk uten grenser</Text>
+
           <View style={styles.premiumFeatures}>
-            {getPremiumFeatures(t).map(f => (
-              <View key={f.label} style={styles.premiumFeatureRow}>
-                <View style={styles.premiumFeatureIcon}>
-                  <Ionicons name={f.icon} size={15} color="rgba(255,255,255,0.9)" />
+            {FREE_FEATURES.map((label, i) => (
+              <View key={`free-${i}`} style={styles.premiumFeatureRow}>
+                <View style={[styles.premiumFeatureIcon, { backgroundColor: '#E8F5E9' }]}>
+                  <Ionicons name="checkmark" size={14} color="#4CAF50" />
                 </View>
-                <Text style={[styles.premiumFeatureText, { fontFamily: 'Inter_400Regular' }]}>{f.label}</Text>
+                <Text style={[styles.premiumFeatureText, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>{label}</Text>
+              </View>
+            ))}
+            <View style={[styles.premiumDivider, { backgroundColor: colors.border }]} />
+            {LOCKED_FEATURES.map((label, i) => (
+              <View key={`locked-${i}`} style={styles.premiumFeatureRow}>
+                <View style={[styles.premiumFeatureIcon, { backgroundColor: colors.background }]}>
+                  <Ionicons name="close" size={14} color={colors.textTertiary} />
+                </View>
+                <Text style={[styles.premiumFeatureText, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{label}</Text>
               </View>
             ))}
           </View>
+
           <Pressable
-            style={({ pressed }) => [styles.premiumBtn, { backgroundColor: '#fff', opacity: pressed ? 0.92 : 1 }]}
+            style={({ pressed }) => [styles.premiumBtn, { backgroundColor: '#5B7FBF', opacity: pressed ? 0.88 : 1 }]}
             onPress={() => setShowPremium(true)}
           >
-            <Text style={[styles.premiumBtnText, { color: '#1A2340', fontFamily: 'Inter_700Bold' }]}>
-              {t.premium.ctaButton}
-            </Text>
-            <Text style={[styles.premiumBtnSub, { fontFamily: 'Inter_400Regular' }]}>{t.premium.price}</Text>
+            <Text style={[styles.premiumBtnText, { color: '#fff', fontFamily: 'Inter_700Bold' }]}>Start gratis prøveperiode</Text>
+            <Text style={[styles.premiumBtnSub, { color: 'rgba(255,255,255,0.65)', fontFamily: 'Inter_400Regular' }]}>14 dager gratis, deretter 69 kr / mnd</Text>
           </Pressable>
         </View>
 
@@ -340,19 +343,19 @@ const styles = StyleSheet.create({
   barBg: { flex: 1, height: 6, borderRadius: 3, overflow: 'hidden' },
   barFill: { height: 6, borderRadius: 3 },
   barLabel: { fontSize: 11, minWidth: 60, textAlign: 'right' },
-  premiumCard: { borderRadius: 20, padding: 20, gap: 14 },
+  premiumCard: { borderRadius: 20, padding: 20, gap: 12 },
   premiumTop: { flexDirection: 'column', alignItems: 'center', gap: 8 },
   premiumIconCircle: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.12)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' },
-  premiumTitle: { fontSize: 15, color: '#fff', lineHeight: 20 },
-  premiumSub: { fontSize: 12, color: 'rgba(255,255,255,0.55)', marginTop: 2 },
-  premiumDivider: { height: 1, backgroundColor: 'rgba(255,255,255,0.1)' },
+  premiumTitle: { fontSize: 18 },
+  premiumSub: { fontSize: 13, marginTop: -4 },
+  premiumDivider: { height: 1, marginVertical: 2 },
   premiumFeatures: { gap: 10 },
-  premiumFeatureRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 },
-  premiumFeatureIcon: { width: 30, height: 30, borderRadius: 8, backgroundColor: 'rgba(255,255,255,0.1)', alignItems: 'center', justifyContent: 'center' },
-  premiumFeatureText: { color: 'rgba(255,255,255,0.85)', fontSize: 14 },
-  premiumBtn: { borderRadius: 14, paddingVertical: 14, paddingHorizontal: 16, alignItems: 'center', gap: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.15, shadowRadius: 8, elevation: 4 },
+  premiumFeatureRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  premiumFeatureIcon: { width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
+  premiumFeatureText: { fontSize: 14 },
+  premiumBtn: { borderRadius: 14, paddingVertical: 14, paddingHorizontal: 16, alignItems: 'center', gap: 3, shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.15, shadowRadius: 8, elevation: 4 },
   premiumBtnText: { fontSize: 15 },
-  premiumBtnSub: { fontSize: 11, color: 'rgba(26,35,64,0.5)' },
+  premiumBtnSub: { fontSize: 11 },
   segContainer: { flexDirection: 'row', borderRadius: 14, padding: 4, gap: 4 },
   segPill: { flex: 1, paddingVertical: 11, alignItems: 'center', borderRadius: 10 },
   segPillText: { fontSize: 14 },
