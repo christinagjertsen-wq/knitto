@@ -121,7 +121,7 @@ export default function InnstillingerScreen() {
   const [showEditName, setShowEditName] = useState(false);
   const [nameInput, setNameInput] = useState('');
   const [showPremium, setShowPremium] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<'yearly' | 'monthly'>('yearly');
+  const [selectedPlan, setSelectedPlan] = useState<'yearly' | 'monthly'>('monthly');
 
   const greeting = getGreeting(firstName, t);
 
