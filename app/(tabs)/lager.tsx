@@ -772,12 +772,14 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   modalHandle: { width: 36, height: 4, borderRadius: 2, backgroundColor: '#ccc', alignSelf: 'center', marginBottom: 8 },
-  modalTitle: { fontSize: 22, marginBottom: 4 },
-  fieldLabel: { fontSize: 13, marginBottom: 4, marginTop: 8 },
+  modalTitle: { fontSize: 22, marginBottom: 4, textAlign: 'center' },
+  fieldLabel: { fontSize: 13, marginBottom: 6, marginTop: 12, textAlign: 'center' },
   input: {
     borderRadius: 12,
-    padding: 14,
+    paddingHorizontal: 18,
+    paddingVertical: 14,
     fontSize: 16,
+    textAlign: 'center',
   },
   pillRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   optionPill: {
