@@ -81,6 +81,28 @@ function AnimatedStatCard({ label, target }: { label: string; target: number }) 
   );
 }
 
+function AnimatedHeaderStat({ label, target }: { label: string; target: number }) {
+  const colors = useColors();
+  const { value, start } = useCountUp(target, 700);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      start();
+    }, [target])
+  );
+
+  return (
+    <View style={styles.headerStat}>
+      <Text style={[styles.headerStatNumber, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>
+        {Math.round(value).toLocaleString('nb-NO')}
+      </Text>
+      <Text style={[styles.headerStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
+        {label}
+      </Text>
+    </View>
+  );
+}
+
 function PulsingDot({ color }: { color: string }) {
   const scale = useRef(new Animated.Value(1)).current;
   const opacity = useRef(new Animated.Value(1)).current;
@@ -483,32 +505,11 @@ export default function HomeScreen() {
           </View>
 
           <View style={[styles.headerStats, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(26,35,64,0.05)' }]}>
-            <View style={styles.headerStat}>
-              <Text style={[styles.headerStatNumber, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>
-                {projects.length}
-              </Text>
-              <Text style={[styles.headerStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                {t.home.statProjects}
-              </Text>
-            </View>
+            <AnimatedHeaderStat label={t.home.statProjects} target={projects.length} />
             <View style={[styles.headerStatDivider, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(26,35,64,0.1)' }]} />
-            <View style={styles.headerStat}>
-              <Text style={[styles.headerStatNumber, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>
-                {Math.round(stats.totalSkeins).toLocaleString('nb-NO')}
-              </Text>
-              <Text style={[styles.headerStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                {t.home.statSkeins}
-              </Text>
-            </View>
+            <AnimatedHeaderStat label={t.home.statSkeins} target={Math.round(stats.totalSkeins)} />
             <View style={[styles.headerStatDivider, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(26,35,64,0.1)' }]} />
-            <View style={styles.headerStat}>
-              <Text style={[styles.headerStatNumber, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>
-                {needles.reduce((sum, n) => sum + (n.quantity || 1), 0)}
-              </Text>
-              <Text style={[styles.headerStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                {t.home.statNeedles}
-              </Text>
-            </View>
+            <AnimatedHeaderStat label={t.home.statNeedles} target={needles.reduce((sum, n) => sum + (n.quantity || 1), 0)} />
           </View>
         </LinearGradient>
 
