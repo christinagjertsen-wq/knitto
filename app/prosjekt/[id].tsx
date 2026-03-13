@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import {
   View,
   Text,
@@ -723,6 +724,21 @@ function EditDetailsModal({
   const [startDate, setStartDate] = useState(initial.startDate ?? '');
   const [endDate, setEndDate] = useState(initial.endDate ?? '');
   const [notes, setNotes] = useState(initial.notes ?? '');
+  const [showStartPicker, setShowStartPicker] = useState(false);
+  const [showEndPicker, setShowEndPicker] = useState(false);
+  const { language } = useLanguage();
+
+  const parseDateStr = (str: string): Date => {
+    if (!str) return new Date();
+    const parts = str.split('.');
+    if (parts.length === 3) {
+      const d = parseInt(parts[0], 10);
+      const m = parseInt(parts[1], 10);
+      const y = parseInt(parts[2], 10);
+      if (!isNaN(d) && !isNaN(m) && !isNaN(y)) return new Date(y, m - 1, d);
+    }
+    return new Date();
+  };
 
   const handleSave = () => {
     onSave({ recipient, size, gauge, patternNeedleSize: patternNeedleSize.replace(',', '.'), startDate, endDate, notes });
@@ -735,7 +751,7 @@ function EditDetailsModal({
   }) => (
     <View style={{ gap: 4 }}>
       <Text style={[styles.detailFieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{label}</Text>
-      {hint && <Text style={[{ fontSize: 11, color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{hint}</Text>}
+      {!!hint && <Text style={[{ fontSize: 11, color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{hint}</Text>}
       <TextInput
         style={[styles.detailInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border, fontFamily: 'Inter_400Regular' }]}
         value={value}
@@ -744,6 +760,36 @@ function EditDetailsModal({
         placeholderTextColor={colors.textTertiary}
         returnKeyType="next"
       />
+    </View>
+  );
+
+  const DateField = ({ label, value, onChangeDate, showPicker, setShowPicker }: {
+    label: string; value: string; onChangeDate: (v: string) => void; showPicker: boolean; setShowPicker: (v: boolean) => void;
+  }) => (
+    <View style={{ gap: 4 }}>
+      <Text style={[styles.detailFieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{label}</Text>
+      <Pressable
+        style={[styles.detailInput, { flexDirection: 'row', alignItems: 'center', gap: 8 }]}
+        onPress={() => { setShowPicker(!showPicker); Haptics.selectionAsync(); }}
+      >
+        <Ionicons name="calendar-outline" size={16} color={colors.textTertiary} />
+        <Text style={{ color: value ? colors.text : colors.textTertiary, fontFamily: 'Inter_400Regular', fontSize: 15 }}>
+          {value || t.project.startDatePlaceholder}
+        </Text>
+      </Pressable>
+      {showPicker && Platform.OS !== 'web' && (
+        <DateTimePicker
+          value={parseDateStr(value)}
+          mode="date"
+          display={Platform.OS === 'ios' ? 'inline' : 'default'}
+          onChange={(_, date) => {
+            if (Platform.OS === 'android') setShowPicker(false);
+            if (date) onChangeDate(date.toLocaleDateString(language === 'no' ? 'nb-NO' : 'en-US'));
+          }}
+          maximumDate={new Date()}
+          locale="nb"
+        />
+      )}
     </View>
   );
 
@@ -759,18 +805,18 @@ function EditDetailsModal({
             contentContainerStyle={styles.editModalContent}
           >
             <View style={styles.modalHandle} />
-            <View style={[styles.modalHeaderRow, { marginBottom: 16 }]}>
-              <Pressable onPress={onClose} hitSlop={8}>
+            <View style={[styles.modalHeaderRow, { marginBottom: 16, justifyContent: 'center' }]}>
+              <Pressable onPress={onClose} hitSlop={8} style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}>
                 <Ionicons name="chevron-back" size={22} color={colors.text} />
+                <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.project.details}</Text>
               </Pressable>
-              <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold', flex: 1, marginLeft: 4 }]}>{t.project.details}</Text>
             </View>
             <Field label={t.project.to} value={recipient} onChangeText={setRecipient} placeholder={t.project.toPlaceholder} />
             <Field label={t.project.size} value={size} onChangeText={setSize} placeholder={t.project.sizePlaceholder} />
             <Field label={t.project.gauge} value={gauge} onChangeText={setGauge} placeholder={t.project.gaugePlaceholder} hint={t.project.gaugeHint} />
             <Field label={t.project.needleSize} value={patternNeedleSize} onChangeText={setPatternNeedleSize} placeholder={t.project.needleSizePlaceholder} hint={t.project.needleSizeHint} />
-            <Field label={status === 'planlagt' ? t.project.expectedStart : t.project.started} value={startDate} onChangeText={setStartDate} placeholder={t.project.startDatePlaceholder} />
-            <Field label={t.project.completed} value={endDate} onChangeText={setEndDate} placeholder={t.project.startDatePlaceholder} />
+            <DateField label={status === 'planlagt' ? t.project.expectedStart : t.project.started} value={startDate} onChangeDate={setStartDate} showPicker={showStartPicker} setShowPicker={setShowStartPicker} />
+            <DateField label={t.project.completed} value={endDate} onChangeDate={setEndDate} showPicker={showEndPicker} setShowPicker={setShowEndPicker} />
             <View style={{ gap: 4 }}>
               <Text style={[styles.detailFieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.project.notes}</Text>
               <TextInput
