@@ -56,7 +56,7 @@ function BrandCard({ brand }: { brand: Brand }) {
           </Text>
           <Text style={[styles.brandMeta, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
             {qualities.length} {qualities.length === 1 ? t.brand.qualitySingular : t.brand.qualityPlural}
-            {totalGrams > 0 ? ` · ${totalGrams.toLocaleString('nb-NO')} g` : ''}
+            {totalGrams > 0 ? ` · ${totalGrams.toLocaleString('nb-NO').replace(',', '.')} g` : ''}
           </Text>
           {sampleColors.length > 0 && (
             <View style={styles.colorStrip}>
