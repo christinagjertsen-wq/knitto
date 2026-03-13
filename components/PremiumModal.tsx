@@ -89,7 +89,7 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
           <View style={styles.featureList}>
             <View style={styles.featureRow}>
               <View style={[styles.iconCircle, { backgroundColor: 'rgba(91,127,191,0.12)' }]}>
-                <FeatherIcon name="feather" size={13} color="#5B7FBF" style={{ alignSelf: 'center' }} />
+                <Ionicons name="leaf-outline" size={14} color="#5B7FBF" style={{ alignSelf: 'center' }} />
               </View>
               <Text style={[styles.featureText, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>
                 {FREE_FEATURES.join('  ·  ')}
