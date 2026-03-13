@@ -334,12 +334,6 @@ function Linjal() {
           ))}
         </View>
       </View>
-
-      {Platform.OS === 'web' && (
-        <Text style={{ fontSize: 11, color: colors.textTertiary, fontFamily: 'Inter_400Regular', paddingHorizontal: 20, paddingBottom: 16, marginTop: -8 }}>
-          {t.tools.rulerWebNote}
-        </Text>
-      )}
     </View>
   );
 }
