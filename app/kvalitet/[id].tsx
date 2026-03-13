@@ -11,6 +11,7 @@ import {
   KeyboardAvoidingView,
   Alert,
   PanResponder,
+  Animated,
 } from 'react-native';
 import { ColorPickerModal } from '@/components/ColorPickerModal';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -233,6 +234,7 @@ type YarnCardProps = {
   gramsPerSkein: number;
   onPress: () => void;
   onRename: () => void;
+  onDelete: () => void;
   isDragging: boolean;
   isDropTarget: boolean;
   isDimmed: boolean;
@@ -242,39 +244,73 @@ type YarnCardProps = {
   onDragEnd: (pageY: number) => void;
 };
 
-function YarnCard({ yarn, gramsPerSkein, onPress, onRename, isDragging, isDropTarget, isDimmed, cardRef, onDragStart, onDragMove, onDragEnd }: YarnCardProps) {
+const SWIPE_DELETE_THRESHOLD = -80;
+
+function YarnCard({ yarn, gramsPerSkein, onPress, onRename, onDelete, isDragging, isDropTarget, isDimmed, cardRef, onDragStart, onDragMove, onDragEnd }: YarnCardProps) {
   const colors = useColors();
   const totalGrams = yarn.skeins * gramsPerSkein;
   const isDraggingRef = useRef(false);
+  const isSwipingRef = useRef(false);
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const swipeX = useRef(new Animated.Value(0)).current;
+  const onDeleteRef = useRef(onDelete);
+  const onPressRef = useRef(onPress);
+  useEffect(() => { onDeleteRef.current = onDelete; }, [onDelete]);
+  useEffect(() => { onPressRef.current = onPress; }, [onPress]);
 
   const panResponder = useRef(PanResponder.create({
     onStartShouldSetPanResponder: () => true,
-    onMoveShouldSetPanResponder: () => isDraggingRef.current,
+    onMoveShouldSetPanResponder: (_, g) =>
+      isDraggingRef.current ||
+      (Math.abs(g.dx) > 6 && Math.abs(g.dx) > Math.abs(g.dy) * 1.3),
     onPanResponderGrant: (evt) => {
       const pageY = evt.nativeEvent.pageY;
+      isSwipingRef.current = false;
       longPressTimer.current = setTimeout(() => {
         isDraggingRef.current = true;
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
         onDragStart(yarn.id, pageY);
       }, 420);
     },
-    onPanResponderMove: (evt) => {
-      if (isDraggingRef.current) onDragMove(evt.nativeEvent.pageY);
+    onPanResponderMove: (evt, g) => {
+      if (isDraggingRef.current) {
+        onDragMove(evt.nativeEvent.pageY);
+        return;
+      }
+      if (!isSwipingRef.current && Math.abs(g.dx) > 6 && Math.abs(g.dx) > Math.abs(g.dy) * 1.3) {
+        isSwipingRef.current = true;
+        if (longPressTimer.current) clearTimeout(longPressTimer.current);
+      }
+      if (isSwipingRef.current && g.dx < 0) {
+        swipeX.setValue(Math.max(g.dx, -120));
+      }
     },
-    onPanResponderRelease: (evt) => {
+    onPanResponderRelease: (evt, g) => {
       if (longPressTimer.current) clearTimeout(longPressTimer.current);
       const wasDragging = isDraggingRef.current;
+      const wasSwiping = isSwipingRef.current;
       isDraggingRef.current = false;
+      isSwipingRef.current = false;
       if (wasDragging) {
         onDragEnd(evt.nativeEvent.pageY);
+      } else if (wasSwiping) {
+        if (g.dx < SWIPE_DELETE_THRESHOLD) {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          Animated.timing(swipeX, { toValue: -500, duration: 220, useNativeDriver: true }).start(() => {
+            onDeleteRef.current();
+          });
+        } else {
+          Animated.spring(swipeX, { toValue: 0, useNativeDriver: true, tension: 120, friction: 8 }).start();
+        }
       } else {
-        onPress();
+        onPressRef.current();
       }
     },
     onPanResponderTerminate: () => {
       if (longPressTimer.current) clearTimeout(longPressTimer.current);
       isDraggingRef.current = false;
+      isSwipingRef.current = false;
+      Animated.spring(swipeX, { toValue: 0, useNativeDriver: true }).start();
       onDragEnd(-1);
     },
   })).current;
@@ -282,32 +318,37 @@ function YarnCard({ yarn, gramsPerSkein, onPress, onRename, isDragging, isDropTa
   return (
     <View
       ref={cardRef}
-      style={[
-        styles.yarnCard,
-        { backgroundColor: colors.surface },
-        isDragging && { opacity: 0.25 },
-        isDropTarget && { borderColor: colors.primaryBtn, borderWidth: 2 },
-        isDimmed && !isDragging && !isDropTarget && { opacity: 0.45 },
-      ]}
-      {...panResponder.panHandlers}
+      style={[styles.yarnCardWrapper, isDragging && { opacity: 0.25 }, isDimmed && !isDragging && !isDropTarget && { opacity: 0.45 }]}
     >
-      <View style={[styles.colorSwatch, { backgroundColor: yarn.colorHex }]} />
-      <Pressable
-        style={styles.yarnCardContent}
-        onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); onRename(); }}
-        hitSlop={4}
-      >
-        <Text style={[styles.colorName, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
-          {yarn.colorName}
-        </Text>
-      </Pressable>
-      <View style={styles.yarnCardRight}>
-        <View style={[styles.gramBadge, { backgroundColor: isDropTarget ? colors.primaryBtn : colors.badgeBg }]}>
-          <Text style={[styles.gramBadgeText, { color: isDropTarget ? '#fff' : colors.badgeText, fontFamily: 'Inter_600SemiBold' }]}>
-            {totalGrams > 0 ? `${totalGrams} g` : `${yarn.skeins} stk`}
-          </Text>
-        </View>
+      <View style={[styles.yarnCardDeleteBg, { borderRadius: styles.yarnCard.borderRadius }]}>
+        <Ionicons name="trash-outline" size={22} color="#fff" />
       </View>
+      <Animated.View
+        style={[
+          styles.yarnCard,
+          { backgroundColor: colors.surface, transform: [{ translateX: swipeX }] },
+          isDropTarget && { borderColor: colors.primaryBtn, borderWidth: 2 },
+        ]}
+        {...panResponder.panHandlers}
+      >
+        <View style={[styles.colorSwatch, { backgroundColor: yarn.colorHex }]} />
+        <Pressable
+          style={styles.yarnCardContent}
+          onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); onRename(); }}
+          hitSlop={4}
+        >
+          <Text style={[styles.colorName, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
+            {yarn.colorName}
+          </Text>
+        </Pressable>
+        <View style={styles.yarnCardRight}>
+          <View style={[styles.gramBadge, { backgroundColor: isDropTarget ? colors.primaryBtn : colors.badgeBg }]}>
+            <Text style={[styles.gramBadgeText, { color: isDropTarget ? '#fff' : colors.badgeText, fontFamily: 'Inter_600SemiBold' }]}>
+              {totalGrams > 0 ? `${totalGrams} g` : `${yarn.skeins} stk`}
+            </Text>
+          </View>
+        </View>
+      </Animated.View>
     </View>
   );
 }
@@ -725,6 +766,7 @@ export default function KvalitetScreen() {
               gramsPerSkein={quality.gramsPerSkein}
               onPress={() => { setSelectedYarn(yarn); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
               onRename={() => { setRenameYarn(yarn); setRenameInput(yarn.colorName); }}
+              onDelete={() => { deleteYarnStock(yarn.id); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); }}
               isDragging={draggingId === yarn.id}
               isDropTarget={dropTargetId === yarn.id}
               isDimmed={!!draggingId && draggingId !== yarn.id && dropTargetId !== yarn.id}
@@ -983,11 +1025,25 @@ const styles = StyleSheet.create({
   miniStatLabel: { fontSize: 11, marginTop: 3 },
   sectionTitle: { fontSize: 16, marginTop: 4, marginBottom: 4 },
   sortPill: { paddingHorizontal: 10, paddingVertical: 5, borderRadius: 20, borderWidth: 1 },
+  yarnCardWrapper: {
+    borderRadius: 16,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  yarnCardDeleteBg: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    bottom: 0,
+    width: 80,
+    backgroundColor: '#C97B84',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   yarnCard: {
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 16,
-    overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.06,
