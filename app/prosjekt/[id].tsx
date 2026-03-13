@@ -781,8 +781,8 @@ function AddNeedleToProjectModal({
                         style={styles.needleRow}
                         onPress={() => { onToggle(needle.id); Haptics.selectionAsync(); }}
                       >
-                        <View style={[styles.needleSize, { backgroundColor: isLinked ? colors.primaryBtn + '22' : colors.badgeBg }]}>
-                          <Text style={[styles.needleSizeText, { color: isLinked ? colors.primaryBtn : colors.badgeText, fontFamily: 'Inter_700Bold' }]}>{needle.size.replace(',', '.')}</Text>
+                        <View style={[styles.needleSize, { backgroundColor: colors.badgeBg }]}>
+                          <Text style={[styles.needleSizeText, { color: colors.badgeText, fontFamily: 'Inter_700Bold' }]}>{needle.size.replace(',', '.')}</Text>
                         </View>
                         <View style={{ flex: 1 }}>
                           <Text style={[styles.needleLabel, { color: colors.text, fontFamily: isLinked ? 'Inter_500Medium' : 'Inter_400Regular' }]}>
@@ -1378,8 +1378,8 @@ export default function ProsjektScreen() {
               const TYPE_LABELS: Record<string, string> = { rundpinne: t.needleTypes.rundpinne, strømpepinner: t.needleTypes.strømpepinner, rett: t.needleTypes.rett, utskiftbar: t.needleTypes.utskiftbar };
               return (
                 <View key={needle.id} style={styles.needleRow}>
-                  <View style={[styles.needleSize, { backgroundColor: colors.primaryBtn + '22' }]}>
-                    <Text style={[styles.needleSizeText, { color: colors.primaryBtn, fontFamily: 'Inter_700Bold' }]}>{needle.size.replace(',', '.')}</Text>
+                  <View style={[styles.needleSize, { backgroundColor: colors.badgeBg }]}>
+                    <Text style={[styles.needleSizeText, { color: colors.badgeText, fontFamily: 'Inter_700Bold' }]}>{needle.size.replace(',', '.')}</Text>
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={[styles.needleLabel, { color: colors.text, fontFamily: 'Inter_500Medium' }]}>
