@@ -245,7 +245,9 @@ export default function InnstillingerScreen() {
           >
             <Text style={[styles.premiumBtnText, { color: '#fff', fontFamily: 'Inter_700Bold' }]}>Start gratis prøveperiode</Text>
             <Text style={[styles.premiumBtnSub, { color: 'rgba(255,255,255,0.65)', fontFamily: 'Inter_400Regular' }]}>
-              Prøv Knitto+ gratis i 14 dager
+              {selectedPlan === 'yearly'
+                ? `14 dager gratis, deretter ${YEARLY_TOTAL} kr / år`
+                : `14 dager gratis, deretter ${MONTHLY_PRICE} kr / mnd`}
             </Text>
           </Pressable>
         </View>
