@@ -142,37 +142,57 @@ function ColorDetailModal({
 }) {
   const colors = useColors();
   const t = useT();
-  const [extra, setExtra] = useState(1);
+  const [gramInput, setGramInput] = useState(gramsPerSkein > 0 ? String(gramsPerSkein) : '');
 
-  const reset = () => setExtra(1);
+  const reset = () => setGramInput(gramsPerSkein > 0 ? String(gramsPerSkein) : '');
   const handleClose = () => { reset(); onClose(); };
+
+  const parsedGrams = parseFloat(gramInput.replace(',', '.')) || 0;
+  const totalGrams = yarn.skeins * gramsPerSkein;
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
       <View style={styles.modalOverlay}>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <View style={[styles.modalSheet, { backgroundColor: colors.surface, paddingBottom: 32, gap: 0 }]}>
           <View style={styles.modalHandle} />
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 20 }}>
-            <View style={[styles.bigColorSwatch, { backgroundColor: yarn.colorHex, width: 48, height: 48, borderRadius: 24 }, yarn.colorHex === '#FFFFFF' && { borderWidth: 1.5, borderColor: 'rgba(0,0,0,0.12)' }]} />
-            <View style={{ flex: 1 }}>
-              <Text style={[styles.colorName, { color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 18 }]}>{yarn.colorName}</Text>
-              <Text style={{ color: colors.textTertiary, fontFamily: 'Inter_400Regular', fontSize: 13, marginTop: 2 }}>
-                {yarn.skeins} {yarn.skeins === 1 ? t.storage.skein : t.storage.skeins} · {yarn.skeins * gramsPerSkein} g
+
+          <View style={{ alignItems: 'center', marginBottom: 24 }}>
+            <View style={[styles.bigColorSwatch, { backgroundColor: yarn.colorHex, width: 56, height: 56, borderRadius: 28, marginBottom: 12 }, yarn.colorHex === '#FFFFFF' && { borderWidth: 1.5, borderColor: 'rgba(0,0,0,0.12)' }]} />
+            <Text style={[styles.colorName, { color: colors.text, fontFamily: 'Inter_700Bold', fontSize: 20, textAlign: 'center' }]}>{yarn.colorName}</Text>
+            {totalGrams > 0 && (
+              <Text style={{ color: colors.textTertiary, fontFamily: 'Inter_400Regular', fontSize: 14, marginTop: 4 }}>
+                {totalGrams} g
               </Text>
-            </View>
+            )}
           </View>
 
-          <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium', marginBottom: 10 }]}>
-            Legg til flere nøster
+          <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium', marginBottom: 8 }]}>
+            Legg til gram
           </Text>
-          <SkeinCounter value={extra} onChange={setExtra} />
+          <TextInput
+            style={[styles.modalInput, { color: colors.text, backgroundColor: colors.background, fontFamily: 'Inter_400Regular', textAlign: 'center', fontSize: 22 }]}
+            value={gramInput}
+            onChangeText={setGramInput}
+            keyboardType="decimal-pad"
+            placeholder="0"
+            placeholderTextColor={colors.textTertiary}
+            selectTextOnFocus
+          />
 
           <Pressable
-            style={({ pressed }) => [styles.modalBtn, { backgroundColor: colors.primaryBtn, opacity: pressed ? 0.85 : 1, marginTop: 20 }]}
-            onPress={() => { onAdd(extra); reset(); onClose(); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); }}
+            style={({ pressed }) => [styles.modalBtn, { backgroundColor: parsedGrams > 0 ? colors.primaryBtn : colors.border, opacity: pressed ? 0.85 : 1, marginTop: 16 }]}
+            onPress={() => {
+              if (parsedGrams <= 0) return;
+              onAdd(parsedGrams);
+              reset();
+              onClose();
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            }}
+            disabled={parsedGrams <= 0}
           >
             <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>
-              Legg til {extra} {extra === 1 ? t.storage.skein : t.storage.skeins}
+              Legg til {parsedGrams > 0 ? `${parsedGrams} g` : ''}
             </Text>
           </Pressable>
 
@@ -193,6 +213,7 @@ function ColorDetailModal({
             <Text style={[styles.cancelBtnText, { color: colors.textSecondary }]}>{t.common.cancel}</Text>
           </Pressable>
         </View>
+        </KeyboardAvoidingView>
       </View>
     </Modal>
   );
@@ -515,7 +536,7 @@ export default function KvalitetScreen() {
           gramsPerSkein={quality.gramsPerSkein}
           visible={!!selectedYarn}
           onClose={() => setSelectedYarn(null)}
-          onAdd={(extra) => updateYarnStock(selectedYarn.id, { skeins: selectedYarn.skeins + extra })}
+          onAdd={(grams) => updateYarnStock(selectedYarn.id, { skeins: selectedYarn.skeins + (quality.gramsPerSkein > 0 ? grams / quality.gramsPerSkein : 0) })}
           onDelete={() => { deleteYarnStock(selectedYarn.id); setSelectedYarn(null); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); }}
         />
       )}
