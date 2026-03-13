@@ -404,7 +404,7 @@ export default function KvalitetScreen() {
     const gpsk = quality?.gramsPerSkein ?? 0;
     return [...yarnStock].sort((a, b) =>
       sortBy === 'navn'
-        ? a.colorName.localeCompare(b.colorName, 'nb')
+        ? a.colorName.localeCompare(b.colorName, 'nb', { numeric: true, sensitivity: 'base' })
         : b.skeins * gpsk - a.skeins * gpsk
     );
   }, [yarnStock, sortBy, quality]);
