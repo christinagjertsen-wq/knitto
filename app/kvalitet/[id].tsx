@@ -398,6 +398,8 @@ export default function KvalitetScreen() {
   const [fiberInput, setFiberInput] = useState('');
   const [selectedYarn, setSelectedYarn] = useState<YarnStock | null>(null);
   const [sortBy, setSortBy] = useState<'navn' | 'gram'>('navn');
+  const [skeinEditField, setSkeinEditField] = useState<'grams' | 'meters' | null>(null);
+  const [skeinEditInput, setSkeinEditInput] = useState('');
 
   const quality = getQualityById(id);
   const brand = quality ? getBrandById(quality.brandId) : undefined;
@@ -496,18 +498,26 @@ export default function KvalitetScreen() {
         contentInsetAdjustmentBehavior="automatic"
       >
         {(quality.gramsPerSkein || quality.metersPerSkein) ? (
-          <View style={[styles.miniStatsRow, { marginBottom: 8 }]}>
+          <View style={styles.miniStatsRow}>
             {quality.gramsPerSkein ? (
-              <View style={[styles.miniStatCard, { backgroundColor: colors.surface }]}>
+              <Pressable
+                style={[styles.miniStatCard, { backgroundColor: colors.surface }]}
+                onPress={() => { setSkeinEditField('grams'); setSkeinEditInput(String(quality.gramsPerSkein)); Haptics.selectionAsync(); }}
+              >
+                <Ionicons name="pencil-outline" size={13} color={colors.textTertiary} style={{ position: 'absolute', top: 10, right: 10 }} />
                 <Text style={[styles.miniStatNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{quality.gramsPerSkein} g</Text>
                 <Text style={[styles.miniStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>per nøste</Text>
-              </View>
+              </Pressable>
             ) : null}
             {quality.metersPerSkein ? (
-              <View style={[styles.miniStatCard, { backgroundColor: colors.surface }]}>
+              <Pressable
+                style={[styles.miniStatCard, { backgroundColor: colors.surface }]}
+                onPress={() => { setSkeinEditField('meters'); setSkeinEditInput(String(quality.metersPerSkein)); Haptics.selectionAsync(); }}
+              >
+                <Ionicons name="pencil-outline" size={13} color={colors.textTertiary} style={{ position: 'absolute', top: 10, right: 10 }} />
                 <Text style={[styles.miniStatNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{quality.metersPerSkein} m</Text>
                 <Text style={[styles.miniStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>per nøste</Text>
-              </View>
+              </Pressable>
             ) : null}
           </View>
         ) : null}
@@ -624,6 +634,54 @@ export default function KvalitetScreen() {
         </View>
       </Modal>
 
+      <Modal visible={skeinEditField !== null} transparent animationType="fade" onRequestClose={() => setSkeinEditField(null)}>
+        <View style={styles.modalOverlay}>
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+          <View style={[styles.modalSheet, { backgroundColor: colors.surface, paddingBottom: Math.max(insets.bottom, 24) }]}>
+            <View style={styles.modalHandle} />
+            <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>
+              {skeinEditField === 'grams' ? 'Gram per nøste' : 'Meter per nøste'}
+            </Text>
+            <TextInput
+              style={[styles.modalInput, { color: colors.text, backgroundColor: colors.background, fontFamily: 'Inter_400Regular', textAlign: 'center', fontSize: 22 }]}
+              value={skeinEditInput}
+              onChangeText={setSkeinEditInput}
+              keyboardType="decimal-pad"
+              placeholder={skeinEditField === 'grams' ? '50' : '100'}
+              placeholderTextColor={colors.textTertiary}
+              autoFocus
+              selectTextOnFocus
+              returnKeyType="done"
+              onSubmitEditing={() => {
+                const val = parseFloat(skeinEditInput.replace(',', '.'));
+                if (val > 0) {
+                  updateQuality(id, skeinEditField === 'grams' ? { gramsPerSkein: val } : { metersPerSkein: val });
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                }
+                setSkeinEditField(null);
+              }}
+            />
+            <Pressable
+              style={({ pressed }) => [styles.modalBtn, { backgroundColor: colors.primaryBtn, opacity: pressed ? 0.85 : 1 }]}
+              onPress={() => {
+                const val = parseFloat(skeinEditInput.replace(',', '.'));
+                if (val > 0) {
+                  updateQuality(id, skeinEditField === 'grams' ? { gramsPerSkein: val } : { metersPerSkein: val });
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                }
+                setSkeinEditField(null);
+              }}
+            >
+              <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Lagre</Text>
+            </Pressable>
+            <Pressable style={styles.modalCancel} onPress={() => setSkeinEditField(null)}>
+              <Text style={{ color: colors.textSecondary, fontSize: 15, fontFamily: 'Inter_400Regular' }}>Avbryt</Text>
+            </Pressable>
+          </View>
+          </KeyboardAvoidingView>
+        </View>
+      </Modal>
+
       <Pressable
         style={[styles.fab, { backgroundColor: colors.primaryBtn, bottom: (Platform.OS === 'web' ? 34 : insets.bottom) + 24 }]}
         onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setShowAdd(true); }}
@@ -674,7 +732,7 @@ const styles = StyleSheet.create({
   },
   fiberLine: { fontSize: 13, marginBottom: 4 },
   fiberLineSub: { fontSize: 12, marginBottom: 12 },
-  miniStatsRow: { flexDirection: 'row', gap: 10, marginBottom: 4 },
+  miniStatsRow: { flexDirection: 'row', gap: 10 },
   miniStatCard: {
     flex: 1,
     borderRadius: 14,
