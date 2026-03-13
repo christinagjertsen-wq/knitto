@@ -282,11 +282,12 @@ function YarnStats() {
         const q = getQualityById(y.qualityId);
         const b = q ? brands.find(b => b.id === q.brandId) : undefined;
         const allocated = allocMap[y.id] || 0;
-        const total = y.skeins + allocated;
+        const total = y.skeins;
         const pct = total > 0 ? allocated / total : 0;
         return { yarn: y, quality: q, brand: b, allocated, total, pct };
       })
-      .sort((a, b) => b.pct - a.pct);
+      .sort((a, b) => b.pct - a.pct)
+      .slice(0, 10);
   }, [projects, yarnStock, qualities, brands]);
 
   const totalAllocated = useMemo(() =>
