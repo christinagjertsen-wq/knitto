@@ -307,7 +307,7 @@ function AddYarnModal({
                 <View style={{ paddingVertical: 24, alignItems: 'center', gap: 8 }}>
                   <Ionicons name="archive-outline" size={32} color={colors.textTertiary} />
                   <Text style={[{ color: colors.textTertiary, fontFamily: 'Inter_400Regular', textAlign: 'center' }]}>
-                    Ingen tilgjengelig garn på lager.{'\n'}Bruk «Nytt garn» for å legge til.
+                    Du har ikke noe garn på lager. Eller?{'\n'}Bruk «Nytt garn» for å legge til garn.
                   </Text>
                 </View>
               ) : (
