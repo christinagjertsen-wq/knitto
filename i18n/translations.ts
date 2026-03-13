@@ -338,6 +338,10 @@ const no = {
     repeatXTimes: 'Gjenta %s ganger',
     incOneStitch: '1 maske etter hver %s. maske',
     xStitchesTotal: '%s masker totalt',
+    ruler: 'Linjal',
+    rulerTitle: 'Linjal 1:1',
+    rulerSubtitle: 'Bla sidelengs – faktisk størrelse på skjermen',
+    rulerWebNote: 'Nøyaktigheten varierer på nett avhengig av skjermens DPI.',
   },
   alerts: {
     whatToDo: 'Hva vil du gjøre?',
@@ -683,6 +687,10 @@ const en: typeof no = {
     repeatXTimes: 'Repeat %s times',
     incOneStitch: '1 stitch after every %s',
     xStitchesTotal: '%s stitches total',
+    ruler: 'Ruler',
+    rulerTitle: 'Ruler 1:1',
+    rulerSubtitle: 'Scroll sideways — actual size on screen',
+    rulerWebNote: 'Accuracy may vary on web depending on your screen DPI.',
   },
   alerts: {
     whatToDo: 'What would you like to do?',

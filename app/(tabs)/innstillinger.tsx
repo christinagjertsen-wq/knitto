@@ -251,6 +251,103 @@ function OkeFelleKalkulator() {
   );
 }
 
+function Linjal() {
+  const colors = useColors();
+  const t = useT();
+
+  // Physical layout units per cm per platform
+  const CM_PER_UNIT = Platform.select({
+    ios: 163 / 2.54,     // ≈ 64.17 iOS points per cm
+    android: 160 / 2.54, // ≈ 62.99 Android dp per cm
+    default: 96 / 2.54,  // ≈ 37.8 web px per cm (96 dpi)
+  })!;
+  const MM_PER_UNIT = CM_PER_UNIT / 10;
+  const TOTAL_CM = 30;
+  const TOTAL_MM = TOTAL_CM * 10;
+  const RULER_H = 72;
+  const END_PAD = 20;
+
+  const ticks = useMemo(() => {
+    const arr: { mm: number; x: number; isCm: boolean; is5mm: boolean; tickH: number }[] = [];
+    for (let mm = 0; mm <= TOTAL_MM; mm++) {
+      const isCm = mm % 10 === 0;
+      const is5mm = mm % 5 === 0;
+      arr.push({
+        mm,
+        x: mm * MM_PER_UNIT,
+        isCm,
+        is5mm,
+        tickH: isCm ? 32 : is5mm ? 20 : 10,
+      });
+    }
+    return arr;
+  }, [MM_PER_UNIT]);
+
+  const totalWidth = TOTAL_MM * MM_PER_UNIT + END_PAD;
+
+  return (
+    <View style={[styles.calcCard, { backgroundColor: colors.surface, padding: 0, overflow: 'hidden' }]}>
+      <View style={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 10 }}>
+        <Text style={[styles.calcTitle, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>
+          {t.tools.rulerTitle}
+        </Text>
+        <Text style={[styles.calcSubtitle, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
+          {t.tools.rulerSubtitle}
+        </Text>
+      </View>
+
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        scrollEventThrottle={16}
+        contentContainerStyle={{ paddingLeft: 20, paddingBottom: 20 }}
+      >
+        <View style={{ width: totalWidth, height: RULER_H, position: 'relative' }}>
+          {/* Baseline */}
+          <View style={{ position: 'absolute', top: 0, left: 0, width: totalWidth, height: 2, backgroundColor: colors.text, borderRadius: 1 }} />
+          {/* Ticks */}
+          {ticks.map(({ mm, x, tickH }) => (
+            <View
+              key={mm}
+              style={{
+                position: 'absolute',
+                left: x,
+                top: 2,
+                width: mm % 10 === 0 ? 2 : 1,
+                height: tickH,
+                backgroundColor: colors.text,
+                borderRadius: 0.5,
+              }}
+            />
+          ))}
+          {/* CM labels */}
+          {ticks.filter(t => t.isCm).map(({ mm, x }) => (
+            <Text
+              key={`lbl-${mm}`}
+              style={{
+                position: 'absolute',
+                left: x + 3,
+                top: 38,
+                fontSize: 12,
+                color: colors.text,
+                fontFamily: 'Inter_500Medium',
+              }}
+            >
+              {mm / 10}
+            </Text>
+          ))}
+        </View>
+      </ScrollView>
+
+      {Platform.OS === 'web' && (
+        <Text style={{ fontSize: 11, color: colors.textTertiary, fontFamily: 'Inter_400Regular', paddingHorizontal: 20, paddingBottom: 16, marginTop: -8 }}>
+          {t.tools.rulerWebNote}
+        </Text>
+      )}
+    </View>
+  );
+}
+
 export default function VerktoyScreen() {
   const insets = useSafeAreaInsets();
   const topInset = Platform.OS === 'web' ? 67 : insets.top;
@@ -281,6 +378,9 @@ export default function VerktoyScreen() {
 
         <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.tools.increaseDecrease}</Text>
         <OkeFelleKalkulator />
+
+        <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.tools.ruler}</Text>
+        <Linjal />
 
         <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.project.needles}</Text>
         <View style={[styles.tableCard, { backgroundColor: colors.surface }]}>
