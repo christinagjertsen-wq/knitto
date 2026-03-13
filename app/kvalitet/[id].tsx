@@ -646,7 +646,9 @@ export default function KvalitetScreen() {
                 style={[styles.miniStatCard, { backgroundColor: colors.surface }]}
                 onPress={() => { setSkeinEditField('grams'); setSkeinEditInput(String(quality.gramsPerSkein)); Haptics.selectionAsync(); }}
               >
-                <Ionicons name="pencil-outline" size={13} color={colors.textTertiary} style={{ position: 'absolute', top: 10, right: 10 }} />
+                <View style={{ position: 'absolute', top: 9, right: 9, width: 20, height: 20, borderRadius: 10, backgroundColor: colors.border, alignItems: 'center', justifyContent: 'center' }}>
+                  <Ionicons name="pencil" size={10} color={colors.textTertiary} />
+                </View>
                 <Text style={[styles.miniStatNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{quality.gramsPerSkein} g</Text>
                 <Text style={[styles.miniStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>per nøste</Text>
               </Pressable>
@@ -656,7 +658,9 @@ export default function KvalitetScreen() {
                 style={[styles.miniStatCard, { backgroundColor: colors.surface }]}
                 onPress={() => { setSkeinEditField('meters'); setSkeinEditInput(String(quality.metersPerSkein)); Haptics.selectionAsync(); }}
               >
-                <Ionicons name="pencil-outline" size={13} color={colors.textTertiary} style={{ position: 'absolute', top: 10, right: 10 }} />
+                <View style={{ position: 'absolute', top: 9, right: 9, width: 20, height: 20, borderRadius: 10, backgroundColor: colors.border, alignItems: 'center', justifyContent: 'center' }}>
+                  <Ionicons name="pencil" size={10} color={colors.textTertiary} />
+                </View>
                 <Text style={[styles.miniStatNum, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{quality.metersPerSkein} m</Text>
                 <Text style={[styles.miniStatLabel, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>per nøste</Text>
               </Pressable>
