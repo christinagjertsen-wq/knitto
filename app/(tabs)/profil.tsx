@@ -12,7 +12,7 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, Feather as FeatherIcon } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
 import { useKnitting } from '@/context/KnittingContext';
@@ -199,7 +199,7 @@ export default function InnstillingerScreen() {
             {FREE_FEATURES.map((label, i) => (
               <View key={`free-${i}`} style={styles.premiumFeatureRow}>
                 <View style={[styles.premiumFeatureIcon, { backgroundColor: '#E8F5E9' }]}>
-                  <Ionicons name="checkmark" size={15} color="#4CAF50" style={{ alignSelf: 'center' }} />
+                  <FeatherIcon name="feather" size={13} color="#4CAF50" style={{ alignSelf: 'center' }} />
                 </View>
                 <Text style={[styles.premiumFeatureText, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>{label}</Text>
               </View>
@@ -207,15 +207,10 @@ export default function InnstillingerScreen() {
             <View style={[styles.premiumDivider, { backgroundColor: colors.border }]} />
             {LOCKED_FEATURES.map((label, i) => (
               <View key={`locked-${i}`} style={styles.premiumFeatureRow}>
-                <View style={[styles.premiumFeatureIcon, { backgroundColor: selectedPlan === 'yearly' ? '#E8F5E9' : colors.background }]}>
-                  <Ionicons
-                    name={selectedPlan === 'yearly' ? 'checkmark' : 'close'}
-                    size={15}
-                    color={selectedPlan === 'yearly' ? '#4CAF50' : colors.textTertiary}
-                    style={{ alignSelf: 'center' }}
-                  />
+                <View style={[styles.premiumFeatureIcon, { backgroundColor: '#E8F5E9' }]}>
+                  <Ionicons name="checkmark" size={15} color="#4CAF50" style={{ alignSelf: 'center' }} />
                 </View>
-                <Text style={[styles.premiumFeatureText, { color: selectedPlan === 'yearly' ? colors.text : colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{label}</Text>
+                <Text style={[styles.premiumFeatureText, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>{label}</Text>
               </View>
             ))}
           </View>
@@ -381,7 +376,7 @@ const styles = StyleSheet.create({
   premiumSub: { fontSize: 13, marginTop: -4 },
   premiumDivider: { height: 1, marginVertical: 2 },
   premiumFeatures: { gap: 10 },
-  premiumFeatureRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  premiumFeatureRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12, width: '100%' },
   premiumFeatureIcon: { width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
   premiumFeatureText: { fontSize: 14 },
   premiumBtn: { borderRadius: 14, paddingVertical: 14, paddingHorizontal: 16, alignItems: 'center', gap: 3, shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.15, shadowRadius: 8, elevation: 4 },

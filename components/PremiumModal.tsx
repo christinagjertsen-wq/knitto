@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Modal, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, Feather as FeatherIcon } from '@expo/vector-icons';
 import { useT } from '@/context/LanguageContext';
 import { T } from '@/i18n/translations';
 import { useSubscription } from '@/lib/revenuecat';
@@ -90,7 +90,7 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
             {FREE_FEATURES.map((label, i) => (
               <View key={`free-${i}`} style={styles.featureRow}>
                 <View style={[styles.iconCircle, { backgroundColor: '#E8F5E9' }]}>
-                  <Ionicons name="checkmark" size={15} color="#4CAF50" style={{ alignSelf: 'center' }} />
+                  <FeatherIcon name="feather" size={13} color="#4CAF50" style={{ alignSelf: 'center' }} />
                 </View>
                 <Text style={[styles.featureText, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>{label}</Text>
               </View>
@@ -100,15 +100,10 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
 
             {LOCKED_FEATURES.map((label, i) => (
               <View key={`locked-${i}`} style={styles.featureRow}>
-                <View style={[styles.iconCircle, { backgroundColor: selectedPlan === 'yearly' ? '#E8F5E9' : colors.background }]}>
-                  <Ionicons
-                    name={selectedPlan === 'yearly' ? 'checkmark' : 'close'}
-                    size={15}
-                    color={selectedPlan === 'yearly' ? '#4CAF50' : colors.textTertiary}
-                    style={{ alignSelf: 'center' }}
-                  />
+                <View style={[styles.iconCircle, { backgroundColor: '#E8F5E9' }]}>
+                  <Ionicons name="checkmark" size={15} color="#4CAF50" style={{ alignSelf: 'center' }} />
                 </View>
-                <Text style={[styles.featureTextLocked, { color: selectedPlan === 'yearly' ? colors.text : colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{label}</Text>
+                <Text style={[styles.featureTextLocked, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>{label}</Text>
               </View>
             ))}
           </View>
@@ -225,11 +220,14 @@ const styles = StyleSheet.create({
   featureList: {
     gap: 11,
     marginBottom: 20,
+    alignItems: 'center',
   },
   featureRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     gap: 14,
+    width: '100%',
   },
   iconCircle: {
     width: 28,
