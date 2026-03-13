@@ -307,7 +307,7 @@ const no = {
   },
   tools: {
     title: 'Verktøy',
-    rowCounter: 'Radteller',
+    rowCounter: 'Omgangsteller',
     stitchCounter: 'Masketeller',
     tapToCount: 'trykk for å telle',
     counters: 'Tellere',
