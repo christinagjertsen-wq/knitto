@@ -24,8 +24,12 @@ function NativeTabLayout() {
         <Label>{t.nav.storage}</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="innstillinger">
-        <Icon sf={{ default: "person.circle", selected: "person.circle.fill" }} />
+        <Icon sf={{ default: "wrench.and.screwdriver", selected: "wrench.and.screwdriver.fill" }} />
         <Label>{t.nav.settings}</Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="profil">
+        <Icon sf={{ default: "gearshape", selected: "gearshape.fill" }} />
+        <Label>{t.nav.innstillinger}</Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );
@@ -100,7 +104,13 @@ function ClassicTabLayout() {
           tabBarIcon: ({ color, size }) => <Ionicons name="construct-outline" size={size} color={color} />,
         }}
       />
-      <Tabs.Screen name="profil" options={{ href: null }} />
+      <Tabs.Screen
+        name="profil"
+        options={{
+          title: t.nav.innstillinger,
+          tabBarIcon: ({ color, size }) => <Ionicons name="settings-outline" size={size} color={color} />,
+        }}
+      />
       <Tabs.Screen name="verktoy" options={{ href: null }} />
     </Tabs>
   );
