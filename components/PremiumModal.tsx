@@ -88,8 +88,8 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
 
           <View style={styles.featureList}>
             <View style={styles.featureRow}>
-              <View style={[styles.iconCircle, { backgroundColor: '#E8F5E9' }]}>
-                <FeatherIcon name="feather" size={13} color="#4CAF50" style={{ alignSelf: 'center' }} />
+              <View style={[styles.iconCircle, { backgroundColor: 'rgba(91,127,191,0.12)' }]}>
+                <FeatherIcon name="feather" size={13} color="#5B7FBF" style={{ alignSelf: 'center' }} />
               </View>
               <Text style={[styles.featureText, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>
                 {FREE_FEATURES.join('  ·  ')}

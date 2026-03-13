@@ -197,8 +197,8 @@ export default function InnstillingerScreen() {
 
           <View style={styles.premiumFeatures}>
             <View style={styles.premiumFeatureRow}>
-              <View style={[styles.premiumFeatureIcon, { backgroundColor: '#E8F5E9' }]}>
-                <FeatherIcon name="feather" size={13} color="#4CAF50" style={{ alignSelf: 'center' }} />
+              <View style={[styles.premiumFeatureIcon, { backgroundColor: 'rgba(91,127,191,0.12)' }]}>
+                <FeatherIcon name="feather" size={13} color="#5B7FBF" style={{ alignSelf: 'center' }} />
               </View>
               <Text style={[styles.premiumFeatureText, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>
                 {FREE_FEATURES.join('  ·  ')}
