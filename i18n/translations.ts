@@ -325,7 +325,7 @@ const no = {
     yarnUsed: 'Garn brukt',
     noYarnLinked: 'Ingen garn er koblet til prosjekter ennå',
     skeinsUsed: 'nøster brukt',
-    yarnTypes: 'garntyper',
+    yarnTypes: 'garnkvaliteter',
     increaseDecrease: 'Øke/Felle',
     increaseDecreaseTitle: 'Øke / Felle',
     incDecSubtitle: 'Fordel justeringer jevnt over maskeraden',
