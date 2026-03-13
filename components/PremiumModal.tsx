@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, Modal, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, Modal, Pressable, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useT } from '@/context/LanguageContext';
 import { T } from '@/i18n/translations';
 import { useSubscription } from '@/lib/revenuecat';
+import { useColors } from '@/context/ThemeContext';
 
 export function getPremiumFeatures(t: T) {
   return [
@@ -19,10 +19,21 @@ export const PREMIUM_FEATURES = [
   { icon: 'cube-outline' as const, label: 'Ubegrenset garnlager' },
 ];
 
+const FREE_FEATURES = [
+  '5 prosjekter',
+  '50 nøster',
+  'Verktøy',
+];
+
+const LOCKED_FEATURES = [
+  'Ubegrenset antall prosjekter',
+  'Ubegrenset garnlager',
+];
+
 export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const insets = useSafeAreaInsets();
   const t = useT();
-  const features = getPremiumFeatures(t);
+  const colors = useColors();
   const { offerings, purchase, isPurchasing, restore, isRestoring } = useSubscription();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -52,81 +63,72 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
   };
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <Pressable style={styles.overlay} onPress={onClose}>
-        <Pressable style={styles.sheetWrapper} onPress={() => {}}>
-          <LinearGradient
-            colors={['#1A2340', '#2C3E6B', '#3A5080']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={[styles.sheet, { paddingBottom: Math.max(insets.bottom + 12, 36) }]}
-          >
-            <View style={styles.handle} />
+        <Pressable style={[styles.sheet, { backgroundColor: colors.surface, paddingBottom: Math.max(insets.bottom + 16, 32) }]} onPress={() => {}}>
+          <View style={[styles.handle, { backgroundColor: colors.border }]} />
 
-            <View style={styles.iconWrap}>
-              <LinearGradient
-                colors={['rgba(255,255,255,0.18)', 'rgba(255,255,255,0.06)']}
-                style={styles.iconCircle}
-              >
-                <Ionicons name="diamond-outline" size={32} color="#fff" />
-              </LinearGradient>
-            </View>
+          <Text style={[styles.title, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Knitto+</Text>
+          <Text style={[styles.sub, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
+            Lås opp alt og strikk uten grenser
+          </Text>
 
-            <View style={styles.titleBlock}>
-              <Text style={[styles.title, { fontFamily: 'Inter_700Bold' }]}>
-                {t.premium.title}
-              </Text>
-              <Text style={[styles.sub, { fontFamily: 'Inter_400Regular' }]}>
-                {t.premium.sub}
-              </Text>
-            </View>
-
-            <View style={styles.divider} />
-
-            <View style={styles.features}>
-              {features.map((f, i) => (
-                <View key={i} style={styles.featureRow}>
-                  <View style={styles.featureIconWrap}>
-                    <Ionicons name={f.icon} size={18} color="rgba(255,255,255,0.9)" />
-                  </View>
-                  <Text style={[styles.featureText, { fontFamily: 'Inter_500Medium' }]}>{f.label}</Text>
+          <View style={styles.featureList}>
+            {FREE_FEATURES.map((label, i) => (
+              <View key={`free-${i}`} style={styles.featureRow}>
+                <View style={[styles.iconCircle, { backgroundColor: '#E8F5E9' }]}>
+                  <Ionicons name="checkmark" size={15} color="#4CAF50" />
                 </View>
-              ))}
-            </View>
+                <Text style={[styles.featureText, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>{label}</Text>
+              </View>
+            ))}
 
-            {errorMsg && (
-              <Text style={[styles.errorText, { fontFamily: 'Inter_400Regular' }]}>{errorMsg}</Text>
+            <View style={[styles.divider, { backgroundColor: colors.border }]} />
+
+            {LOCKED_FEATURES.map((label, i) => (
+              <View key={`locked-${i}`} style={styles.featureRow}>
+                <View style={[styles.iconCircle, { backgroundColor: colors.background }]}>
+                  <Ionicons name="close" size={15} color={colors.textTertiary} />
+                </View>
+                <Text style={[styles.featureTextLocked, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{label}</Text>
+              </View>
+            ))}
+          </View>
+
+          {errorMsg && (
+            <Text style={[styles.errorText, { fontFamily: 'Inter_400Regular' }]}>{errorMsg}</Text>
+          )}
+
+          <Pressable
+            style={({ pressed }) => [styles.btn, { opacity: (pressed || isPurchasing || isRestoring) ? 0.85 : 1 }]}
+            onPress={handlePurchase}
+            disabled={isPurchasing || isRestoring || !monthlyPackage}
+          >
+            {isPurchasing ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <>
+                <Text style={[styles.btnText, { fontFamily: 'Inter_700Bold' }]}>
+                  Prøv Knitto+ gratis
+                </Text>
+                <Text style={[styles.btnSub, { fontFamily: 'Inter_400Regular' }]}>
+                  {priceString ? `${priceString} / mnd etter prøveperioden` : t.premium.price}
+                </Text>
+              </>
             )}
+          </Pressable>
 
-            <Pressable
-              style={({ pressed }) => [styles.btn, { opacity: (pressed || isPurchasing || isRestoring) ? 0.85 : 1 }]}
-              onPress={handlePurchase}
-              disabled={isPurchasing || isRestoring || !monthlyPackage}
-            >
-              {isPurchasing ? (
-                <ActivityIndicator color="#1A2340" />
-              ) : (
-                <>
-                  <Text style={[styles.btnText, { fontFamily: 'Inter_700Bold' }]}>
-                    {t.premium.startTrial}
-                  </Text>
-                  <Text style={[styles.btnSub, { fontFamily: 'Inter_400Regular' }]}>
-                    {priceString ? `${priceString} / mnd etter prøveperioden` : t.premium.price}
-                  </Text>
-                </>
-              )}
-            </Pressable>
-
-            <Pressable onPress={handleRestore} hitSlop={16} style={styles.dismissWrap} disabled={isPurchasing || isRestoring}>
-              <Text style={[styles.dismiss, { fontFamily: 'Inter_400Regular' }]}>
+          <View style={styles.footerLinks}>
+            <Pressable onPress={handleRestore} hitSlop={16} disabled={isPurchasing || isRestoring}>
+              <Text style={[styles.footerLink, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
                 {isRestoring ? 'Gjenoppretter...' : 'Gjenopprett kjøp'}
               </Text>
             </Pressable>
-
-            <Pressable onPress={onClose} hitSlop={16} style={[styles.dismissWrap, { marginTop: 6 }]} disabled={isPurchasing}>
-              <Text style={[styles.dismiss, { fontFamily: 'Inter_400Regular' }]}>{t.premium.notNow}</Text>
+            <Text style={[styles.footerDot, { color: colors.textTertiary }]}>·</Text>
+            <Pressable onPress={onClose} hitSlop={16} disabled={isPurchasing}>
+              <Text style={[styles.footerLink, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{t.premium.notNow}</Text>
             </Pressable>
-          </LinearGradient>
+          </View>
         </Pressable>
       </Pressable>
     </Modal>
@@ -137,115 +139,98 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.55)',
-  },
-  sheetWrapper: {
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
-    overflow: 'hidden',
+    backgroundColor: 'rgba(0,0,0,0.4)',
   },
   sheet: {
-    padding: 28,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    paddingHorizontal: 24,
+    paddingTop: 12,
     gap: 0,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    elevation: 12,
   },
   handle: {
-    width: 40,
+    width: 36,
     height: 4,
     borderRadius: 2,
-    backgroundColor: 'rgba(255,255,255,0.25)',
     alignSelf: 'center',
-    marginBottom: 24,
-  },
-  iconWrap: {
-    alignItems: 'center',
     marginBottom: 20,
   },
-  iconCircle: {
-    width: 68,
-    height: 68,
-    borderRadius: 34,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.15)',
-  },
-  titleBlock: {
-    alignItems: 'center',
-    marginBottom: 24,
-    gap: 6,
-  },
   title: {
-    fontSize: 22,
-    color: '#fff',
+    fontSize: 26,
     textAlign: 'center',
-    lineHeight: 28,
+    marginBottom: 6,
   },
   sub: {
     fontSize: 14,
-    color: 'rgba(255,255,255,0.55)',
     textAlign: 'center',
+    marginBottom: 24,
   },
-  divider: {
-    height: 1,
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    marginVertical: 20,
-  },
-  features: {
-    gap: 14,
+  featureList: {
+    gap: 12,
+    marginBottom: 24,
   },
   featureRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     gap: 14,
   },
-  featureIconWrap: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    backgroundColor: 'rgba(255,255,255,0.1)',
+  iconCircle: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
   },
   featureText: {
-    color: '#fff',
     fontSize: 15,
+  },
+  featureTextLocked: {
+    fontSize: 15,
+  },
+  divider: {
+    height: 1,
+    marginVertical: 4,
   },
   btn: {
     borderRadius: 16,
     paddingVertical: 18,
     paddingHorizontal: 24,
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#5B7FBF',
     gap: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 12,
-    elevation: 6,
     minHeight: 64,
     justifyContent: 'center',
+    marginBottom: 16,
   },
   btnText: {
-    color: '#1A2340',
+    color: '#fff',
     fontSize: 16,
   },
   btnSub: {
-    color: 'rgba(26,35,64,0.5)',
+    color: 'rgba(255,255,255,0.65)',
     fontSize: 12,
   },
   errorText: {
-    color: 'rgba(255,120,120,0.9)',
+    color: '#C97B84',
     fontSize: 13,
     textAlign: 'center',
     marginBottom: 12,
   },
-  dismissWrap: {
+  footerLinks: {
+    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 16,
+    gap: 10,
   },
-  dismiss: {
-    fontSize: 14,
-    color: 'rgba(255,255,255,0.4)',
+  footerLink: {
+    fontSize: 13,
+  },
+  footerDot: {
+    fontSize: 13,
   },
 });
