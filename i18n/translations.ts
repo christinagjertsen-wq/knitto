@@ -340,7 +340,7 @@ const no = {
     xStitchesTotal: '%s masker totalt',
     ruler: 'Linjal',
     rulerTitle: 'Linjal 1:1',
-    rulerSubtitle: 'Bla sidelengs – faktisk størrelse på skjermen',
+    rulerSubtitle: 'Faktisk størrelse på skjermen',
     rulerWebNote: 'Nøyaktigheten varierer på nett avhengig av skjermens DPI.',
   },
   alerts: {
