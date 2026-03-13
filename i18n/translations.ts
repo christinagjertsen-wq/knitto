@@ -77,7 +77,7 @@ const no = {
   addProject: {
     title: 'Nytt prosjekt',
     namePlaceholder: 'Prosjektnavn',
-    nameInputPlaceholder: 'Julegenser til bestemor...',
+    nameInputPlaceholder: 'Riddari Genser...',
     status: 'Status',
     create: 'Legg til',
   },
@@ -421,7 +421,7 @@ const en: typeof no = {
   addProject: {
     title: 'New project',
     namePlaceholder: 'Project name',
-    nameInputPlaceholder: 'Christmas sweater for grandma...',
+    nameInputPlaceholder: 'Riddari Genser...',
     status: 'Status',
     create: 'Add',
   },
