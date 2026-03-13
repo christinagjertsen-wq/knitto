@@ -1272,7 +1272,7 @@ export default function ProsjektScreen() {
         <View style={[styles.card, { backgroundColor: colors.surface }]}>
           <View style={styles.cardHeader}>
             <Text style={[styles.cardLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>
-              {t.project.yarn} ({allocatedYarn.length})
+              {t.project.yarn}
             </Text>
             <Pressable
               style={[styles.addSmallBtn, { backgroundColor: colors.primaryBtn }]}
@@ -1353,7 +1353,7 @@ export default function ProsjektScreen() {
         <View style={[styles.card, { backgroundColor: colors.surface }]}>
           <View style={styles.cardHeader}>
             <Text style={[styles.cardLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>
-              {t.project.needles} ({projectNeedles.length})
+              {t.project.needles}
             </Text>
             <Pressable
               style={[styles.addSmallBtn, { backgroundColor: colors.primaryBtn }]}
