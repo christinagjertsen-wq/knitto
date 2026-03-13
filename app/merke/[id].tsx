@@ -106,7 +106,7 @@ function AddQualityModal({ brandId, visible, onClose }: { brandId: string; visib
 
             <TextInput
               style={[styles.input, { color: colors.text, backgroundColor: colors.background }]}
-              placeholder="Kvalitetsnavn (f.eks. Tynn Merinoull)"
+              placeholder="Tynn Merinoull"
               placeholderTextColor={colors.textTertiary}
               value={name}
               onChangeText={setName}
@@ -115,7 +115,7 @@ function AddQualityModal({ brandId, visible, onClose }: { brandId: string; visib
 
             <TextInput
               style={[styles.input, { color: colors.text, backgroundColor: colors.background }]}
-              placeholder="Fiber (f.eks. 100% Merinoull)"
+              placeholder="100% Merinoull"
               placeholderTextColor={colors.textTertiary}
               value={fiber}
               onChangeText={setFiber}

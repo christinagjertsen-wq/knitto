@@ -483,7 +483,7 @@ function AddYarnModal({
                   style={[styles.detailInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border, fontFamily: 'Inter_400Regular' }]}
                   value={newColorName}
                   onChangeText={setNewColorName}
-                  placeholder="f.eks. Natthimmel"
+                  placeholder="Natthimmel"
                   placeholderTextColor={colors.textTertiary}
                 />
 
@@ -540,7 +540,7 @@ function AddYarnModal({
                       style={[styles.detailInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border, fontFamily: 'Inter_400Regular' }]}
                       value={newGramsPerSkein}
                       onChangeText={setNewGramsPerSkein}
-                      placeholder="f.eks. 50"
+                      placeholder="50"
                       placeholderTextColor={colors.textTertiary}
                       keyboardType="number-pad"
                     />
@@ -551,7 +551,7 @@ function AddYarnModal({
                       style={[styles.detailInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border, fontFamily: 'Inter_400Regular' }]}
                       value={newMetersPerSkein}
                       onChangeText={setNewMetersPerSkein}
-                      placeholder="f.eks. 200"
+                      placeholder="200"
                       placeholderTextColor={colors.textTertiary}
                       keyboardType="number-pad"
                     />
@@ -1332,7 +1332,7 @@ export default function ProsjektScreen() {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         }}
         onAddNew={(qualityId, colorName, colorHex, skeinsTotal, skeinsForProject) => {
-          if (!isSubscribed && yarnStock.length >= 50) {
+          if (!isSubscribed && yarnStock.length >= 5) {
             setShowAddYarn(false);
             setShowPremium(true);
             return;

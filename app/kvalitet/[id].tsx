@@ -166,7 +166,7 @@ function AddYarnModal({ qualityId, visible, onClose, onPaywall }: { qualityId: s
 
   const handleAdd = useCallback(() => {
     if (!colorName.trim()) return;
-    if (!isSubscribed && yarnStock.length >= 50) {
+    if (!isSubscribed && yarnStock.length >= 5) {
       onClose();
       onPaywall();
       return;
@@ -393,7 +393,7 @@ export default function KvalitetScreen() {
             <Text style={[styles.modalTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Fiberinnhold</Text>
             <TextInput
               style={[styles.modalInput, { color: colors.text, backgroundColor: colors.background, fontFamily: 'Inter_400Regular' }]}
-              placeholder="f.eks. 100% Merinoull"
+              placeholder="100% Merinoull"
               placeholderTextColor={colors.textTertiary}
               value={fiberInput}
               onChangeText={setFiberInput}
