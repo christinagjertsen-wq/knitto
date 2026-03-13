@@ -759,40 +759,48 @@ function AddNeedleToProjectModal({
             </View>
 
             {mode === 'lager' ? (
-              allNeedles.length === 0 ? (
-                <View style={{ paddingVertical: 24, alignItems: 'center', gap: 8 }}>
-                  <Ionicons name="archive-outline" size={32} color={colors.textTertiary} />
-                  <Text style={{ color: colors.textTertiary, fontFamily: 'Inter_400Regular', textAlign: 'center' }}>
-                    Du har ingen pinner på lager.{'\n'}Bruk «Ny pinne» for å legge til.
-                  </Text>
-                </View>
-              ) : (
-                allNeedles.map(needle => {
-                  const isLinked = needleIds.includes(needle.id);
-                  return (
-                    <Pressable
-                      key={needle.id}
-                      style={styles.needleRow}
-                      onPress={() => { onToggle(needle.id); Haptics.selectionAsync(); }}
-                    >
-                      <View style={[styles.needleSize, { backgroundColor: isLinked ? colors.primaryBtn + '22' : colors.badgeBg }]}>
-                        <Text style={[styles.needleSizeText, { color: isLinked ? colors.primaryBtn : colors.badgeText, fontFamily: 'Inter_700Bold' }]}>{needle.size.replace(',', '.')}</Text>
-                      </View>
-                      <View style={{ flex: 1 }}>
-                        <Text style={[styles.needleLabel, { color: colors.text, fontFamily: isLinked ? 'Inter_500Medium' : 'Inter_400Regular' }]}>
-                          {TYPE_LABELS[needle.type] ?? needle.type}, {needle.lengthCm} cm
-                        </Text>
-                        <Text style={{ fontSize: 12, color: colors.textTertiary, fontFamily: 'Inter_400Regular' }}>
-                          {MAT_LABELS[needle.material] ?? needle.material}
-                        </Text>
-                      </View>
-                      <View style={[styles.checkbox, { borderColor: isLinked ? colors.primaryBtn : colors.border }, isLinked && { backgroundColor: colors.primaryBtn }]}>
-                        {isLinked && <Ionicons name="checkmark" size={14} color="#fff" />}
-                      </View>
-                    </Pressable>
-                  );
-                })
-              )
+              <>
+                {allNeedles.length === 0 ? (
+                  <View style={{ paddingVertical: 24, alignItems: 'center', gap: 8 }}>
+                    <Ionicons name="archive-outline" size={32} color={colors.textTertiary} />
+                    <Text style={{ color: colors.textTertiary, fontFamily: 'Inter_400Regular', textAlign: 'center' }}>
+                      Du har ingen pinner på lager.{'\n'}Bruk «Ny pinne» for å legge til.
+                    </Text>
+                  </View>
+                ) : (
+                  allNeedles.map(needle => {
+                    const isLinked = needleIds.includes(needle.id);
+                    return (
+                      <Pressable
+                        key={needle.id}
+                        style={styles.needleRow}
+                        onPress={() => { onToggle(needle.id); Haptics.selectionAsync(); }}
+                      >
+                        <View style={[styles.needleSize, { backgroundColor: isLinked ? colors.primaryBtn + '22' : colors.badgeBg }]}>
+                          <Text style={[styles.needleSizeText, { color: isLinked ? colors.primaryBtn : colors.badgeText, fontFamily: 'Inter_700Bold' }]}>{needle.size.replace(',', '.')}</Text>
+                        </View>
+                        <View style={{ flex: 1 }}>
+                          <Text style={[styles.needleLabel, { color: colors.text, fontFamily: isLinked ? 'Inter_500Medium' : 'Inter_400Regular' }]}>
+                            {TYPE_LABELS[needle.type] ?? needle.type}, {needle.lengthCm} cm
+                          </Text>
+                          <Text style={{ fontSize: 12, color: colors.textTertiary, fontFamily: 'Inter_400Regular' }}>
+                            {MAT_LABELS[needle.material] ?? needle.material}
+                          </Text>
+                        </View>
+                        <View style={[styles.checkbox, { borderColor: isLinked ? colors.primaryBtn : colors.border }, isLinked && { backgroundColor: colors.primaryBtn }]}>
+                          {isLinked && <Ionicons name="checkmark" size={14} color="#fff" />}
+                        </View>
+                      </Pressable>
+                    );
+                  })
+                )}
+                <Pressable
+                  style={({ pressed }) => [styles.modalBtn, { backgroundColor: colors.primaryBtn, opacity: pressed ? 0.85 : 1 }]}
+                  onPress={handleClose}
+                >
+                  <Text style={[styles.modalBtnText, { fontFamily: 'Inter_600SemiBold' }]}>Ferdig</Text>
+                </Pressable>
+              </>
             ) : (
               <>
                 <Text style={[styles.fieldLabel, { color: colors.textSecondary, fontFamily: 'Inter_500Medium' }]}>{t.storage.sizeMm}</Text>
