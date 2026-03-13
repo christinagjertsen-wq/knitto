@@ -32,7 +32,7 @@ export const LOCKED_FEATURES = [
 
 export const MONTHLY_PRICE = 69;
 export const YEARLY_MONTHLY_PRICE = 59;
-const YEARLY_TOTAL = YEARLY_MONTHLY_PRICE * 12;
+export const YEARLY_TOTAL = YEARLY_MONTHLY_PRICE * 12;
 export const YEARLY_SAVINGS = MONTHLY_PRICE * 12 - YEARLY_TOTAL;
 
 type Plan = 'yearly' | 'monthly';
@@ -140,7 +140,7 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
                 </View>
               </View>
               <Text style={[styles.planPrice, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
-                {YEARLY_MONTHLY_PRICE} kr / mnd
+                {YEARLY_TOTAL} kr / år
               </Text>
             </Pressable>
           </View>

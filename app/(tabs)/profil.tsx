@@ -17,7 +17,7 @@ import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
 import { useKnitting } from '@/context/KnittingContext';
 import { useUser, getGreeting } from '@/context/UserContext';
-import { PremiumModal, FREE_FEATURES, LOCKED_FEATURES, MONTHLY_PRICE, YEARLY_MONTHLY_PRICE, YEARLY_SAVINGS } from '@/components/PremiumModal';
+import { PremiumModal, FREE_FEATURES, LOCKED_FEATURES, MONTHLY_PRICE, YEARLY_MONTHLY_PRICE, YEARLY_SAVINGS, YEARLY_TOTAL } from '@/components/PremiumModal';
 import { useColors, useIsDark, useTheme } from '@/context/ThemeContext';
 import { useLanguage, useT } from '@/context/LanguageContext';
 import { useSubscription } from '@/lib/revenuecat';
@@ -235,7 +235,7 @@ export default function InnstillingerScreen() {
                   <Text style={{ color: '#fff', fontSize: 10, fontFamily: 'Inter_600SemiBold' }}>Spar {YEARLY_SAVINGS} kr</Text>
                 </View>
               </View>
-              <Text style={{ fontSize: 12, color: colors.textTertiary, fontFamily: 'Inter_400Regular' }}>{YEARLY_MONTHLY_PRICE} kr / mnd</Text>
+              <Text style={{ fontSize: 12, color: colors.textTertiary, fontFamily: 'Inter_400Regular' }}>{YEARLY_TOTAL} kr / år</Text>
             </Pressable>
           </View>
 
