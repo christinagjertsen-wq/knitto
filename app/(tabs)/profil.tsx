@@ -31,15 +31,14 @@ function YarnStats() {
 
   const usedYarn = useMemo(() => {
     const totals = new Map<string, { allocated: number; total: number }>();
+    for (const y of yarnStock) {
+      totals.set(y.id, { allocated: 0, total: y.skeins });
+    }
     for (const p of projects) {
       for (const al of p.yarnAllocations) {
         const prev = totals.get(al.yarnStockId) ?? { allocated: 0, total: 0 };
-        totals.set(al.yarnStockId, { allocated: prev.allocated + al.skeinsAllocated, total: prev.total });
+        totals.set(al.yarnStockId, { ...prev, allocated: prev.allocated + al.skeinsAllocated });
       }
-    }
-    for (const y of yarnStock) {
-      const prev = totals.get(y.id);
-      if (prev) totals.set(y.id, { ...prev, total: y.skeins });
     }
     return [...totals.entries()]
       .map(([id, { allocated, total }]) => {
