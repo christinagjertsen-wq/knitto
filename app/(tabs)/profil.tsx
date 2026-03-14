@@ -10,6 +10,7 @@ import {
   Modal,
   TextInput,
   KeyboardAvoidingView,
+  Linking,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons, Feather as FeatherIcon } from '@expo/vector-icons';
@@ -291,15 +292,21 @@ export default function InnstillingerScreen() {
             { label: t.settings.aboutApp, value: 'Knitto' },
             { label: t.settings.aboutVersion, value: '1.0.0' },
             { label: t.settings.aboutDeveloper, value: 'Sisu Knitwear AS' },
-          ].map((row, i, arr) => (
+          ].map((row) => (
             <View key={row.label}>
               <View style={styles.row}>
                 <Text style={[styles.rowLabel, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>{row.label}</Text>
                 <Text style={[styles.rowValue, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{row.value}</Text>
               </View>
-              {i < arr.length - 1 && <View style={[styles.divider, { backgroundColor: colors.border }]} />}
+              <View style={[styles.divider, { backgroundColor: colors.border }]} />
             </View>
           ))}
+          <Pressable onPress={() => Linking.openURL('https://sisuknitwear.com/pages/terms-of-use-knitto')}>
+            <View style={styles.row}>
+              <Text style={[styles.rowLabel, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>{t.premium.terms}</Text>
+              <Text style={[styles.rowValue, { color: colors.primaryBtn, fontFamily: 'Inter_400Regular' }]}>Klikk her</Text>
+            </View>
+          </Pressable>
         </View>
       </ScrollView>
 

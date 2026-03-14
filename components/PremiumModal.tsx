@@ -7,7 +7,7 @@ import { T } from '@/i18n/translations';
 import { useSubscription } from '@/lib/revenuecat';
 import { useColors } from '@/context/ThemeContext';
 
-const EULA_URL = 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/';
+const EULA_URL = 'https://sisuknitwear.com/pages/terms-of-use-knitto';
 const PRIVACY_URL = 'https://knitto.app/personvern';
 
 export function getPremiumFeatures(t: T) {
