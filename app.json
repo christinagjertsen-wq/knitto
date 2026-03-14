@@ -16,7 +16,10 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.sisuknitwear.knitto",
-      "buildNumber": "10"
+      "buildNumber": "10",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "com.sisuknitwear.knitto",
