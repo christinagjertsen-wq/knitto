@@ -304,14 +304,14 @@ export default function InnstillingerScreen() {
           <Pressable onPress={() => Linking.openURL('https://sisuknitwear.com/pages/terms-of-use-knitto')}>
             <View style={styles.row}>
               <Text style={[styles.rowLabel, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>{t.premium.terms}</Text>
-              <Text style={[styles.rowValue, { color: colors.primaryBtn, fontFamily: 'Inter_400Regular' }]}>Klikk her</Text>
+              <Text style={[styles.rowValue, { color: colors.primaryBtn, fontFamily: 'Inter_400Regular' }]}>{t.common.clickHere}</Text>
             </View>
           </Pressable>
           <View style={[styles.divider, { backgroundColor: colors.border }]} />
           <Pressable onPress={() => Linking.openURL('https://sisuknitwear.com/pages/privacy-policy')}>
             <View style={styles.row}>
               <Text style={[styles.rowLabel, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>{t.premium.privacy}</Text>
-              <Text style={[styles.rowValue, { color: colors.primaryBtn, fontFamily: 'Inter_400Regular' }]}>Klikk her</Text>
+              <Text style={[styles.rowValue, { color: colors.primaryBtn, fontFamily: 'Inter_400Regular' }]}>{t.common.clickHere}</Text>
             </View>
           </Pressable>
         </View>

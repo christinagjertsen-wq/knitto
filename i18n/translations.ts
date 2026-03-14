@@ -31,6 +31,7 @@ const no = {
     search: 'Søk',
     all: 'Alle',
     noResults: 'Ingen treff',
+    clickHere: 'Klikk her',
   },
   greeting: {
     saturday: 'God lørdag',
@@ -399,6 +400,7 @@ const en: typeof no = {
     search: 'Search',
     all: 'All',
     noResults: 'No results',
+    clickHere: 'Click here',
   },
   greeting: {
     saturday: 'Happy Saturday',
