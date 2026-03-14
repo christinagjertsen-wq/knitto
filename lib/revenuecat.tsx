@@ -10,6 +10,8 @@ const REVENUECAT_ANDROID_API_KEY = process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_AP
 
 export const REVENUECAT_ENTITLEMENT_IDENTIFIER = 'premium';
 
+let purchasesConfigured = false;
+
 function getRevenueCatApiKey(): string | null {
   if (__DEV__ || Platform.OS === 'web' || Constants.executionEnvironment === 'storeClient') {
     return REVENUECAT_TEST_API_KEY ?? null;
@@ -19,28 +21,38 @@ function getRevenueCatApiKey(): string | null {
   return REVENUECAT_TEST_API_KEY ?? null;
 }
 
+function ensureConfigured(): boolean {
+  if (purchasesConfigured) return true;
+  const apiKey = getRevenueCatApiKey();
+  if (!apiKey) return false;
+  try {
+    Purchases.setLogLevel(LOG_LEVEL.DEBUG);
+    Purchases.configure({ apiKey });
+    purchasesConfigured = true;
+    return true;
+  } catch (e) {
+    console.warn('[RevenueCat] configure() failed:', e);
+    return false;
+  }
+}
+
 function useSubscriptionContext() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const apiKey = getRevenueCatApiKey();
-    if (!apiKey) {
-      console.warn('[RevenueCat] API key not found — skipping initialization.');
-      setReady(true);
-      return;
-    }
-    try {
-      Purchases.setLogLevel(LOG_LEVEL.DEBUG);
-      Purchases.configure({ apiKey });
-    } catch (e) {
-      console.warn('[RevenueCat] configure() failed:', e);
+    const configured = ensureConfigured();
+    if (!configured) {
+      console.warn('[RevenueCat] API key not found or configure failed — skipping initialization.');
     }
     setReady(true);
   }, []);
 
   const customerInfoQuery = useQuery({
     queryKey: ['revenuecat', 'customer-info'],
-    queryFn: () => Purchases.getCustomerInfo(),
+    queryFn: async () => {
+      ensureConfigured();
+      return Purchases.getCustomerInfo();
+    },
     enabled: ready,
     staleTime: 60 * 1000,
     retry: 1,
@@ -48,7 +60,10 @@ function useSubscriptionContext() {
 
   const offeringsQuery = useQuery({
     queryKey: ['revenuecat', 'offerings'],
-    queryFn: () => Purchases.getOfferings(),
+    queryFn: async () => {
+      ensureConfigured();
+      return Purchases.getOfferings();
+    },
     enabled: ready,
     staleTime: 300 * 1000,
     retry: 1,
@@ -56,6 +71,7 @@ function useSubscriptionContext() {
 
   const purchaseMutation = useMutation({
     mutationFn: async (pkg: any) => {
+      ensureConfigured();
       const { customerInfo } = await Purchases.purchasePackage(pkg);
       return customerInfo;
     },
@@ -63,7 +79,10 @@ function useSubscriptionContext() {
   });
 
   const restoreMutation = useMutation({
-    mutationFn: () => Purchases.restorePurchases(),
+    mutationFn: async () => {
+      ensureConfigured();
+      return Purchases.restorePurchases();
+    },
     onSuccess: () => customerInfoQuery.refetch(),
   });
 
