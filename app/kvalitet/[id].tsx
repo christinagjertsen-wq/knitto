@@ -382,7 +382,8 @@ function AddYarnModal({ qualityId, visible, onClose, onPaywall }: { qualityId: s
     const duplicate = yarnStock.find(
       y => y.qualityId === qualityId && y.colorName.trim().toLowerCase() === colorName.trim().toLowerCase()
     );
-    if (!duplicate && !isSubscribed && yarnStock.length >= 5) {
+    const totalSkeins = yarnStock.reduce((s, y) => s + y.skeins, 0);
+    if (!duplicate && !isSubscribed && totalSkeins >= 50) {
       onClose();
       onPaywall();
       return;

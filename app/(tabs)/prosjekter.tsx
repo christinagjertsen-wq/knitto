@@ -439,7 +439,7 @@ export default function ProsjekterScreen() {
         style={[styles.fab, { backgroundColor: colors.primaryBtn, bottom: bottomInset + 66 }]}
         onPress={() => {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          if (!isSubscribed && projects.length >= 3) {
+          if (!isSubscribed && projects.length >= 5) {
             setShowPremium(true);
           } else {
             setShowAdd(true);
