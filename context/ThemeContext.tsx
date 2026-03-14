@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useColorScheme as useSystemColorScheme } from 'react-native';
+import { useColorScheme as useSystemColorScheme, Platform } from 'react-native';
 import Colors from '@/constants/colors';
 
 export type ThemePreference = 'light' | 'dark' | 'system';
@@ -33,8 +33,27 @@ export function useIsDark() {
 
 const STORAGE_KEY = 'app_theme';
 
+function useWebDarkMode(): boolean {
+  const [webDark, setWebDark] = useState<boolean>(() => {
+    if (Platform.OS !== 'web' || typeof window === 'undefined') return false;
+    return window.matchMedia?.('(prefers-color-scheme: dark)')?.matches ?? false;
+  });
+
+  useEffect(() => {
+    if (Platform.OS !== 'web' || typeof window === 'undefined') return;
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const handler = (e: MediaQueryListEvent) => setWebDark(e.matches);
+    mq.addEventListener('change', handler);
+    setWebDark(mq.matches);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
+  return webDark;
+}
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const systemScheme = useSystemColorScheme();
+  const webDark = useWebDarkMode();
   const [themePreference, setThemeState] = useState<ThemePreference>('system');
 
   useEffect(() => {
@@ -50,10 +69,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     AsyncStorage.setItem(STORAGE_KEY, pref);
   };
 
+  const systemIsDark = Platform.OS === 'web' ? webDark : systemScheme === 'dark';
+
   const isDark =
     themePreference === 'dark' ? true :
     themePreference === 'light' ? false :
-    systemScheme === 'dark';
+    systemIsDark;
 
   const colors = isDark ? Colors.dark : Colors.light;
 
