@@ -171,6 +171,7 @@ const no = {
     skeinsLabel: 'Antall nøster',
   },
   project: {
+    renameProject: 'Endre navn',
     deleteProject: 'Slett prosjekt',
     confirmDelete: 'Slett "%s"?',
     deleteImage: 'Slett bilde',
@@ -535,6 +536,7 @@ const en: typeof no = {
     skeinsLabel: 'Number of skeins',
   },
   project: {
+    renameProject: 'Rename project',
     deleteProject: 'Delete project',
     confirmDelete: 'Delete "%s"?',
     deleteImage: 'Delete image',

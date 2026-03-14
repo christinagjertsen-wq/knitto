@@ -1010,6 +1010,8 @@ export default function ProsjektScreen() {
   const [showEditDetails, setShowEditDetails] = useState(false);
   const [showAddLog, setShowAddLog] = useState(false);
   const [showPremium, setShowPremium] = useState(false);
+  const [showRenameProject, setShowRenameProject] = useState(false);
+  const [projectNameInput, setProjectNameInput] = useState('');
   const { isSubscribed } = useSubscription();
 
   const {
@@ -1116,9 +1118,15 @@ export default function ProsjektScreen() {
         <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)/prosjekter')}>
           <Ionicons name="chevron-back" size={24} color={colors.text} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]} numberOfLines={1}>
-          {project.name}
-        </Text>
+        <Pressable
+          style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+          onPress={() => { setProjectNameInput(project.name); setShowRenameProject(true); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
+        >
+          <Text style={[styles.headerTitle, { color: colors.text, fontFamily: 'Inter_700Bold', flex: 0 }]} numberOfLines={1}>
+            {project.name}
+          </Text>
+          <Ionicons name="pencil-outline" size={15} color={colors.textTertiary} />
+        </Pressable>
         <Pressable
           style={{ padding: 4, minWidth: 40, alignItems: 'flex-end' }}
           onPress={() => {
@@ -1528,6 +1536,47 @@ export default function ProsjektScreen() {
         }}
       />
 
+      <Modal visible={showRenameProject} transparent animationType="fade" onRequestClose={() => setShowRenameProject(false)}>
+        <View style={styles.modalOverlay}>
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+            <View style={[styles.renameSheet, { backgroundColor: colors.surface }]}>
+              <View style={styles.modalHandle} />
+              <Text style={[styles.renameTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.project.renameProject}</Text>
+              <TextInput
+                style={[styles.renameInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border, fontFamily: 'Inter_400Regular' }]}
+                value={projectNameInput}
+                onChangeText={setProjectNameInput}
+                placeholder={t.project.namePlaceholder}
+                placeholderTextColor={colors.textTertiary}
+                autoFocus
+                returnKeyType="done"
+                onSubmitEditing={() => {
+                  if (projectNameInput.trim()) {
+                    updateProject(id, { name: projectNameInput.trim() });
+                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                    setShowRenameProject(false);
+                  }
+                }}
+              />
+              <Pressable
+                style={[styles.renameSaveBtn, { backgroundColor: projectNameInput.trim() ? colors.primaryBtn : colors.border }]}
+                disabled={!projectNameInput.trim()}
+                onPress={() => {
+                  updateProject(id, { name: projectNameInput.trim() });
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                  setShowRenameProject(false);
+                }}
+              >
+                <Text style={[styles.renameSaveBtnText, { fontFamily: 'Inter_600SemiBold' }]}>{t.common.save}</Text>
+              </Pressable>
+              <Pressable onPress={() => setShowRenameProject(false)} style={styles.renameCancelBtn}>
+                <Text style={{ color: colors.textSecondary, fontFamily: 'Inter_400Regular' }}>{t.common.cancel}</Text>
+              </Pressable>
+            </View>
+          </KeyboardAvoidingView>
+        </View>
+      </Modal>
+
       <PremiumModal visible={showPremium} onClose={() => setShowPremium(false)} />
 
       <EditDetailsModal
@@ -1836,6 +1885,12 @@ const styles = StyleSheet.create({
   inlineBtnText: { color: '#fff', fontSize: 14 },
   modalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.4)' },
   modalSheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40, gap: 12 },
+  renameSheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40, gap: 12 },
+  renameTitle: { fontSize: 18, textAlign: 'center' },
+  renameInput: { borderRadius: 12, padding: 14, fontSize: 16, borderWidth: 1 },
+  renameSaveBtn: { borderRadius: 14, padding: 16, alignItems: 'center' },
+  renameSaveBtnText: { color: '#fff', fontSize: 16 },
+  renameCancelBtn: { alignItems: 'center', padding: 10 },
   editModalSheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: SCREEN_HEIGHT * 0.92 },
   editModalContent: { padding: 24, paddingBottom: 40, gap: 14 },
   modalHandle: { width: 36, height: 4, borderRadius: 2, backgroundColor: '#ccc', alignSelf: 'center', marginBottom: 8 },
