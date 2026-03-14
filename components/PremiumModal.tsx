@@ -8,7 +8,7 @@ import { useSubscription } from '@/lib/revenuecat';
 import { useColors } from '@/context/ThemeContext';
 
 const EULA_URL = 'https://sisuknitwear.com/pages/terms-of-use-knitto';
-const PRIVACY_URL = 'https://knitto.app/personvern';
+const PRIVACY_URL = 'https://sisuknitwear.com/pages/privacy-policy';
 
 export function getPremiumFeatures(t: T) {
   return [
