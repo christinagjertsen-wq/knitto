@@ -166,12 +166,7 @@ function ProjectRow({ project }: { project: Project }) {
       {project.coverImage ? (
         <Image source={{ uri: project.coverImage }} style={styles.projectRowThumb} resizeMode="cover" />
       ) : (
-        <View style={styles.yarnDots}>
-          {yarnColors.map((hex, i) => (
-            <View key={i} style={[styles.yarnDot, { backgroundColor: hex, marginLeft: i > 0 ? -6 : 0, zIndex: 3 - i }]} />
-          ))}
-          {yarnColors.length === 0 && <View style={[styles.yarnDot, { backgroundColor: colors.border }]} />}
-        </View>
+        <View style={[styles.projectRowThumb, { backgroundColor: yarnColors[0] ?? colors.border }]} />
       )}
       <View style={styles.projectRowText}>
         <Text style={[styles.projectRowName, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]} numberOfLines={1}>
