@@ -17,7 +17,7 @@ import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
 import { useKnitting } from '@/context/KnittingContext';
 import { useUser, getGreeting } from '@/context/UserContext';
-import { PremiumModal, FREE_FEATURES, LOCKED_FEATURES, MONTHLY_PRICE, YEARLY_MONTHLY_PRICE, YEARLY_SAVINGS, YEARLY_TOTAL } from '@/components/PremiumModal';
+import { PremiumModal, MONTHLY_PRICE, YEARLY_SAVINGS, YEARLY_TOTAL } from '@/components/PremiumModal';
 import { useColors, useIsDark, useTheme } from '@/context/ThemeContext';
 import { useLanguage, useT } from '@/context/LanguageContext';
 import { useSubscription } from '@/lib/revenuecat';
@@ -189,8 +189,8 @@ export default function InnstillingerScreen() {
 
         <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.premium.sectionTitle}</Text>
         <View style={[styles.premiumCard, { backgroundColor: colors.surface }]}>
-          <Text style={[styles.premiumTitle, { color: colors.text, fontFamily: 'Inter_700Bold', textAlign: 'center' }]}>Prøv Knitto+ gratis</Text>
-          <Text style={[styles.premiumSub, { color: colors.textTertiary, fontFamily: 'Inter_400Regular', textAlign: 'center' }]}>Lås opp alt og strikk uten grenser</Text>
+          <Text style={[styles.premiumTitle, { color: colors.text, fontFamily: 'Inter_700Bold', textAlign: 'center' }]}>{t.premium.title}</Text>
+          <Text style={[styles.premiumSub, { color: colors.textTertiary, fontFamily: 'Inter_400Regular', textAlign: 'center' }]}>{t.premium.subtitle}</Text>
 
           <View style={styles.premiumFeatures}>
             <View style={styles.premiumFeatureRow}>
@@ -198,11 +198,11 @@ export default function InnstillingerScreen() {
                 <Ionicons name="leaf-outline" size={14} color="#4CAF50" style={{ alignSelf: 'center' }} />
               </View>
               <Text style={[styles.premiumFeatureText, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>
-                {FREE_FEATURES.join('  ·  ')}
+                {[t.premium.freeProjects, t.premium.freeSkeins, t.premium.freeTools].join('  ·  ')}
               </Text>
             </View>
             <View style={[styles.premiumDivider, { backgroundColor: colors.border }]} />
-            {LOCKED_FEATURES.map((label, i) => (
+            {[t.premium.lockedProjects, t.premium.lockedYarn].map((label, i) => (
               <View key={`locked-${i}`} style={styles.premiumFeatureRow}>
                 <View style={[styles.premiumFeatureIcon, { backgroundColor: 'rgba(91,127,191,0.12)' }]}>
                   <Ionicons name="add" size={18} color="#5B7FBF" style={{ alignSelf: 'center' }} />
@@ -219,20 +219,20 @@ export default function InnstillingerScreen() {
               style={[styles.premiumPlanCard, { borderColor: selectedPlan === 'monthly' ? '#5B7FBF' : colors.border, backgroundColor: colors.background }, selectedPlan === 'monthly' && { borderWidth: 2 }]}
               onPress={() => { setSelectedPlan('monthly'); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
             >
-              <Text style={[{ fontSize: 14, color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>Månedlig</Text>
-              <Text style={{ fontSize: 12, color: colors.textTertiary, fontFamily: 'Inter_400Regular' }}>{MONTHLY_PRICE} kr / mnd</Text>
+              <Text style={[{ fontSize: 14, color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>{t.premium.monthly}</Text>
+              <Text style={{ fontSize: 12, color: colors.textTertiary, fontFamily: 'Inter_400Regular' }}>{MONTHLY_PRICE} {t.premium.perMonth}</Text>
             </Pressable>
             <Pressable
               style={[styles.premiumPlanCard, { borderColor: selectedPlan === 'yearly' ? '#5B7FBF' : colors.border, backgroundColor: colors.background }, selectedPlan === 'yearly' && { borderWidth: 2 }]}
               onPress={() => { setSelectedPlan('yearly'); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
             >
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                <Text style={[{ fontSize: 14, color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>Årlig</Text>
+                <Text style={[{ fontSize: 14, color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>{t.premium.yearly}</Text>
                 <View style={{ backgroundColor: '#5B7FBF', borderRadius: 5, paddingHorizontal: 6, paddingVertical: 2 }}>
-                  <Text style={{ color: '#fff', fontSize: 10, fontFamily: 'Inter_600SemiBold' }}>Spar {YEARLY_SAVINGS} kr</Text>
+                  <Text style={{ color: '#fff', fontSize: 10, fontFamily: 'Inter_600SemiBold' }}>{t.premium.save} {YEARLY_SAVINGS} kr</Text>
                 </View>
               </View>
-              <Text style={{ fontSize: 12, color: colors.textTertiary, fontFamily: 'Inter_400Regular' }}>{YEARLY_TOTAL} kr / år</Text>
+              <Text style={{ fontSize: 12, color: colors.textTertiary, fontFamily: 'Inter_400Regular' }}>{YEARLY_TOTAL} {t.premium.perYear}</Text>
             </Pressable>
           </View>
 
@@ -240,11 +240,11 @@ export default function InnstillingerScreen() {
             style={({ pressed }) => [styles.premiumBtn, { backgroundColor: '#5B7FBF', opacity: pressed ? 0.88 : 1 }]}
             onPress={() => setShowPremium(true)}
           >
-            <Text style={[styles.premiumBtnText, { color: '#fff', fontFamily: 'Inter_700Bold' }]}>Start gratis prøveperiode</Text>
+            <Text style={[styles.premiumBtnText, { color: '#fff', fontFamily: 'Inter_700Bold' }]}>{t.premium.startTrial}</Text>
             <Text style={[styles.premiumBtnSub, { color: 'rgba(255,255,255,0.65)', fontFamily: 'Inter_400Regular' }]}>
               {selectedPlan === 'yearly'
-                ? `14 dager gratis, deretter ${YEARLY_TOTAL} kr / år`
-                : `14 dager gratis, deretter ${MONTHLY_PRICE} kr / mnd`}
+                ? t.premium.trialSubYearly.replace('%s', String(YEARLY_TOTAL))
+                : t.premium.trialSubMonthly.replace('%s', String(MONTHLY_PRICE))}
             </Text>
           </Pressable>
         </View>

@@ -19,16 +19,8 @@ export const PREMIUM_FEATURES = [
   { icon: 'cube-outline' as const, label: 'Ubegrenset garnlager' },
 ];
 
-export const FREE_FEATURES = [
-  '5 prosjekter',
-  '50 nøster',
-  'Verktøy',
-];
-
-export const LOCKED_FEATURES = [
-  'Ubegrenset antall prosjekter',
-  'Ubegrenset garnlager',
-];
+export const FREE_FEATURES: string[] = [];
+export const LOCKED_FEATURES: string[] = [];
 
 export const MONTHLY_PRICE = 69;
 export const YEARLY_MONTHLY_PRICE = 59;
@@ -81,9 +73,9 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
         >
           <View style={[styles.handle, { backgroundColor: colors.border }]} />
 
-          <Text style={[styles.title, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>Prøv Knitto+ gratis</Text>
+          <Text style={[styles.title, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.premium.title}</Text>
           <Text style={[styles.sub, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-            Lås opp alt og strikk uten grenser
+            {t.premium.subtitle}
           </Text>
 
           <View style={styles.featureList}>
@@ -92,13 +84,13 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
                 <Ionicons name="leaf-outline" size={14} color="#4CAF50" style={{ alignSelf: 'center' }} />
               </View>
               <Text style={[styles.featureText, { color: colors.text, fontFamily: 'Inter_400Regular' }]}>
-                {FREE_FEATURES.join('  ·  ')}
+                {[t.premium.freeProjects, t.premium.freeSkeins, t.premium.freeTools].join('  ·  ')}
               </Text>
             </View>
 
             <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
-            {LOCKED_FEATURES.map((label, i) => (
+            {[t.premium.lockedProjects, t.premium.lockedYarn].map((label, i) => (
               <View key={`locked-${i}`} style={styles.featureRow}>
                 <View style={[styles.iconCircle, { backgroundColor: 'rgba(91,127,191,0.12)' }]}>
                   <Ionicons name="add" size={18} color="#5B7FBF" style={{ alignSelf: 'center' }} />
@@ -119,9 +111,9 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
               ]}
               onPress={() => setSelectedPlan('monthly')}
             >
-              <Text style={[styles.planTitle, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>Månedlig</Text>
+              <Text style={[styles.planTitle, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>{t.premium.monthly}</Text>
               <Text style={[styles.planPrice, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
-                {MONTHLY_PRICE} kr / mnd
+                {MONTHLY_PRICE} {t.premium.perMonth}
               </Text>
             </Pressable>
 
@@ -134,13 +126,13 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
               onPress={() => setSelectedPlan('yearly')}
             >
               <View style={styles.planBadgeRow}>
-                <Text style={[styles.planTitle, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>Årlig</Text>
+                <Text style={[styles.planTitle, { color: colors.text, fontFamily: 'Inter_600SemiBold' }]}>{t.premium.yearly}</Text>
                 <View style={styles.savingsBadge}>
-                  <Text style={[styles.savingsText, { fontFamily: 'Inter_600SemiBold' }]}>Spar {YEARLY_SAVINGS} kr</Text>
+                  <Text style={[styles.savingsText, { fontFamily: 'Inter_600SemiBold' }]}>{t.premium.save} {YEARLY_SAVINGS} kr</Text>
                 </View>
               </View>
               <Text style={[styles.planPrice, { color: colors.textSecondary, fontFamily: 'Inter_400Regular' }]}>
-                {YEARLY_TOTAL} kr / år
+                {YEARLY_TOTAL} {t.premium.perYear}
               </Text>
             </Pressable>
           </View>
@@ -159,12 +151,12 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
             ) : (
               <>
                 <Text style={[styles.btnText, { fontFamily: 'Inter_700Bold' }]}>
-                  Start gratis prøveperiode
+                  {t.premium.startTrial}
                 </Text>
                 <Text style={[styles.btnSub, { fontFamily: 'Inter_400Regular' }]}>
                   {selectedPlan === 'yearly'
-                    ? `14 dager gratis, deretter ${YEARLY_TOTAL} kr / år`
-                    : `14 dager gratis, deretter ${MONTHLY_PRICE} kr / mnd`}
+                    ? t.premium.trialSubYearly.replace('%s', String(YEARLY_TOTAL))
+                    : t.premium.trialSubMonthly.replace('%s', String(MONTHLY_PRICE))}
                 </Text>
               </>
             )}
@@ -173,7 +165,7 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
           <View style={styles.footerLinks}>
             <Pressable onPress={handleRestore} hitSlop={16} disabled={isPurchasing || isRestoring}>
               <Text style={[styles.footerLink, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
-                {isRestoring ? 'Gjenoppretter...' : 'Gjenopprett kjøp'}
+                {isRestoring ? t.premium.restoring : t.premium.restore}
               </Text>
             </Pressable>
             <Text style={[styles.footerDot, { color: colors.textTertiary }]}>·</Text>

@@ -150,7 +150,7 @@ function YarnCalculator() {
             style={[styles.calcInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border }]}
             value={stitchGauge}
             onChangeText={setStitchGauge}
-            placeholder="22 masker/10cm"
+            placeholder={t.tools.gaugeStitchPlaceholder}
             placeholderTextColor={colors.textTertiary}
             keyboardType="number-pad"
           />
@@ -160,7 +160,7 @@ function YarnCalculator() {
             style={[styles.calcInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border }]}
             value={rowGauge}
             onChangeText={setRowGauge}
-            placeholder="28 rader/10cm"
+            placeholder={t.tools.gaugeRowPlaceholder}
             placeholderTextColor={colors.textTertiary}
             keyboardType="number-pad"
           />
