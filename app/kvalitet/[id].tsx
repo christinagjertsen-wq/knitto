@@ -675,31 +675,33 @@ export default function KvalitetScreen() {
         <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)/lager')}>
           <Ionicons name="chevron-back" size={24} color={colors.text} />
         </Pressable>
-        <Pressable
-          style={{ flex: 1 }}
-          onPress={() => { setQualityNameInput(quality.name); setShowRenameQuality(true); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
-        >
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
-            <Text style={[styles.qualityTitle, { color: colors.text, fontFamily: 'Inter_700Bold', flex: 0 }]} numberOfLines={1}>
-              {quality.name}
-            </Text>
-            <Ionicons name="pencil-outline" size={14} color={colors.textTertiary} />
-          </View>
+        <View style={{ flex: 1 }}>
+          <Text style={[styles.qualityTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]} numberOfLines={1}>
+            {quality.name}
+          </Text>
           <Text style={[styles.qualitySub, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
             {brand?.name}
           </Text>
-        </Pressable>
-        <Pressable
-          style={styles.deleteBtn}
-          onPress={() => {
-            Alert.alert(t.quality.deleteQuality, t.quality.confirmDeleteQuality.replace('%s', ''), [
-              { text: t.common.cancel, style: 'cancel' },
-              { text: t.common.delete, style: 'destructive', onPress: () => { deleteQuality(id); router.back(); } },
-            ]);
-          }}
-        >
-          <Ionicons name="trash-outline" size={20} color="#C97B84" />
-        </Pressable>
+        </View>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <Pressable
+            onPress={() => { setQualityNameInput(quality.name); setShowRenameQuality(true); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
+            hitSlop={8}
+          >
+            <Ionicons name="pencil-outline" size={18} color={colors.textTertiary} />
+          </Pressable>
+          <Pressable
+            style={styles.deleteBtn}
+            onPress={() => {
+              Alert.alert(t.quality.deleteQuality, t.quality.confirmDeleteQuality.replace('%s', ''), [
+                { text: t.common.cancel, style: 'cancel' },
+                { text: t.common.delete, style: 'destructive', onPress: () => { deleteQuality(id); router.back(); } },
+              ]);
+            }}
+          >
+            <Ionicons name="trash-outline" size={20} color="#C97B84" />
+          </Pressable>
+        </View>
       </View>
 
       <ScrollView
