@@ -719,7 +719,7 @@ const en: typeof no = {
     xStitchesTotal: '%s stitches total',
     ruler: 'Ruler',
     rulerTitle: 'Ruler 1:1',
-    rulerSubtitle: 'Scroll sideways — actual size on screen',
+    rulerSubtitle: 'Actual size on screen',
     rulerWebNote: 'Accuracy may vary on web depending on your screen DPI.',
   },
   alerts: {
