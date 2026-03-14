@@ -514,6 +514,8 @@ export default function KvalitetScreen() {
   const [selectedYarn, setSelectedYarn] = useState<YarnStock | null>(null);
   const [renameYarn, setRenameYarn] = useState<YarnStock | null>(null);
   const [renameInput, setRenameInput] = useState('');
+  const [showRenameQuality, setShowRenameQuality] = useState(false);
+  const [qualityNameInput, setQualityNameInput] = useState('');
   const [sortBy, setSortBy] = useState<'navn' | 'gram'>('navn');
   const [skeinEditField, setSkeinEditField] = useState<'grams' | 'meters' | null>(null);
   const [skeinEditInput, setSkeinEditInput] = useState('');
@@ -672,14 +674,20 @@ export default function KvalitetScreen() {
         <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)/lager')}>
           <Ionicons name="chevron-back" size={24} color={colors.text} />
         </Pressable>
-        <View style={{ flex: 1 }}>
-          <Text style={[styles.qualityTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]} numberOfLines={1}>
-            {quality.name}
-          </Text>
+        <Pressable
+          style={{ flex: 1 }}
+          onPress={() => { setQualityNameInput(quality.name); setShowRenameQuality(true); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
+        >
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+            <Text style={[styles.qualityTitle, { color: colors.text, fontFamily: 'Inter_700Bold', flex: 0 }]} numberOfLines={1}>
+              {quality.name}
+            </Text>
+            <Ionicons name="pencil-outline" size={14} color={colors.textTertiary} />
+          </View>
           <Text style={[styles.qualitySub, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
             {brand?.name}
           </Text>
-        </View>
+        </Pressable>
         <Pressable
           style={styles.deleteBtn}
           onPress={() => {
@@ -794,6 +802,47 @@ export default function KvalitetScreen() {
       </ScrollView>
 
       <AddYarnModal qualityId={id} visible={showAdd} onClose={() => setShowAdd(false)} onPaywall={() => setShowPremium(true)} />
+      <Modal visible={showRenameQuality} transparent animationType="fade" onRequestClose={() => setShowRenameQuality(false)}>
+        <View style={styles.modalOverlay}>
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+            <View style={[styles.renameQualitySheet, { backgroundColor: colors.surface }]}>
+              <View style={styles.modalHandle} />
+              <Text style={[styles.renameQualityTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]}>{t.project.renameProject}</Text>
+              <TextInput
+                style={[styles.renameQualityInput, { color: colors.text, backgroundColor: colors.background, borderColor: colors.border, fontFamily: 'Inter_400Regular' }]}
+                value={qualityNameInput}
+                onChangeText={setQualityNameInput}
+                placeholder={t.storage.newQuality}
+                placeholderTextColor={colors.textTertiary}
+                autoFocus
+                returnKeyType="done"
+                onSubmitEditing={() => {
+                  if (qualityNameInput.trim()) {
+                    updateQuality(id, { name: qualityNameInput.trim() });
+                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                    setShowRenameQuality(false);
+                  }
+                }}
+              />
+              <Pressable
+                style={[styles.renameQualitySaveBtn, { backgroundColor: qualityNameInput.trim() ? colors.primaryBtn : colors.border }]}
+                disabled={!qualityNameInput.trim()}
+                onPress={() => {
+                  updateQuality(id, { name: qualityNameInput.trim() });
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                  setShowRenameQuality(false);
+                }}
+              >
+                <Text style={[{ color: '#fff', fontSize: 16, fontFamily: 'Inter_600SemiBold' }]}>{t.common.save}</Text>
+              </Pressable>
+              <Pressable onPress={() => setShowRenameQuality(false)} style={{ alignItems: 'center', padding: 10 }}>
+                <Text style={{ color: colors.textSecondary, fontFamily: 'Inter_400Regular' }}>{t.common.cancel}</Text>
+              </Pressable>
+            </View>
+          </KeyboardAvoidingView>
+        </View>
+      </Modal>
+
       <PremiumModal visible={showPremium} onClose={() => setShowPremium(false)} />
       {selectedYarn && (
         <ColorDetailModal
@@ -1079,6 +1128,10 @@ const styles = StyleSheet.create({
   emptyBtn: { paddingHorizontal: 20, paddingVertical: 12, borderRadius: 12, marginTop: 4 },
   emptyBtnText: { color: '#fff', fontSize: 15 },
   modalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.4)' },
+  renameQualitySheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40, gap: 12 },
+  renameQualityTitle: { fontSize: 18, textAlign: 'center' },
+  renameQualityInput: { borderRadius: 12, padding: 14, fontSize: 16, borderWidth: 1 },
+  renameQualitySaveBtn: { borderRadius: 14, padding: 16, alignItems: 'center' },
   modalSheet: { borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40, gap: 10 },
   modalHandle: { width: 36, height: 4, borderRadius: 2, backgroundColor: '#ccc', alignSelf: 'center', marginBottom: 8 },
   modalTitle: { fontSize: 22, marginBottom: 4, textAlign: 'center' },
