@@ -33,7 +33,7 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
   const insets = useSafeAreaInsets();
   const t = useT();
   const colors = useColors();
-  const { offerings, purchase, isPurchasing, restore, isRestoring } = useSubscription();
+  const { offerings, purchase, isPurchasing, restore, isRestoring, isLoadingOfferings } = useSubscription();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<Plan>('monthly');
 
@@ -41,6 +41,7 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
   const yearlyPackage = offerings?.current?.annual ?? offerings?.current?.availablePackages?.[0];
 
   const activePackage = selectedPlan === 'yearly' ? yearlyPackage : monthlyPackage;
+  const offeringsLoading = isLoadingOfferings;
 
   const handlePurchase = async () => {
     if (!activePackage) return;
@@ -142,11 +143,14 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
           )}
 
           <Pressable
-            style={({ pressed }) => [styles.btn, { opacity: (pressed || isPurchasing || isRestoring) ? 0.85 : 1 }]}
+            style={({ pressed }) => [
+              styles.btn,
+              { opacity: (pressed || isPurchasing || isRestoring || offeringsLoading) ? 0.85 : 1 },
+            ]}
             onPress={handlePurchase}
-            disabled={isPurchasing || isRestoring || !activePackage}
+            disabled={isPurchasing || isRestoring || !activePackage || offeringsLoading}
           >
-            {isPurchasing ? (
+            {(isPurchasing || offeringsLoading) ? (
               <ActivityIndicator color="#fff" />
             ) : (
               <>
