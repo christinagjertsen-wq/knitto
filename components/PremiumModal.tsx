@@ -36,19 +36,33 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
   const insets = useSafeAreaInsets();
   const t = useT();
   const colors = useColors();
-  const { offerings, purchase, isPurchasing, restore, isRestoring, isLoadingOfferings } = useSubscription();
+  const { offerings, purchase, isPurchasing, restore, isRestoring, isLoadingOfferings, refetchOfferings } = useSubscription();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<Plan>('monthly');
 
-  const monthlyPackage = offerings?.current?.monthly ?? offerings?.current?.availablePackages?.[0];
-  const yearlyPackage = offerings?.current?.annual ?? offerings?.current?.availablePackages?.[0];
-
+  const monthlyPackage = offerings?.current?.monthly ?? offerings?.current?.availablePackages?.find(p => p.packageType === 'MONTHLY');
+  const yearlyPackage = offerings?.current?.annual ?? offerings?.current?.availablePackages?.find(p => p.packageType === 'ANNUAL');
   const activePackage = selectedPlan === 'yearly' ? yearlyPackage : monthlyPackage;
   const offeringsLoading = isLoadingOfferings;
 
+  React.useEffect(() => {
+    if (visible) {
+      setErrorMsg(null);
+      if (!offerings && !isLoadingOfferings) {
+        refetchOfferings?.();
+      }
+    }
+  }, [visible]);
+
   const handlePurchase = async () => {
-    if (!activePackage) return;
     setErrorMsg(null);
+    if (!activePackage) {
+      if (!isLoadingOfferings) {
+        await refetchOfferings?.();
+      }
+      setErrorMsg('Laster inn abonnementer… Prøv igjen om et øyeblikk.');
+      return;
+    }
     try {
       await purchase(activePackage);
       onClose();
@@ -148,10 +162,10 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
           <Pressable
             style={({ pressed }) => [
               styles.btn,
-              { opacity: (pressed || isPurchasing || isRestoring || offeringsLoading) ? 0.85 : 1 },
+              { opacity: (pressed || isPurchasing || isRestoring) ? 0.85 : 1 },
             ]}
             onPress={handlePurchase}
-            disabled={isPurchasing || isRestoring || !activePackage || offeringsLoading}
+            disabled={isPurchasing || isRestoring}
           >
             {(isPurchasing || offeringsLoading) ? (
               <ActivityIndicator color="#fff" />

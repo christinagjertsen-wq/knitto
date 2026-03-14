@@ -81,6 +81,7 @@ function useSubscriptionContext() {
     isPurchasing: purchaseMutation.isPending,
     isRestoring: restoreMutation.isPending,
     purchaseError: purchaseMutation.error,
+    refetchOfferings: offeringsQuery.refetch,
   };
 }
 
