@@ -27,15 +27,15 @@ export function useUser() {
 
 const NO_QUOTES = [
   'Ull er kjærlighet på pinner',
-  'Ett maskefall om gangen',
-  'Strikk mer, bekymre deg mindre',
-  'Livet er for kort til dårlig garn',
-  'Garn healer alt',
-  'Masker teller – og det gjør du også',
-  'Ull og rolig',
-  'Strikk på, livet er kort',
-  'God strikking tar tid – og det er verdt det',
-  'Hvert maskefall med kjærlighet',
+  'En maske om gangen',
+  'Strikk mer. Bekymre deg mindre.',
+  'Livet er for kort for dårlig garn',
+  'Garn fikser det meste',
+  'Masker teller, og det gjør du også.',
+  'Ull er gull, ikke tull.',
+  'Strikk i dag også, livet er kort.',
+  'Strikking tar tid, og det er verdt det.',
+  'Hver maske med kjærlighet',
 ];
 
 const EN_QUOTES = [
