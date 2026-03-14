@@ -25,20 +25,38 @@ export function useUser() {
   return useContext(UserContext);
 }
 
-export function getGreeting(firstName: string, t: T): string {
-  const now = new Date();
-  const day = now.getDay();
-  const hour = now.getHours();
-  const name = firstName.trim();
-  const suffix = name ? ` ${name}` : '';
+const NO_QUOTES = [
+  'Ull er kjærlighet på pinner',
+  'Ett maskefall om gangen',
+  'Strikk mer, bekymre deg mindre',
+  'Livet er for kort til dårlig garn',
+  'Garn healer alt',
+  'Masker teller – og det gjør du også',
+  'Ull og rolig',
+  'Strikk på, livet er kort',
+  'God strikking tar tid – og det er verdt det',
+  'Hvert maskefall med kjærlighet',
+];
 
-  if (day === 6) return `${t.greeting.saturday}${suffix}`;
-  if (day === 0) return `${t.greeting.sunday}${suffix}`;
-  if (hour >= 5 && hour < 11) return `${t.greeting.morning}${suffix}`;
-  if (hour >= 11 && hour < 13) return `${t.greeting.midday}${suffix}`;
-  if (hour >= 13 && hour < 18) return `${t.greeting.afternoon}${suffix}`;
-  if (hour >= 18 && hour < 23) return `${t.greeting.evening}${suffix}`;
-  return `${t.greeting.night}${suffix}`;
+const EN_QUOTES = [
+  'Wool is love on needles',
+  'One stitch at a time',
+  'Knit more, worry less',
+  'Life is too short for bad yarn',
+  'Yarn heals everything',
+  'Stitches count — and so do you',
+  'Keep calm and knit on',
+  'Knit on, life is short',
+  'Good knitting takes time — worth every stitch',
+  'Every stitch with love',
+];
+
+export function getGreeting(firstName: string, t: T): string {
+  const isNorwegian = t.greeting.morning === 'God morgen';
+  const quotes = isNorwegian ? NO_QUOTES : EN_QUOTES;
+  const now = new Date();
+  const dayOfYear = Math.floor((now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / 86400000);
+  return quotes[dayOfYear % quotes.length];
 }
 
 export function UserProvider({ children }: { children: ReactNode }) {
