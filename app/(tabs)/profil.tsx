@@ -16,7 +16,7 @@ import { Ionicons, Feather as FeatherIcon } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import Colors from '@/constants/colors';
 import { useKnitting } from '@/context/KnittingContext';
-import { useUser, getGreeting } from '@/context/UserContext';
+import { useUser, getKnittingQuote } from '@/context/UserContext';
 import { PremiumModal, MONTHLY_PRICE, YEARLY_SAVINGS, YEARLY_TOTAL } from '@/components/PremiumModal';
 import { useColors, useIsDark, useTheme } from '@/context/ThemeContext';
 import { useLanguage, useT } from '@/context/LanguageContext';
@@ -123,7 +123,7 @@ export default function InnstillingerScreen() {
   const [showPremium, setShowPremium] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<'yearly' | 'monthly'>('monthly');
 
-  const greeting = getGreeting(firstName, t);
+  const greeting = getKnittingQuote(t);
 
   const activeProjects = projects.filter(p => p.status === 'aktiv').length;
   const finishedProjects = projects.filter(p => p.status === 'ferdig').length;

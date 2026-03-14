@@ -52,6 +52,22 @@ const EN_QUOTES = [
 ];
 
 export function getGreeting(firstName: string, t: T): string {
+  const now = new Date();
+  const day = now.getDay();
+  const hour = now.getHours();
+  const name = firstName.trim();
+  const suffix = name ? ` ${name}` : '';
+
+  if (day === 6) return `${t.greeting.saturday}${suffix}`;
+  if (day === 0) return `${t.greeting.sunday}${suffix}`;
+  if (hour >= 5 && hour < 11) return `${t.greeting.morning}${suffix}`;
+  if (hour >= 11 && hour < 13) return `${t.greeting.midday}${suffix}`;
+  if (hour >= 13 && hour < 18) return `${t.greeting.afternoon}${suffix}`;
+  if (hour >= 18 && hour < 23) return `${t.greeting.evening}${suffix}`;
+  return `${t.greeting.night}${suffix}`;
+}
+
+export function getKnittingQuote(t: T): string {
   const isNorwegian = t.greeting.morning === 'God morgen';
   const quotes = isNorwegian ? NO_QUOTES : EN_QUOTES;
   const now = new Date();
