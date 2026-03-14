@@ -24,7 +24,7 @@ export const LOCKED_FEATURES: string[] = [];
 
 export const MONTHLY_PRICE = 69;
 export const YEARLY_MONTHLY_PRICE = 59;
-export const YEARLY_TOTAL = YEARLY_MONTHLY_PRICE * 12;
+export const YEARLY_TOTAL = 709;
 export const YEARLY_SAVINGS = MONTHLY_PRICE * 12 - YEARLY_TOTAL;
 
 type Plan = 'yearly' | 'monthly';
