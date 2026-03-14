@@ -1118,31 +1118,33 @@ export default function ProsjektScreen() {
         <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)/prosjekter')}>
           <Ionicons name="chevron-back" size={24} color={colors.text} />
         </Pressable>
-        <Pressable
-          style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}
-          onPress={() => { setProjectNameInput(project.name); setShowRenameProject(true); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
-        >
-          <Text style={{ fontSize: 22, color: colors.text, fontFamily: 'Inter_700Bold', flexShrink: 1 }} numberOfLines={1}>
-            {project.name}
-          </Text>
-          <Ionicons name="pencil-outline" size={15} color={colors.textTertiary} />
-        </Pressable>
-        <Pressable
-          style={{ padding: 4, minWidth: 40, alignItems: 'flex-end' }}
-          onPress={() => {
-            Alert.alert(t.project.deleteProject, t.project.confirmDelete.replace('%s', project.name), [
-              { text: t.common.cancel, style: 'cancel' },
-              {
-                text: t.common.delete, style: 'destructive', onPress: () => {
-                  deleteProject(id);
-                  router.replace('/(tabs)/prosjekter');
-                }
-              },
-            ]);
-          }}
-        >
-          <Ionicons name="trash-outline" size={20} color="#C97B84" />
-        </Pressable>
+        <Text style={[styles.headerTitle, { color: colors.text, fontFamily: 'Inter_700Bold' }]} numberOfLines={1}>
+          {project.name}
+        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, minWidth: 40, justifyContent: 'flex-end' }}>
+          <Pressable
+            onPress={() => { setProjectNameInput(project.name); setShowRenameProject(true); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
+            hitSlop={8}
+          >
+            <Ionicons name="pencil-outline" size={18} color={colors.textTertiary} />
+          </Pressable>
+          <Pressable
+            style={{ padding: 4 }}
+            onPress={() => {
+              Alert.alert(t.project.deleteProject, t.project.confirmDelete.replace('%s', project.name), [
+                { text: t.common.cancel, style: 'cancel' },
+                {
+                  text: t.common.delete, style: 'destructive', onPress: () => {
+                    deleteProject(id);
+                    router.replace('/(tabs)/prosjekter');
+                  }
+                },
+              ]);
+            }}
+          >
+            <Ionicons name="trash-outline" size={20} color="#C97B84" />
+          </Pressable>
+        </View>
       </View>
 
       <ScrollView
