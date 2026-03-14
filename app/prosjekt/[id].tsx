@@ -1119,10 +1119,10 @@ export default function ProsjektScreen() {
           <Ionicons name="chevron-back" size={24} color={colors.text} />
         </Pressable>
         <Pressable
-          style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+          style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}
           onPress={() => { setProjectNameInput(project.name); setShowRenameProject(true); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
         >
-          <Text style={[styles.headerTitle, { color: colors.text, fontFamily: 'Inter_700Bold', flex: 0 }]} numberOfLines={1}>
+          <Text style={{ fontSize: 22, color: colors.text, fontFamily: 'Inter_700Bold', flexShrink: 1 }} numberOfLines={1}>
             {project.name}
           </Text>
           <Ionicons name="pencil-outline" size={15} color={colors.textTertiary} />
