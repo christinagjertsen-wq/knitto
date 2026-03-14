@@ -18,7 +18,9 @@
       "bundleIdentifier": "com.sisuknitwear.knitto",
       "buildNumber": "10",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSPhotoLibraryUsageDescription": "Knitto bruker fotobiblioteket ditt for å legge til bilder av strikkeprosjekter og garn i lageret ditt.",
+        "NSPhotoLibraryAddUsageDescription": "Knitto lagrer prosjektbilder i fotobiblioteket ditt."
       }
     },
     "android": {

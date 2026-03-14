@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, Modal, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, Modal, Pressable, StyleSheet, ActivityIndicator, Linking } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons, Feather as FeatherIcon } from '@expo/vector-icons';
 import { useT } from '@/context/LanguageContext';
 import { T } from '@/i18n/translations';
 import { useSubscription } from '@/lib/revenuecat';
 import { useColors } from '@/context/ThemeContext';
+
+const EULA_URL = 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/';
+const PRIVACY_URL = 'https://knitto.app/personvern';
 
 export function getPremiumFeatures(t: T) {
   return [
@@ -166,14 +169,26 @@ export function PremiumModal({ visible, onClose }: { visible: boolean; onClose: 
             )}
           </Pressable>
 
+          <Text style={[styles.legalNote, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
+            {t.premium.legalNote}
+          </Text>
+
           <View style={styles.footerLinks}>
-            <Pressable onPress={handleRestore} hitSlop={16} disabled={isPurchasing || isRestoring}>
+            <Pressable onPress={() => Linking.openURL(EULA_URL)} hitSlop={12}>
+              <Text style={[styles.footerLink, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{t.premium.terms}</Text>
+            </Pressable>
+            <Text style={[styles.footerDot, { color: colors.textTertiary }]}>·</Text>
+            <Pressable onPress={() => Linking.openURL(PRIVACY_URL)} hitSlop={12}>
+              <Text style={[styles.footerLink, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{t.premium.privacy}</Text>
+            </Pressable>
+            <Text style={[styles.footerDot, { color: colors.textTertiary }]}>·</Text>
+            <Pressable onPress={handleRestore} hitSlop={12} disabled={isPurchasing || isRestoring}>
               <Text style={[styles.footerLink, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>
                 {isRestoring ? t.premium.restoring : t.premium.restore}
               </Text>
             </Pressable>
             <Text style={[styles.footerDot, { color: colors.textTertiary }]}>·</Text>
-            <Pressable onPress={onClose} hitSlop={16} disabled={isPurchasing}>
+            <Pressable onPress={onClose} hitSlop={12} disabled={isPurchasing}>
               <Text style={[styles.footerLink, { color: colors.textTertiary, fontFamily: 'Inter_400Regular' }]}>{t.premium.notNow}</Text>
             </Pressable>
           </View>
@@ -316,13 +331,21 @@ const styles = StyleSheet.create({
     height: 1,
     marginTop: 4,
   },
+  legalNote: {
+    fontSize: 11,
+    textAlign: 'center',
+    marginTop: 8,
+    marginBottom: 4,
+    paddingHorizontal: 8,
+  },
   footerLinks: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 10,
-    paddingTop: 20,
-    paddingBottom: 20,
+    flexWrap: 'wrap',
+    gap: 8,
+    paddingTop: 10,
+    paddingBottom: 10,
   },
   footerLink: {
     fontSize: 13,
